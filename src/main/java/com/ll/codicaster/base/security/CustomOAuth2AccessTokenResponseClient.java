@@ -1,10 +1,6 @@
 package com.ll.codicaster.base.security;
 
-import static org.springframework.security.oauth2.core.OAuth2AccessToken.TokenType.*;
-
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.RequestEntity;

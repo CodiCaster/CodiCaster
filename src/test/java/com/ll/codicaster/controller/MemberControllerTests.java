@@ -27,8 +27,6 @@ import com.ll.codicaster.boundedContext.member.service.MemberService;
 
 import jakarta.servlet.http.HttpSession;
 
-;
-
 @SuppressWarnings("checkstyle:RegexpSinglelineJava")
 @SpringBootTest // 스프링부트 관련 컴포넌트 테스트할 때 붙여야 함, Ioc 컨테이너 작동시킴
 @AutoConfigureMockMvc // http 요청, 응답 테스트
