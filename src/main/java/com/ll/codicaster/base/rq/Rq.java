@@ -6,6 +6,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.servlet.LocaleResolver;
@@ -14,7 +15,6 @@ import com.ll.codicaster.boundedContext.member.entity.Member;
 import com.ll.codicaster.boundedContext.member.service.MemberService;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Component
@@ -25,16 +25,17 @@ public class Rq {
 	private final LocaleResolver localeResolver;
 	private Locale locale;
 	private final HttpServletRequest req;
+	private final HttpSession session;
 	private final User user;
 	private Member member = null; // 레이지 로딩, 처음부터 넣지 않고, 요청이 들어올 때 넣는다.
 
 	public Rq(MemberService memberService, MessageSource messageSource, LocaleResolver localeResolver,
-		HttpServletRequest req, HttpServletResponse resp, HttpSession session) {
+		HttpServletRequest req, HttpSession session) {
 		this.memberService = memberService;
 		this.messageSource = messageSource;
 		this.localeResolver = localeResolver;
 		this.req = req;
-
+		this.session = session;
 		// 현재 로그인한 회원의 인증정보를 가져옴
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -81,5 +82,15 @@ public class Rq {
 
 	public Long getLoginedMemberId() {
 		return getMember().getId();
+	}
+
+	public boolean isRefererAdminPage() {
+		SavedRequest savedRequest = (SavedRequest)session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+
+		if (savedRequest == null)
+			return false;
+
+		String referer = savedRequest.getRedirectUrl();
+		return referer != null && referer.contains("/adm");
 	}
 }
