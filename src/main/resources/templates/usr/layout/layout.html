@@ -17,12 +17,6 @@
                             <span th:text="#{c.pageNameStart}"></span>
                         </a>
                     </li>
-                    <li th:if="${@rq.admin}">
-                        <a href="/adm/home/main">
-                            <th:block th:utext="#{c.iconAdmin}"></th:block>
-                            <span th:text="#{c.pageNameAdmin}"></span>
-                        </a>
-                    </li>
                     <li th:if="${@rq.login}">
                         <a href="/usr/member/me">
                             <th:block th:utext="#{c.iconMyProfile}"></th:block>
