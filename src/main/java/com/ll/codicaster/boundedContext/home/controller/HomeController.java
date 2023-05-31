@@ -1,23 +1,28 @@
 package com.ll.codicaster.boundedContext.home.controller;
 
-import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import java.util.Enumeration;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Enumeration;
+import com.ll.codicaster.base.rq.Rq;
+
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
-
+    private final Rq rq;
 
     @GetMapping("/")
     public String showMain() {
+        if (rq.isLogout()) {
+            return "redirect:/usr/member/login";
+        }
 
-        return "redirect:/usr/home/about";
+        return "redirect:/usr/member/newInfo";
     }
 
     @GetMapping("/usr/home/about")
