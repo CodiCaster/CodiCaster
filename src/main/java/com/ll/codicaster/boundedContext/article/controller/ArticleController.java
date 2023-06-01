@@ -20,7 +20,7 @@ import com.ll.codicaster.boundedContext.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/article")
+@RequestMapping("/usr/article")
 @RequiredArgsConstructor
 public class ArticleController {
 
