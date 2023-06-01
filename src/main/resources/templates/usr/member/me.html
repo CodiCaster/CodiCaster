@@ -2,4 +2,153 @@
 
 <head>
     <title>내 정보</title>
+    <style>
+        #loadingSpinner {
+            display: none;
+            /* 로딩 스피너 스타일링을 위한 CSS */
+        }
+        .lds-roller {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+        .lds-roller div {
+            animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            transform-origin: 40px 40px;
+        }
+        .lds-roller div:after {
+            content: " ";
+            display: block;
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #000;
+            margin: -4px 0 0 -4px;
+        }
+        .lds-roller div:nth-child(1) {
+            animation-delay: -0.036s;
+        }
+        .lds-roller div:nth-child(1):after {
+            top: 63px;
+            left: 63px;
+        }
+        .lds-roller div:nth-child(2) {
+            animation-delay: -0.072s;
+        }
+        .lds-roller div:nth-child(2):after {
+            top: 68px;
+            left: 56px;
+        }
+        .lds-roller div:nth-child(3) {
+            animation-delay: -0.108s;
+        }
+        .lds-roller div:nth-child(3):after {
+            top: 71px;
+            left: 48px;
+        }
+        .lds-roller div:nth-child(4) {
+            animation-delay: -0.144s;
+        }
+        .lds-roller div:nth-child(4):after {
+            top: 72px;
+            left: 40px;
+        }
+        .lds-roller div:nth-child(5) {
+            animation-delay: -0.18s;
+        }
+        .lds-roller div:nth-child(5):after {
+            top: 71px;
+            left: 32px;
+        }
+        .lds-roller div:nth-child(6) {
+            animation-delay: -0.216s;
+        }
+        .lds-roller div:nth-child(6):after {
+            top: 68px;
+            left: 24px;
+        }
+        .lds-roller div:nth-child(7) {
+            animation-delay: -0.252s;
+        }
+        .lds-roller div:nth-child(7):after {
+            top: 63px;
+            left: 17px;
+        }
+        .lds-roller div:nth-child(8) {
+            animation-delay: -0.288s;
+        }
+        .lds-roller div:nth-child(8):after {
+            top: 56px;
+            left: 12px;
+        }
+        @keyframes lds-roller {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+    </style>
+    <script>
+        function showLoadingSpinner() {
+            var spinner = document.getElementById('loadingSpinner');
+            spinner.style.display = 'block';
+        }
+
+        function hideLoadingSpinner() {
+            var spinner = document.getElementById('loadingSpinner');
+            spinner.style.display = 'none';
+        }
+
+        function getLocationAndSubmit() {
+            if (navigator.geolocation) {
+                showLoadingSpinner();
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    sendLocationToServer(position);
+                    submitForm();
+                }, function (error) {
+                    hideLoadingSpinner();
+                    console.log('위치 정보 가져오기 실패:', error.message);
+                });
+            } else {
+                console.log('연결 안됨. 위치 정보 제공 동의 필요');
+            }
+        }
+
+        function sendLocationToServer(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+
+            var form = document.getElementById('regionDTO');
+            form.latitude.value = latitude;
+            form.longitude.value = longitude;
+        }
+
+        function submitForm() {
+            var form = document.getElementById('regionDTO');
+            form.submit();
+        }
+    </script>
 </head>
+
+<body>
+<main layout:fragment="main" className="flex-grow flex items-center justify-center ">
+    <div className="text-center">
+        <i className="fa-regular fa-face-sad-tear"></i> 해당 페이지는 존재하지 않습니다.
+
+        <form id="regionDTO" th:action="@{/usr/location/save}" method="post">
+            <input type="hidden" name="latitude" th:value="${latitude}">
+            <input type="hidden" name="longitude" th:value="${longitude}">
+            <button id="submitButton" type="button" onClick="getLocationAndSubmit()">위치 정보 갱신</button>
+        </form>
+    </div>
+    <div id="loadingSpinner">
+        <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>    </div>
+</main>
+</body>
+
+</html>

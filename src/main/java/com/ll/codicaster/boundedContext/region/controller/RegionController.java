@@ -32,4 +32,8 @@ public class RegionController {
 
         return "redirect:/usr/member/me";
     }
+    @GetMapping("/no")
+    public String no(){
+        return "usr/member/me";
+    }
 }
