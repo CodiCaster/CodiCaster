@@ -72,4 +72,16 @@ public class ArticleService {
 			.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
 	}
 
+	@Transactional
+	public boolean deleteArticle(Long id) {
+		try {
+			articleRepository.deleteById(id);
+			return true;
+		} catch (Exception e) {
+			// e.printStackTrace();
+			return false;
+		}
+
+	}
+
 }

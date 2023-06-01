@@ -57,6 +57,21 @@ public class ArticleController {
 	}
 
 
+	@GetMapping("/delete/{id}")
+	public String deleteArticle(@PathVariable("id") Long id) {
+
+		boolean success = articleService.deleteArticle(id);
+
+		if (!success) {
+			return "redirect:/error";
+		}
+
+
+		return "redirect:/article/list";
+	}
+
+
+
 }
 
 
