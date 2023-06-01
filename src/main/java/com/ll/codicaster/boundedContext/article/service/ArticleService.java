@@ -1,10 +1,13 @@
 package com.ll.codicaster.boundedContext.article.service;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -50,10 +53,8 @@ public class ArticleService {
 				directory.mkdirs(); // 상위 디렉토리까지 모두 생성
 			}
 
-
 			File saveFile = new File(uploadDir, fileName);
 			imageFile.transferTo(saveFile);
-
 
 			Image image = new Image();
 			image.setFilename(fileName);
@@ -67,21 +68,24 @@ public class ArticleService {
 
 	}
 
-
+	//게시물 전체 리스트
 	public List<Article> articleList() {
 
 		return articleRepository.findAll();
 	}
 
+	//게시물 상세
 	public Article articleDetail(Long id) {
 		return articleRepository.findById(id)
 			.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
 	}
 
+	//게시물 수정
 	@Transactional
 	public boolean updateArticle(Long id, ArticleCreateForm form, MultipartFile imageFile) {
 		try {
-			Article article = articleRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
+			Article article = articleRepository.findById(id)
+				.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
 
 			// 게시글의 정보를 수정
 			article.setTitle(form.getTitle());
@@ -147,6 +151,43 @@ public class ArticleService {
 	public Article findArticleById(Long id) {
 		return articleRepository.findById(id)
 			.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
+	}
+
+	//일년전 게시물 조회
+	public List<Article> getArticlesYearAgo() {
+		LocalDate today = LocalDate.now();
+		LocalDate oneYearAgo = today.minusYears(1); // 오늘로부터 1년 전
+		LocalDate oneYearAndMonthAgo = oneYearAgo.minusMonths(1); // 오늘로부터 1년 전 - 한달
+		LocalDate oneYearPlusMonthAgo = oneYearAgo.plusMonths(1);// 오늘로부터 1년 전 + 한달
+		LocalDate startDate = oneYearAndMonthAgo; // 오늘로부터 1년 전 ± 한달
+		LocalDate endDate = oneYearPlusMonthAgo;
+
+		LocalDateTime startDateTime = startDate.atStartOfDay();
+		LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+
+		return articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
+	}
+
+	//한달전 ~ 현재 게시물 조회
+	public List<Article> getArticlesLastOneMonth() {
+		LocalDate today = LocalDate.now();
+		LocalDate oneMonthAgo = today.minusMonths(1); //한달전
+
+		LocalDateTime startDateTime = oneMonthAgo.atStartOfDay();
+		LocalDateTime endDateTime = LocalDateTime.now();
+
+		return articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
+	}
+
+	public List<Article> getArticlesNearbyToday() {
+		List<Article> articleLastOneMonth = getArticlesLastOneMonth();
+		List<Article> articleYearAgo = getArticlesYearAgo();
+
+		List<Article> ArticlesNearbyToday = Stream.concat(articleYearAgo.stream(), articleLastOneMonth.stream())
+			.collect(Collectors.toList());
+
+		return ArticlesNearbyToday;
+
 	}
 
 }
