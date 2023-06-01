@@ -11,14 +11,56 @@
                 </label>
                 <ul tabindex="0"
                     class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-64">
+                    <li th:if="${@rq.logout}">
+                        <a href="/usr/member/login">
+                            <th:block th:utext="#{c.iconStart}"></th:block>
+                            <span th:text="#{c.pageNameStart}"></span>
+                        </a>
+                    </li>
+                    <li th:if="${@rq.login}">
+                        <a href="/usr/member/me">
+                            <th:block th:utext="#{c.iconMyProfile}"></th:block>
+                            <span th:text="#{c.pageNameMyProfile}"></span>
+                        </a>
+                    </li>
+
+                    <div th:if="${@rq.login}" class="divider"></div>
+
+                    <li th:if="${@rq.login}">
+                        <a href="/usr/main/post">
+                            <th:block th:utext="#{c.iconPost}"></th:block>
+                            <span th:text="#{c.pageNamePost}"></span>
+                        </a>
+                    </li>
+
+                    <div th:if="${@rq.login}" class="divider"></div>
+
+                    <li>
+                        <a href="/usr/home/about">
+                            <th:block th:utext="#{c.iconWhatIsThisService}"></th:block>
+                            <span th:text="#{c.whatIsThisService}"></span>
+                        </a>
+                    </li>
+                    <li th:if="${@rq.login}">
+                        <a href="javascript:" onclick="$(this).next().submit();">
+                            <th:block th:utext="#{c.iconLogout}"></th:block>
+                            <span th:text="#{c.pageNameLogout}"></span>
+                        </a>
+                        <form class="!hidden" hidden th:action="|/usr/member/logout|" method="POST"></form>
+                    </li>
                 </ul>
             </div>
         </div>
         <div class="navbar-center">
             <a href="/" class="btn btn-ghost normal-case text-xl">
+                <span class="hidden min-[339px]:inline" th:utext="#{c.logoTextWithEmojiEn}"></span>
+                <span class="min-[339px]:hidden" th:utext="#{c.logoEmoji}"></span>
             </a>
         </div>
         <div class="navbar-end">
+            <a href="/usr/home/about" class="btn btn-ghost btn-circle" th:if="${@rq.logout}">
+                <th:block th:utext="#{c.iconWhatIsThisService}"></th:block>
+            </a>
         </div>
     </div>
 </header>
