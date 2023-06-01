@@ -1,7 +1,9 @@
 package com.ll.codicaster.boundedContext.member.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import com.ll.codicaster.base.baseEntity.BaseEntity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +35,8 @@ public class Member extends BaseEntity {
 	private String nickname;
 
 	private String bodytype;
+	@ElementCollection
+	private HashMap<String, Integer> tagMap;
 
 	// 이 함수 자체는 만들어야 한다. 스프링 시큐리티 규격
 	public List<? extends GrantedAuthority> getGrantedAuthorities() {
@@ -56,4 +61,19 @@ public class Member extends BaseEntity {
 		this.nickname = nickname;
 		this.bodytype = bodytype;
 	}
+
+	//유저가 가장 많이 이용한 태그
+	public String getMostUsedTag() {
+		String mostUsedTag = null;
+		int maxCount = 0;
+
+		for (Map.Entry<String, Integer> entry : tagMap.entrySet()) {
+			if (entry.getValue() > maxCount) {
+				mostUsedTag = entry.getKey();
+				maxCount = entry.getValue();
+			}
+		}
+		return mostUsedTag;
+	}
+
 }

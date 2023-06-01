@@ -1,10 +1,12 @@
 package com.ll.codicaster.boundedContext.article.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.ll.codicaster.boundedContext.image.entity.Image;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
