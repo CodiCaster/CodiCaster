@@ -62,4 +62,9 @@ public class ArticleService {
 
 	}
 
+	public List<Article> articleList() {
+
+		return articleRepository.findAll();
+	}
+
 }
