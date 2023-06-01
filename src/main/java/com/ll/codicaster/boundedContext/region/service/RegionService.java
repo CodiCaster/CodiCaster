@@ -14,6 +14,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RegionService {
     private final RegionRepository regionRepository;
+    private final KakaoAPIService kakaoAPIService;
+
 
     public void save(LocationDTO locationDTO, Member member) {
         if (member.getRegionId() != null) {
@@ -23,7 +25,7 @@ public class RegionService {
         double latitude = Double.parseDouble(locationDTO.getLatitude());
         double longitude = Double.parseDouble(locationDTO.getLongitude());
         Point point = transferToPoint(0, latitude, longitude);
-        String address = "행정 주소";
+        String address = kakaoAPIService.loadRegionFromKakao(longitude, latitude);
         Region region = new Region(latitude, longitude, point, address);
         regionRepository.save(region);
         member.setRegionId(region.getId());
@@ -36,7 +38,7 @@ public class RegionService {
         double latitude = Double.parseDouble(locationDTO.getLatitude());
         double longitude = Double.parseDouble(locationDTO.getLongitude());
         Point point = transferToPoint(0, latitude, longitude);
-        String address = "행정 주소";
+        String address = kakaoAPIService.loadRegionFromKakao(longitude, latitude);
         region.update(latitude, longitude, point, address);
         regionRepository.save(region);
     }

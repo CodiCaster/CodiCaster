@@ -15,15 +15,11 @@ public class RegionController {
 
     //위치 정보 갱신 버튼을 누르면 위치 갱신
     @PostMapping("/save")
-    public String save(LocationDTO locationDTO, Member member) {
-        if (locationDTO.getLatitude().isEmpty()) {
+    public String saveRegion(LocationDTO locationDTO, Member member) {
+        if (locationDTO.getLatitude().isEmpty() || locationDTO.getLongitude().isEmpty()) {
             return "error/404";
         }
         regionService.save(locationDTO, member);
         return "usr/member/me";
-    }
-    @GetMapping("/gogo")
-    public String gogo(){
-        return "redirect:/location/test";
     }
 }
