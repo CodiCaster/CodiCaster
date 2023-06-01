@@ -11,4 +11,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ImageService {
 
+	private final ImageRepository imageRepository;
+
+	public void saveImage(MultipartFile imageFile) {
+
+	}
 }

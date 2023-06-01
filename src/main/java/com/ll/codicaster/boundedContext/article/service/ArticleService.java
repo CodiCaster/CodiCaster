@@ -50,6 +50,7 @@ public class ArticleService {
 			File saveFile = new File(projectPath, fileName);
 			imageFile.transferTo(saveFile);
 
+
 			Image image = new Image();
 			image.setFilename(fileName);
 			image.setFilepath("/images/" + fileName);
@@ -62,6 +63,7 @@ public class ArticleService {
 
 	}
 
+
 	public List<Article> articleList() {
 
 		return articleRepository.findAll();
@@ -71,24 +73,6 @@ public class ArticleService {
 		return articleRepository.findById(id)
 			.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
 	}
-
-	@Transactional
-	public boolean deleteArticle(Long id) {
-		try {
-			articleRepository.deleteById(id);
-			return true;
-		} catch (Exception e) {
-			// e.printStackTrace();
-			return false;
-		}
-
-	}
-
-	public Article findArticleById(Long id) {
-		return articleRepository.findById(id)
-			.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
-	}
-
 
 	@Transactional
 	public boolean updateArticle(Long id, ArticleCreateForm form, MultipartFile imageFile) {
@@ -145,7 +129,21 @@ public class ArticleService {
 		}
 	}
 
+	@Transactional
+	public boolean deleteArticle(Long id) {
+		try {
+			articleRepository.deleteById(id);
+			return true;
+		} catch (Exception e) {
+			// e.printStackTrace();
+			return false;
+		}
 
+	}
 
+	public Article findArticleById(Long id) {
+		return articleRepository.findById(id)
+			.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
+	}
 
 }

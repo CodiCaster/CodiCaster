@@ -1,7 +1,8 @@
 package com.ll.codicaster.boundedContext.article.controller;
 
 import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.article.form.ArticleCreateForm;
 import com.ll.codicaster.boundedContext.article.service.ArticleService;
-import com.ll.codicaster.boundedContext.image.service.ImageService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class ArticleController {
 
 	private final ArticleService articleService;
+
 
 	@GetMapping("/write")
 	public String articleWrite() {
@@ -38,6 +39,8 @@ public class ArticleController {
 
 		return "redirect:/article/list";
 	}
+
+
 
 	@GetMapping("/list")
 	public String articles(Model model) {
@@ -54,20 +57,6 @@ public class ArticleController {
 		model.addAttribute("article", article);
 		model.addAttribute("image", article.getImage());
 		return "usr/article/detail";
-	}
-
-
-	@GetMapping("/delete/{id}")
-	public String deleteArticle(@PathVariable("id") Long id) {
-
-		boolean success = articleService.deleteArticle(id);
-
-		if (!success) {
-			return "redirect:/error";
-		}
-
-
-		return "redirect:/article/list";
 	}
 
 	@GetMapping("/modify/{id}")
@@ -95,6 +84,18 @@ public class ArticleController {
 		return "redirect:/article/detail/" + id;
 	}
 
+	@GetMapping("/delete/{id}")
+	public String deleteArticle(@PathVariable("id") Long id) {
+
+		boolean success = articleService.deleteArticle(id);
+
+		if (!success) {
+			return "redirect:/error";
+		}
+
+
+		return "redirect:/article/list";
+	}
 
 
 }
