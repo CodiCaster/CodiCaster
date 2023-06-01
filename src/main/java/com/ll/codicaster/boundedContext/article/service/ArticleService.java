@@ -84,4 +84,68 @@ public class ArticleService {
 
 	}
 
+	public Article findArticleById(Long id) {
+		return articleRepository.findById(id)
+			.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
+	}
+
+
+	@Transactional
+	public boolean updateArticle(Long id, ArticleCreateForm form, MultipartFile imageFile) {
+		try {
+			Article article = articleRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
+
+			// 게시글의 정보를 수정
+			article.setTitle(form.getTitle());
+			article.setContent(form.getContent());
+			article.setModifyDate(LocalDateTime.now());
+
+			// 이미지 파일이 있으면 저장
+			if (!imageFile.isEmpty()) {
+				String projectPath = "C:/Users/82102/IdeaProjects/CodiCaster-main/images";
+				UUID uuid = UUID.randomUUID();
+				String fileName = uuid + "_" + imageFile.getOriginalFilename();
+
+				File directory = new File(projectPath);
+				if (!directory.exists()) {
+					directory.mkdirs();
+				}
+
+				File saveFile = new File(projectPath, fileName);
+				imageFile.transferTo(saveFile);
+
+				// 기존 이미지가 있으면 삭제
+				Image oldImage = article.getImage();
+				if (oldImage != null) {
+					// 실제 파일 삭제
+					File oldFile = new File(projectPath, oldImage.getFilename());
+					if (oldFile.exists()) {
+						oldFile.delete();
+					}
+
+					// DB에서 기존 이미지 삭제
+					imageRepository.delete(oldImage);
+				}
+
+				// 새 이미지 정보를 설정하고 저장
+				Image image = new Image();
+				image.setFilename(fileName);
+				image.setFilepath("/images/" + fileName);
+				image.setArticle(article);
+
+				image = imageRepository.save(image);
+
+				article.setImage(image);
+			}
+
+			return true;
+		} catch (Exception e) {
+			// e.printStackTrace();
+			return false;
+		}
+	}
+
+
+
+
 }

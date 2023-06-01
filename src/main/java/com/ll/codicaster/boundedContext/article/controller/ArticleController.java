@@ -70,6 +70,31 @@ public class ArticleController {
 		return "redirect:/article/list";
 	}
 
+	@GetMapping("/modify/{id}")
+	public String modifyArticle(@PathVariable("id") Long id, Model model) {
+
+		Article article = articleService.findArticleById(id);
+
+		if (article == null) {
+			return "redirect:/error";
+		}
+
+		model.addAttribute("article", article);
+
+		return "usr/article/modify";
+	}
+
+	@PostMapping("/modify/{id}")
+	public String updateArticle(@PathVariable("id") Long id, @ModelAttribute ArticleCreateForm updatedArticle, MultipartFile imageFile) {
+		boolean success = articleService.updateArticle(id, updatedArticle, imageFile);
+
+		if (!success) {
+			return "redirect:/error";
+		}
+
+		return "redirect:/article/detail/" + id;
+	}
+
 
 
 }
