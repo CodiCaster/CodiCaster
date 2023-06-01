@@ -2,6 +2,8 @@ package com.ll.codicaster.base.rq;
 
 import java.util.Locale;
 
+import com.ll.codicaster.base.rsData.RsData;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,77 +22,96 @@ import jakarta.servlet.http.HttpSession;
 @Component
 @RequestScope
 public class Rq {
-	private final MemberService memberService;
-	private final MessageSource messageSource;
-	private final LocaleResolver localeResolver;
-	private Locale locale;
-	private final HttpServletRequest req;
-	private final HttpSession session;
-	private final User user;
-	private Member member = null; // 레이지 로딩, 처음부터 넣지 않고, 요청이 들어올 때 넣는다.
+    private final MemberService memberService;
+    private final MessageSource messageSource;
+    private final LocaleResolver localeResolver;
+    private Locale locale;
+    private final HttpServletRequest req;
+    private final HttpServletResponse resp;
 
-	public Rq(MemberService memberService, MessageSource messageSource, LocaleResolver localeResolver,
-		HttpServletRequest req, HttpSession session) {
-		this.memberService = memberService;
-		this.messageSource = messageSource;
-		this.localeResolver = localeResolver;
-		this.req = req;
-		this.session = session;
-		// 현재 로그인한 회원의 인증정보를 가져옴
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    private final HttpSession session;
+    private final User user;
+    private Member member = null; // 레이지 로딩, 처음부터 넣지 않고, 요청이 들어올 때 넣는다.
 
-		if (authentication.getPrincipal() instanceof User) {
-			this.user = (User)authentication.getPrincipal();
-		} else {
-			this.user = null;
-		}
-	}
+    public Rq(MemberService memberService, MessageSource messageSource, LocaleResolver localeResolver,
+              HttpServletRequest req, HttpServletResponse resp, HttpSession session) {
+        this.memberService = memberService;
+        this.messageSource = messageSource;
+        this.localeResolver = localeResolver;
+        this.req = req;
+        this.resp = resp;
+        this.session = session;
+        // 현재 로그인한 회원의 인증정보를 가져옴
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-	// 로그인 되어 있는지 체크
-	public boolean isLogin() {
-		return user != null;
-	}
+        if (authentication.getPrincipal() instanceof User) {
+            this.user = (User) authentication.getPrincipal();
+        } else {
+            this.user = null;
+        }
+    }
 
-	// 로그아웃 되어 있는지 체크
-	public boolean isLogout() {
-		return !isLogin();
-	}
+    // 로그인 되어 있는지 체크
+    public boolean isLogin() {
+        return user != null;
+    }
 
-	// 로그인 된 회원의 객체
-	public Member getMember() {
-		if (isLogout())
-			return null;
+    // 로그아웃 되어 있는지 체크
+    public boolean isLogout() {
+        return !isLogin();
+    }
 
-		// 데이터가 없는지 체크
-		if (member == null) {
-			member = memberService.findByUsername(user.getUsername()).orElseThrow();
-		}
+    // 로그인 된 회원의 객체
+    public Member getMember() {
+        if (isLogout())
+            return null;
 
-		return member;
-	}
+        // 데이터가 없는지 체크
+        if (member == null) {
+            member = memberService.findByUsername(user.getUsername()).orElseThrow();
+        }
 
-	public String getCText(String code, String... args) {
-		return messageSource.getMessage(code, args, getLocale());
-	}
+        return member;
+    }
 
-	private Locale getLocale() {
-		if (locale == null)
-			locale = localeResolver.resolveLocale(req);
+    public String getCText(String code, String... args) {
+        return messageSource.getMessage(code, args, getLocale());
+    }
 
-		return locale;
-	}
+    private Locale getLocale() {
+        if (locale == null)
+            locale = localeResolver.resolveLocale(req);
 
-	public Long getLoginedMemberId() {
-		return getMember().getId();
-	}
+        return locale;
+    }
 
-	public boolean isRefererAdminPage() {
-		SavedRequest savedRequest = (SavedRequest)session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+    public Long getLoginedMemberId() {
+        return getMember().getId();
+    }
 
-		if (savedRequest == null)
-			return false;
+    public boolean isRefererAdminPage() {
+        SavedRequest savedRequest = (SavedRequest) session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
 
-		String referer = savedRequest.getRedirectUrl();
-		return referer != null && referer.contains("/adm");
-	}
+        if (savedRequest == null)
+            return false;
+
+        String referer = savedRequest.getRedirectUrl();
+        return referer != null && referer.contains("/adm");
+    }
+
+    // 뒤로가기 + 메세지
+    public String historyBack(String msg) {
+        String referer = req.getHeader("referer");
+        String key = "historyBackErrorMsg___" + referer;
+        req.setAttribute("localStorageKeyAboutHistoryBackErrorMsg", key);
+        req.setAttribute("historyBackErrorMsg", msg);
+        // 200 이 아니라 400 으로 응답코드가 지정되도록
+        resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return "common/js";
+    }
+
+    // 뒤로가기 + 메세지
+    public String historyBack(RsData rsData) {
+        return historyBack(rsData.getMsg());
+    }
 }

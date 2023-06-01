@@ -1,5 +1,6 @@
 package com.ll.codicaster.boundedContext.region.service;
 
+import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.member.entity.Member;
 import com.ll.codicaster.boundedContext.region.dto.LocationDTO;
 import com.ll.codicaster.boundedContext.region.entity.Point;
@@ -16,11 +17,9 @@ public class RegionService {
     private final RegionRepository regionRepository;
     private final KakaoAPIService kakaoAPIService;
 
-
-    public void save(LocationDTO locationDTO, Member member) {
+    public RsData<Region> save(LocationDTO locationDTO, Member member) {
         if (member.getRegionId() != null) {
-            update(locationDTO, member);
-            return;
+            return update(locationDTO, member);
         }
         double latitude = Double.parseDouble(locationDTO.getLatitude());
         double longitude = Double.parseDouble(locationDTO.getLongitude());
@@ -29,10 +28,15 @@ public class RegionService {
         Region region = new Region(latitude, longitude, point, address);
         regionRepository.save(region);
         member.setRegionId(region.getId());
+
+        return RsData.of("S-1", "위치 정보가 등록되었습니다.", region);
     }
 
-    public void update(LocationDTO locationDTO, Member member) {
+    public RsData<Region> update(LocationDTO locationDTO, Member member) {
         Optional<Region> regionOptional = regionRepository.findById(member.getRegionId());
+        if (!regionOptional.isPresent()) {
+            return RsData.of("F-1", "해당 유저(%s)의 위치 정보가 존재하지 않습니다.".formatted(member.getNickname()));
+        }
         Region region = regionOptional.get();
 
         double latitude = Double.parseDouble(locationDTO.getLatitude());
@@ -41,10 +45,12 @@ public class RegionService {
         String address = kakaoAPIService.loadRegionFromKakao(longitude, latitude);
         region.update(latitude, longitude, point, address);
         regionRepository.save(region);
+
+        return RsData.of("S-1", "위치 정보가 갱신되었습니다.", region);
     }
 
     //위도, 경도를 x, y 좌표로 변환
-    public Point transferToPoint(int mode, double lat, double lon) {
+    private Point transferToPoint(int mode, double lat, double lon) {
         double xLat = 0;
         double yLon = 0;
 
