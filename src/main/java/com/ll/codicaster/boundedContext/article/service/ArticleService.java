@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,9 @@ public class ArticleService {
 	private final ArticleRepository articleRepository;
 	private final ImageRepository imageRepository;
 
+	@Value("${file.upload-dir}")
+	private String uploadDir;
+
 	public void saveArticle(ArticleCreateForm form, MultipartFile imageFile) throws Exception {
 		Article article = Article.builder()
 			.title(form.getTitle())
@@ -37,17 +41,17 @@ public class ArticleService {
 
 		// 이미지 파일이 있으면 저장
 		if (!imageFile.isEmpty()) {
-			String projectPath = "C:/Users/82102/IdeaProjects/CodiCaster-main/images";
 			UUID uuid = UUID.randomUUID();
 			String fileName = uuid + "_" + imageFile.getOriginalFilename();
 
-			File directory = new File(projectPath);
+			File directory = new File(uploadDir);
 			// 디렉토리가 존재하지 않으면 생성
 			if (!directory.exists()) {
 				directory.mkdirs(); // 상위 디렉토리까지 모두 생성
 			}
 
-			File saveFile = new File(projectPath, fileName);
+
+			File saveFile = new File(uploadDir, fileName);
 			imageFile.transferTo(saveFile);
 
 
@@ -86,23 +90,22 @@ public class ArticleService {
 
 			// 이미지 파일이 있으면 저장
 			if (!imageFile.isEmpty()) {
-				String projectPath = "C:/Users/82102/IdeaProjects/CodiCaster-main/images";
 				UUID uuid = UUID.randomUUID();
 				String fileName = uuid + "_" + imageFile.getOriginalFilename();
 
-				File directory = new File(projectPath);
+				File directory = new File(uploadDir);
 				if (!directory.exists()) {
 					directory.mkdirs();
 				}
 
-				File saveFile = new File(projectPath, fileName);
+				File saveFile = new File(uploadDir, fileName);
 				imageFile.transferTo(saveFile);
 
 				// 기존 이미지가 있으면 삭제
 				Image oldImage = article.getImage();
 				if (oldImage != null) {
 					// 실제 파일 삭제
-					File oldFile = new File(projectPath, oldImage.getFilename());
+					File oldFile = new File(uploadDir, oldImage.getFilename());
 					if (oldFile.exists()) {
 						oldFile.delete();
 					}

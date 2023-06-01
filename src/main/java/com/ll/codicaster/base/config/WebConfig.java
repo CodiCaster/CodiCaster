@@ -1,14 +1,19 @@
 package com.ll.codicaster.base.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+	@Value("${file.upload-dir}")
+	private String uploadDir;
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/images/**")
-			.addResourceLocations("file:///C:/Users/82102/IdeaProjects/CodiCaster-main/images/");
+			.addResourceLocations("file:///" + uploadDir + "/");
 	}
 }

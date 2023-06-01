@@ -26,3 +26,5 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+file:
+  upload-dir: C:\Users\82102\IdeaProjects\CodiCaster__-main\images
