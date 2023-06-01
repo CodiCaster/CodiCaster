@@ -3,9 +3,12 @@ package com.ll.codicaster.boundedContext.article.service;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,11 +36,14 @@ public class ArticleService {
 	private String uploadDir;
 
 	public void saveArticle(ArticleCreateForm form, MultipartFile imageFile) throws Exception {
+		List<String> TagList = extractHashTagList(form.getContent());
+
 		Article article = Article.builder()
 			.title(form.getTitle())
 			.content(form.getContent())
 			.createDate(LocalDateTime.now())
 			.modifyDate(LocalDateTime.now())
+			.tagList(TagList)
 			.build();
 
 		articleRepository.save(article);
@@ -189,5 +195,21 @@ public class ArticleService {
 		return ArticlesNearbyToday;
 
 	}
+
+	public static List<String> extractHashTagList(String content) {
+		List<String> tagList = new ArrayList<>();
+
+		Pattern pattern = Pattern.compile("#([ㄱ-ㅎ가-힣a-zA-Z0-9_]+)");
+		Matcher matcher = pattern.matcher(content);
+
+		while (matcher.find()) {
+			String tag = matcher.group(1);
+			tagList.add(tag);
+		}
+
+		return tagList;
+	}
+
+
 
 }

@@ -37,7 +37,7 @@ public class ArticleController {
 	public String articleWriteSave(@ModelAttribute ArticleCreateForm articleCreateForm, @RequestParam("imageFile") MultipartFile imageFile) throws Exception {
 		articleService.saveArticle(articleCreateForm, imageFile);
 
-		return "redirect:/article/list";
+		return "redirect:/usr/article/list";
 	}
 
 
@@ -94,7 +94,7 @@ public class ArticleController {
 		}
 
 
-		return "redirect:/article/list";
+		return "redirect:/usr/article/list";
 	}
 
 

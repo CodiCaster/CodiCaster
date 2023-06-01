@@ -1,7 +1,10 @@
 package com.ll.codicaster.boundedContext.article.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.ll.codicaster.boundedContext.image.entity.Image;
 
@@ -43,9 +46,7 @@ public class Article {
 	@OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
 	private Image image;
 
-
-	//ManyToMany 태그리스트와 연결
-	// @ElementCollection
-	// private List<String> tags;
+	@ElementCollection
+	private List<String> tagList;
 
 }
