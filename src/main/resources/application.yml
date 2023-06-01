@@ -54,7 +54,7 @@ server:
       enabled: true
       force: true
 file:
-  upload-dir: C:\Users\82102\IdeaProjects\CodiCaster__-main\images
+  upload-dir: /Users/heegwonjo/Desktop/Likelion/codicaster
 custom:
   site:
     baseUrl: http://localhost:8080

@@ -35,9 +35,6 @@ public class Member extends BaseEntity {
 	private String nickname;
 
 	private String bodytype;
-	@ElementCollection
-	private HashMap<String, Integer> tagMap;
-
 	// 이 함수 자체는 만들어야 한다. 스프링 시큐리티 규격
 	public List<? extends GrantedAuthority> getGrantedAuthorities() {
 		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
@@ -62,18 +59,18 @@ public class Member extends BaseEntity {
 		this.bodytype = bodytype;
 	}
 
-	//유저가 가장 많이 이용한 태그
-	public String getMostUsedTag() {
-		String mostUsedTag = null;
-		int maxCount = 0;
-
-		for (Map.Entry<String, Integer> entry : tagMap.entrySet()) {
-			if (entry.getValue() > maxCount) {
-				mostUsedTag = entry.getKey();
-				maxCount = entry.getValue();
-			}
-		}
-		return mostUsedTag;
-	}
+	// //유저가 가장 많이 이용한 태그
+	// public String getMostUsedTag() {
+	// 	String mostUsedTag = null;
+	// 	int maxCount = 0;
+	//
+	// 	for (Map.Entry<String, Integer> entry : tagMap.entrySet()) {
+	// 		if (entry.getValue() > maxCount) {
+	// 			mostUsedTag = entry.getKey();
+	// 			maxCount = entry.getValue();
+	// 		}
+	// 	}
+	// 	return mostUsedTag;
+	// }
 
 }
