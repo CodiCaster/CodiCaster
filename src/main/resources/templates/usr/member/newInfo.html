@@ -1,0 +1,137 @@
+<html layout:decorate="~{usr/layout/layout.html}">
+<head>
+    <title>가입하기</title>
+    <script>
+        var isNicknameValid = false; // 닉네임 중복 여부를 저장하는 변수
+
+        function checkNickname() {
+            var nickname = document.getElementById('nickname').value;
+            var submitBtn = document.getElementById('submitBtn');
+
+            nickname = nickname.trim(); // 좌우 공백 제거
+
+            if (nickname.length === 0) {
+                toastWarning('닉네임을 입력해주세요.');
+                submitBtn.disabled = true;
+                return;
+            }
+
+            if (nickname.length < 4) {
+                toastWarning('닉네임을 4자 이상 입력해주세요.');
+                submitBtn.disabled = true;
+                return;
+            }
+
+            // AJAX request
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/usr/member/checkNickname?nickname=' + encodeURIComponent(nickname), true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.resultCode === 'F-1') {
+                        toastWarning(response.msg);
+                        submitBtn.disabled = true;
+                        isNicknameValid = false;
+                    } else {
+                        toastNotice(response.msg);
+                        isNicknameValid = true;
+                        enableSubmitButton();
+                    }
+                }
+            };
+            xhr.send();
+        }
+
+        function enableSubmitButton() {
+            var submitBtn = document.getElementById('submitBtn');
+            var bodyTypeChecked = document.querySelector('input[name="bodytype"]:checked');
+
+            if (isNicknameValid && bodyTypeChecked) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        function updateNickname() {
+            isNicknameValid = false;
+            enableSubmitButton();
+        }
+    </script>
+    <style>
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .radio-button-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<main layout:fragment="main" class="flex-grow flex items-center justify-center">
+    <div class="max-w-2xl w-full px-4">
+        <h1 class="mb-4">
+            <i class="fa-solid fa-user"></i>
+            가입하기
+        </h1>
+        <div class="flex flex-col gap-4">
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <i class="fa-solid fa-user"></i>
+                        내 정보
+                    </h2>
+                    <br>
+                    <form th:action="@{/usr/member/newInfo}" th:object="${user}" method="post">
+                        <div class="form-group">
+                            <label for="nickname"><i class="fa-regular fa-id-badge"></i> 닉네임 </label>
+                            <br>
+                            <input type="text" name="nickname" id="nickname" placeholder="닉네임을 입력해주세요" required
+                                   minlength="3" onkeyup="updateNickname()"/>
+                            <button type="button" onclick="checkNickname()" id="checkNicknameBtn">확인</button>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-temperature-low"></i> 나의 체질 </label>
+                            <br>
+                            <div class="radio-button-group">
+                                <div>
+                                    <input type="radio" id="veryCold" name="bodytype" value="1"
+                                           onchange="enableSubmitButton()"/>
+                                    <label for="veryCold">추위를 많이 탄다</label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="cold" name="bodytype" value="2"
+                                           onchange="enableSubmitButton()"/>
+                                    <label for="cold">추위를 조금 탄다</label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="normal" name="bodytype" value="3"
+                                           onchange="enableSubmitButton()"/>
+                                    <label for="normal">보통</label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="hot" name="bodytype" value="4"
+                                           onchange="enableSubmitButton()"/>
+                                    <label for="hot">더위를 조금 탄다</label>
+                                </div>
+                                <div>
+                                    <input type="radio" id="veryHot" name="bodytype" value="5"
+                                           onchange="enableSubmitButton()"/>
+                                    <label for="veryHot">더위를 많이 탄다</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary" id="submitBtn" disabled>가입 완료</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
