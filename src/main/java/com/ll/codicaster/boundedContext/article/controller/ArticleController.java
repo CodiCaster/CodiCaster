@@ -48,6 +48,14 @@ public class ArticleController {
 		return "usr/article/list";
 	}
 
+	@GetMapping("/detail/{id}")
+	public String articleDetail(@PathVariable Long id, Model model) {
+		Article article = articleService.articleDetail(id);
+		model.addAttribute("article", article);
+		model.addAttribute("image", article.getImage());
+		return "usr/article/detail";
+	}
+
 
 }
 

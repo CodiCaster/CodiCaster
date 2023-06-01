@@ -67,4 +67,9 @@ public class ArticleService {
 		return articleRepository.findAll();
 	}
 
+	public Article articleDetail(Long id) {
+		return articleRepository.findById(id)
+			.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
+	}
+
 }
