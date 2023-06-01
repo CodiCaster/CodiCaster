@@ -17,11 +17,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.article.form.ArticleCreateForm;
 import com.ll.codicaster.boundedContext.article.repository.ArticleRepository;
 import com.ll.codicaster.boundedContext.image.entity.Image;
 import com.ll.codicaster.boundedContext.image.repository.ImageRepository;
+import com.ll.codicaster.boundedContext.member.entity.Member;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,15 +34,17 @@ public class ArticleService {
 	private final ArticleRepository articleRepository;
 	private final ImageRepository imageRepository;
 
+	private final Rq rq;
 	@Value("${file.upload-dir}")
 	private String uploadDir;
 
 	public void saveArticle(ArticleCreateForm form, MultipartFile imageFile) throws Exception {
 		List<String> TagList = extractHashTagList(form.getContent());
-
+		Member author = rq.getMember();
 		Article article = Article.builder()
 			.title(form.getTitle())
 			.content(form.getContent())
+			.author(author)
 			.createDate(LocalDateTime.now())
 			.modifyDate(LocalDateTime.now())
 			.tagList(TagList)
