@@ -60,7 +60,7 @@ public class ArticleController {
 	@GetMapping("/list/nearby")
 	public String showArticlesNearbyToday(Model model) {
 
-		List<Article> articles = articleService.showArticlesNearbyToday();
+		List<Article> articles = articleService.showArticlesNearbyToday(rq.getMember());
 		model.addAttribute("articlesNearbyToday", articles);
 
 		return "usr/article/todaylist";

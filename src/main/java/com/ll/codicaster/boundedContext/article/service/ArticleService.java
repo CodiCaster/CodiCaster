@@ -218,12 +218,14 @@ public class ArticleService {
 		return articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
 	}
 
-	//일년전 오늘 앞뒤 한달 + 한달전 ~ 오늘 게시물 조회
-	public List<Article> showArticlesNearbyToday() {
+	// 일년전 오늘 앞뒤 한달 + 한달전 ~ 오늘 게시물 조회 + 성별 필터링 => 1차 필터링
+	// 추가로 위치 순 정렬 필요
+	public List<Article> showArticlesNearbyToday(Member member) {
 		List<Article> articleLastOneMonth = getArticlesLastOneMonth();
 		List<Article> articleYearAgo = getArticlesYearAgo();
 		//일년전의 게시물도 포함되었으므로 최신순 정렬기능은 넣지 않는다.
 		List<Article> ArticlesNearbyToday = Stream.concat(articleYearAgo.stream(), articleLastOneMonth.stream())
+			.filter(article -> article.getAuthor().getGender().equals(member.getGender()))
 			.collect(Collectors.toList());
 
 		return ArticlesNearbyToday;
