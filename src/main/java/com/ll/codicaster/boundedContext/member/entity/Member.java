@@ -30,71 +30,76 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @ToString(callSuper = true)
 public class Member extends BaseEntity {
-	private String providerTypeCode; // 일반회원인지, 카카오로 가입한 회원인지, 네이버로 가입한 회원인지
+    private String providerTypeCode; // 일반회원인지, 카카오로 가입한 회원인지, 네이버로 가입한 회원인지
 
-	@Column(unique = true)
-	private String username;
+    @Column(unique = true)
+    private String username;
 
-	private String password;
+    private String password;
 
-	@Column(unique = true)
-	private String nickname;
+    @Column(unique = true)
+    private String nickname;
 
-	private String bodytype;
+    private String bodytype;
 
-	private String gender;
+    private String gender;
 
-	@ElementCollection
-	@CollectionTable(name = "member_tagMap", joinColumns = @JoinColumn(name = "member_id"))
-	@MapKeyColumn(name = "tag_type")
-	@Column(name = "tag_count")
-	private Map<String, Integer> tagMap;
+    @ElementCollection
+    @CollectionTable(name = "member_tagMap", joinColumns = @JoinColumn(name = "member_id"))
+    @MapKeyColumn(name = "tag_type")
+    @Column(name = "tag_count")
+    private Map<String, Integer> tagMap;
 
+    private Long regionId;
 
-	// 이 함수 자체는 만들어야 한다. 스프링 시큐리티 규격
-	public List<? extends GrantedAuthority> getGrantedAuthorities() {
-		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+    public void updateRegionId(Long regionId) {
+        this.regionId = regionId;
+    }
 
-		// 모든 멤버는 member 권한을 가진다.
-		grantedAuthorities.add(new SimpleGrantedAuthority("member"));
+    // 이 함수 자체는 만들어야 한다. 스프링 시큐리티 규격
+    public List<? extends GrantedAuthority> getGrantedAuthorities() {
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
-		// username이 admin인 회원은 추가로 admin 권한도 가진다.
-		if (isAdmin()) {
-			grantedAuthorities.add(new SimpleGrantedAuthority("admin"));
-		}
+        // 모든 멤버는 member 권한을 가진다.
+        grantedAuthorities.add(new SimpleGrantedAuthority("member"));
 
-		return grantedAuthorities;
-	}
+        // username이 admin인 회원은 추가로 admin 권한도 가진다.
+        if (isAdmin()) {
+            grantedAuthorities.add(new SimpleGrantedAuthority("admin"));
+        }
 
-	public boolean isAdmin() {
-		return "admin".equals(username);
-	}
+        return grantedAuthorities;
+    }
 
-	public void updateInfo(String nickname, String bodytype, String gender) {
-		this.nickname = nickname;
-		this.bodytype = bodytype;
-		this.gender = gender;
-	}
+    public boolean isAdmin() {
+        return "admin".equals(username);
+    }
 
-	//유저가 가장 많이 이용한 태그
-	public List<String> getMostUsedTags() {
-		List<String> mostUsedTags = new ArrayList<>();
-		int maxCount = 0;
+    public void updateInfo(String nickname, String bodytype, String gender) {
+        this.nickname = nickname;
+        this.bodytype = bodytype;
+        this.gender = gender;
+    }
 
-		Map<String, Integer> tagMap = this.getTagMap();
+    //유저가 가장 많이 이용한 태그
+    public List<String> getMostUsedTags() {
+        List<String> mostUsedTags = new ArrayList<>();
+        int maxCount = 0;
 
-		for (Map.Entry<String, Integer> entry : tagMap.entrySet()) {
-			int count = entry.getValue();
-			if (count > maxCount) {
-				maxCount = count;
-				mostUsedTags.clear();
-				mostUsedTags.add(entry.getKey());
-			} else if (count == maxCount) {
-				mostUsedTags.add(entry.getKey());
-			}
-		}
+        Map<String, Integer> tagMap = this.getTagMap();
 
-		return mostUsedTags;
-	}
+        for (Map.Entry<String, Integer> entry : tagMap.entrySet()) {
+            int count = entry.getValue();
+            if (count > maxCount) {
+                maxCount = count;
+                mostUsedTags.clear();
+                mostUsedTags.add(entry.getKey());
+            } else if (count == maxCount) {
+                mostUsedTags.add(entry.getKey());
+            }
+        }
+
+        return mostUsedTags;
+    }
 
 }
