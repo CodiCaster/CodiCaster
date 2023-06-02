@@ -22,6 +22,13 @@
                 return;
             }
 
+            if (nickname.indexOf(' ') !== -1) {
+                toastWarning('닉네임에는 공백을 사용할 수 없습니다.');
+                submitBtn.disabled = true;
+                return false;
+            }
+
+
             // AJAX request
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '/usr/member/checkNickname?nickname=' + encodeURIComponent(nickname), true);
