@@ -2,97 +2,7 @@
 
 <head>
     <title>내 정보</title>
-    <style>
-        #loadingSpinner {
-            display: none;
-            /* 로딩 스피너 스타일링을 위한 CSS */
-        }
-        .lds-roller {
-            display: inline-block;
-            position: relative;
-            width: 80px;
-            height: 80px;
-        }
-        .lds-roller div {
-            animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-            transform-origin: 40px 40px;
-        }
-        .lds-roller div:after {
-            content: " ";
-            display: block;
-            position: absolute;
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #000;
-            margin: -4px 0 0 -4px;
-        }
-        .lds-roller div:nth-child(1) {
-            animation-delay: -0.036s;
-        }
-        .lds-roller div:nth-child(1):after {
-            top: 63px;
-            left: 63px;
-        }
-        .lds-roller div:nth-child(2) {
-            animation-delay: -0.072s;
-        }
-        .lds-roller div:nth-child(2):after {
-            top: 68px;
-            left: 56px;
-        }
-        .lds-roller div:nth-child(3) {
-            animation-delay: -0.108s;
-        }
-        .lds-roller div:nth-child(3):after {
-            top: 71px;
-            left: 48px;
-        }
-        .lds-roller div:nth-child(4) {
-            animation-delay: -0.144s;
-        }
-        .lds-roller div:nth-child(4):after {
-            top: 72px;
-            left: 40px;
-        }
-        .lds-roller div:nth-child(5) {
-            animation-delay: -0.18s;
-        }
-        .lds-roller div:nth-child(5):after {
-            top: 71px;
-            left: 32px;
-        }
-        .lds-roller div:nth-child(6) {
-            animation-delay: -0.216s;
-        }
-        .lds-roller div:nth-child(6):after {
-            top: 68px;
-            left: 24px;
-        }
-        .lds-roller div:nth-child(7) {
-            animation-delay: -0.252s;
-        }
-        .lds-roller div:nth-child(7):after {
-            top: 63px;
-            left: 17px;
-        }
-        .lds-roller div:nth-child(8) {
-            animation-delay: -0.288s;
-        }
-        .lds-roller div:nth-child(8):after {
-            top: 56px;
-            left: 12px;
-        }
-        @keyframes lds-roller {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
 
-    </style>
     <script>
         function showLoadingSpinner() {
             var spinner = document.getElementById('loadingSpinner');
@@ -137,17 +47,103 @@
 
 <body>
 <main layout:fragment="main" className="flex-grow flex items-center justify-center ">
-    <div className="text-center">
-        <i className="fa-regular fa-face-sad-tear"></i> 해당 페이지는 존재하지 않습니다.
 
-        <form id="regionDTO" th:action="@{/usr/location/save}" method="post">
-            <input type="hidden" name="latitude" th:value="${latitude}">
-            <input type="hidden" name="longitude" th:value="${longitude}">
-            <button id="submitButton" type="button" onClick="getLocationAndSubmit()">위치 정보 갱신</button>
-        </form>
+    <div th:if="${@rq.isLogin}" class="max-w-2xl w-full px-4">
+        <h1 class="mb-4">
+            <i class="fa-solid fa-user"></i>
+            내 정보
+        </h1>
+
+        <div class="flex flex-col gap-4">
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <i class="fa-solid fa-user"></i>
+                        내 정보
+                    </h2>
+
+                    <div class="mt-4">
+                        <div>
+                            <i class="fa-brands fa-instagram"></i>
+                            닉네임
+                        </div>
+                        <div class="mt-2">
+<!--                            <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>-->
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <div>
+                            <i class="fa-solid fa-person-half-dress"></i>
+                            성별
+                        </div>
+                        <div class="mt-2">
+<!--                            <span class="badge badge-primary"-->
+<!--                                  th:utext="${@rq.member.instaMember.genderDisplayNameWithIcon}"></span>-->
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div>
+                            <i class="fa-brands fa-instagram"></i>
+                            주 활동 지역 :
+                        </div>
+                        <div class="mt-2">
+<!--                            <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>-->
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div>
+                            <i class="fa-brands fa-instagram"></i>
+                            현재 위치 :
+                        </div>
+                        <form id="regionDTO" th:action="@{/usr/location/save}" method="post">
+                            <input type="hidden" name="latitude" th:value="${latitude}">
+                            <input type="hidden" name="longitude" th:value="${longitude}">
+                            <button id="submitButton" type="button" onClick="getLocationAndSubmit()">위치 정보 갱신</button>
+                            <div id="loadingSpinner">
+                                <div class="lds-roller">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+
+                        </form>
+                        <div class="mt-2">
+<!--                            <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>-->
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div>
+                            <i class="fa-brands fa-instagram"></i>
+                            현재 날씨 :
+                        </div>
+                        <div class="mt-2">
+<!--                            <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="/usr/member/pop" class="mt-10 mb-4 block">
+            <i class="fa-solid fa-chart-line"></i>
+            내 게시글
+
+            <span class="float-right text-sm">
+                <i class="fa-solid fa-angles-right"></i>
+                자세히 보기
+            </span>
+        </a>
+
+
     </div>
-    <div id="loadingSpinner">
-        <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>    </div>
+
 </main>
 </body>
 
