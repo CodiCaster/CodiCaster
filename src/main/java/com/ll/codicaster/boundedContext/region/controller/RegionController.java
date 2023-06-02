@@ -21,15 +21,10 @@ public class RegionController {
     //위치 정보 갱신 버튼을 누르면 위치 갱신
     @PostMapping("/save")
     public String saveRegion(LocationDTO locationDTO, Member member) {
-        if (locationDTO.getLatitude().isEmpty() || locationDTO.getLongitude().isEmpty()) {
-            return "error/404";
-        }
         RsData<Region> rsData = regionService.save(locationDTO, member);
-
         if (rsData.isFail()) {
             return rq.historyBack(rsData);
         }
-
         return "redirect:/usr/member/me";
     }
     @GetMapping("/no")

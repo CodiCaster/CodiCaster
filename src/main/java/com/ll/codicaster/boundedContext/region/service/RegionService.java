@@ -18,6 +18,10 @@ public class RegionService {
     private final KakaoAPIService kakaoAPIService;
 
     public RsData<Region> save(LocationDTO locationDTO, Member member) {
+        if (locationDTO.getLatitude().isEmpty() || locationDTO.getLongitude().isEmpty()) {
+            return RsData.of("F-1", "위치 정보를 불러오지 못했습니다.");
+        }
+
         if (member.getRegionId() != null) {
             return update(locationDTO, member);
         }
@@ -35,7 +39,7 @@ public class RegionService {
     public RsData<Region> update(LocationDTO locationDTO, Member member) {
         Optional<Region> regionOptional = regionRepository.findById(member.getRegionId());
         if (!regionOptional.isPresent()) {
-            return RsData.of("F-1", "해당 유저(%s)의 위치 정보가 존재하지 않습니다.".formatted(member.getNickname()));
+            return RsData.of("F-2", "해당 유저(%s)의 위치 정보가 존재하지 않습니다.".formatted(member.getNickname()));
         }
         Region region = regionOptional.get();
 
