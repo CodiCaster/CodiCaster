@@ -4,36 +4,47 @@
 </head>
 <body>
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">
-    <div class="max-w-md mx-auto">
-        <form th:action="@{/usr/article/writepro}" method="post" enctype="multipart/form-data">
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
-                    제목
-                </label>
-                <input class="input input-bordered w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                       id="title" type="text" placeholder="Title" name="title">
+    <div class="max-w-2xl w-full px-4">
+        <h1 class="mb-4">
+            <i class="fa-solid fa-pen-to-square"></i>
+            게시글 작성하기
+        </h1>
+        <div class="flex flex-col gap-4">
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <br>
+                    <form th:action="@{/usr/article/writepro}" method="post" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
+                                제목
+                            </label>
+                            <input class="input input-bordered w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                   id="title" type="text" placeholder="Title" name="title">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="content">
+                                내용
+                            </label>
+                            <textarea
+                                    class="textarea textarea-bordered w-full h-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="content" placeholder="Content" name="content"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="imageFile">
+                                이미지 업로드
+                            </label>
+                            <input type="file" id="imageFile" name="imageFile"
+                                   class="input input-bordered w-full focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+                        </div>
+                        <div class="mb-4 flex justify-end">
+                            <button class="btn btn-primary hover:bg-gray-300" type="submit">
+                                작성
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="content">
-                    내용
-                </label>
-                <textarea
-                        class="textarea textarea-bordered w-full h-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="content" placeholder="Content" name="content"></textarea>
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="imageFile">
-                    이미지 업로드
-                </label>
-                <input type="file" id="imageFile" name="imageFile"
-                       class="input input-bordered w-full focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
-            </div>
-            <div class="mb-4 flex justify-end">
-                <button class="btn btn-primary hover:bg-gray-300" type="submit">
-                    작성
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
 </main>
 </body>
