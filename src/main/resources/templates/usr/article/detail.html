@@ -1,6 +1,11 @@
 <html layout:decorate="~{usr/layout/layout.html}">
 <head>
     <title>게시글 상세보기</title>
+    <script>
+        function confirmDelete() {
+            return confirm("게시글을 삭제하시겠습니까?"); // 사용자에게 알림 대화상자를 표시합니다.
+        }
+    </script>
 </head>
 <body>
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">
@@ -69,7 +74,7 @@
                                class="btn btn-warning">수정</a>
                             <!-- 삭제 버튼 -->
                             <a href="usr/article/delete/{id}" th:href="@{/usr/article/delete/{id}(id=${article.id})}"
-                               class="btn btn-danger ml-4">삭제</a>
+                               class="btn btn-danger ml-4" onclick="return confirmDelete()">삭제</a>
                         </div>
                     </div>
                 </div>
