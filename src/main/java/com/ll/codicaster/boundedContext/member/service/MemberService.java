@@ -80,11 +80,11 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updateMemberInfo(Long memberId, String nickname, String bodytype) {
+	public void updateMemberInfo(Long memberId, String nickname, String bodytype, String gender) {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. ID=" + memberId));
 
-		member.updateInfo(nickname, bodytype);
+		member.updateInfo(nickname, bodytype, gender);
 	}
 
 }

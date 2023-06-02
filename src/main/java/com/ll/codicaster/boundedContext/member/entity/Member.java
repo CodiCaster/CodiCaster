@@ -42,6 +42,8 @@ public class Member extends BaseEntity {
 
 	private String bodytype;
 
+	private String gender;
+
 	@ElementCollection
 	@CollectionTable(name = "member_tagMap", joinColumns = @JoinColumn(name = "member_id"))
 	@MapKeyColumn(name = "tag_type")
@@ -68,9 +70,10 @@ public class Member extends BaseEntity {
 		return "admin".equals(username);
 	}
 
-	public void updateInfo(String nickname, String bodytype) {
+	public void updateInfo(String nickname, String bodytype, String gender) {
 		this.nickname = nickname;
 		this.bodytype = bodytype;
+		this.gender = gender;
 	}
 
 	//유저가 가장 많이 이용한 태그
