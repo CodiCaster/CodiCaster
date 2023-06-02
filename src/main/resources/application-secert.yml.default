@@ -1,0 +1,22 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            clientId: 'CLIENT ID'
+          naver:
+            clientId: 'CLIENT ID'
+            client-secret: 'CLIENT PASSWORD'
+custom:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            devUserOauthId: 'oauthId'
+          naver:
+            devUserOauthId: 'oauthId'
+api:
+  kakao:
+    key: 'REST API KEY'
