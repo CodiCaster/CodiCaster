@@ -1,4 +1,3 @@
-
 package com.ll.codicaster.boundedContext.member.entity;
 
 import java.util.ArrayList;
@@ -49,12 +48,6 @@ public class Member extends BaseEntity {
     @Column(name = "tag_count")
     private Map<String, Integer> tagMap;
 
-    private Long regionId;
-
-    public void updateRegionId(Long regionId) {
-        this.regionId = regionId;
-    }
-
 
     // 이 함수 자체는 만들어야 한다. 스프링 시큐리티 규격
     public List<? extends GrantedAuthority> getGrantedAuthorities() {
@@ -97,6 +90,8 @@ public class Member extends BaseEntity {
                 mostUsedTags.add(entry.getKey());
             }
         }
+
         return mostUsedTags;
     }
+
 }
