@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -38,13 +39,27 @@ public class ArticleService {
 	@Value("${file.upload-dir}")
 	private String uploadDir;
 
-	public void saveArticle(ArticleCreateForm form, MultipartFile imageFile) throws Exception {
+	public static List<String> extractHashTagList(String content) {
+		List<String> tagList = new ArrayList<>();
+
+		Pattern pattern = Pattern.compile("#([ㄱ-ㅎ가-힣a-zA-Z0-9_]+)");
+		Matcher matcher = pattern.matcher(content);
+
+		while (matcher.find()) {
+			String tag = matcher.group(1);
+			tagList.add(tag);
+		}
+
+		return tagList;
+	}
+
+	public void saveArticle(Member actor, ArticleCreateForm form, MultipartFile imageFile) throws Exception {
 		List<String> TagList = extractHashTagList(form.getContent());
-		Member author = rq.getMember();
+		updateUserTagMap(actor, TagList);
 		Article article = Article.builder()
 			.title(form.getTitle())
 			.content(form.getContent())
-			.author(author)
+			.author(actor)
 			.createDate(LocalDateTime.now())
 			.modifyDate(LocalDateTime.now())
 			.tagList(TagList)
@@ -189,7 +204,7 @@ public class ArticleService {
 		return articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
 	}
 
-	public List<Article> getArticlesNearbyToday() {
+	public List<Article> showArticlesNearbyToday() {
 		List<Article> articleLastOneMonth = getArticlesLastOneMonth();
 		List<Article> articleYearAgo = getArticlesYearAgo();
 
@@ -200,20 +215,13 @@ public class ArticleService {
 
 	}
 
-	public static List<String> extractHashTagList(String content) {
-		List<String> tagList = new ArrayList<>();
+	public void updateUserTagMap(Member member, List<String> TagList) {
+		Map<String, Integer> tagMap = member.getTagMap();
 
-		Pattern pattern = Pattern.compile("#([ㄱ-ㅎ가-힣a-zA-Z0-9_]+)");
-		Matcher matcher = pattern.matcher(content);
-
-		while (matcher.find()) {
-			String tag = matcher.group(1);
-			tagList.add(tag);
+		for (String tag : TagList) {
+			tagMap.put(tag, tagMap.getOrDefault(tag, 0) + 1);
 		}
 
-		return tagList;
 	}
-
-
 
 }

@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.article.form.ArticleCreateForm;
 import com.ll.codicaster.boundedContext.article.service.ArticleService;
+import com.ll.codicaster.boundedContext.member.entity.Member;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class ArticleController {
 
 	private final ArticleService articleService;
+	private final Rq rq;
 
 
 	@GetMapping("/write")
@@ -35,7 +38,8 @@ public class ArticleController {
 
 	@PostMapping("/writepro")
 	public String articleWriteSave(@ModelAttribute ArticleCreateForm articleCreateForm, @RequestParam("imageFile") MultipartFile imageFile) throws Exception {
-		articleService.saveArticle(articleCreateForm, imageFile);
+
+		articleService.saveArticle(rq.getMember(),articleCreateForm, imageFile);
 
 		return "redirect:/usr/article/list";
 	}
@@ -49,6 +53,15 @@ public class ArticleController {
 		model.addAttribute("articles", articles);
 
 		return "usr/article/list";
+	}
+
+	@GetMapping("/list/nearby")
+	public String showArticlesNearbyToday(Model model) {
+
+		List<Article> articles = articleService.showArticlesNearbyToday();
+		model.addAttribute("articlesNearbyToday", articles);
+
+		return "usr/article/todaylist";
 	}
 
 	@GetMapping("/detail/{id}")
@@ -81,7 +94,7 @@ public class ArticleController {
 			return "redirect:/error";
 		}
 
-		return "redirect:/article/detail/" + id;
+		return "redirect:/usr/article/detail/" + id;
 	}
 
 	@GetMapping("/delete/{id}")

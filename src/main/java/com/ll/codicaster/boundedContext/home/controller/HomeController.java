@@ -22,8 +22,8 @@ public class HomeController {
 			return "redirect:/usr/member/login";
 		}
 
-		if (rq.getMember().getNickname() != null || rq.getMember().getBodytype() != null)
-			return "usr/home/about";
+		// if (rq.getMember().getNickname() != null || rq.getMember().getBodytype() != null)
+		// 	return "usr/home/about";
 
 		return "redirect:/usr/member/newInfo";
 	}
