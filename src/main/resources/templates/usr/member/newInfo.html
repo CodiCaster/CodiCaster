@@ -63,12 +63,38 @@
             margin-bottom: 1.5rem;
         }
 
+        .bodytype-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bodytype-item {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+
+        .bodytype-item label{
+            margin-left: 2px;
+        }
+
         .radio-button-group {
             display: flex;
-            justify-content: space-between;
             align-items: center;
         }
+
+        .radio-button-item {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+
+        .radio-button-item label {
+            margin-left: 2px;
+        }
     </style>
+
 </head>
 <body>
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">
@@ -94,32 +120,41 @@
                             <button type="button" onclick="checkNickname()" id="checkNicknameBtn">확인</button>
                         </div>
                         <div class="form-group">
-                            <label><i class="fa-solid fa-temperature-low"></i> 나의 체질 </label>
+                            <label><i class="fa-solid fa-venus-mars"></i> 성별</label>
                             <br>
                             <div class="radio-button-group">
-                                <div>
-                                    <input type="radio" id="veryCold" name="bodytype" value="1"
-                                           onchange="enableSubmitButton()"/>
+                                <div class="radio-button-item">
+                                    <input type="radio" id="male" name="gender" value="male" onchange="enableSubmitButton()" />
+                                    <label for="male">남성</label>
+                                </div>
+                                <div class="radio-button-item">
+                                    <input type="radio" id="female" name="gender" value="female" onchange="enableSubmitButton()" />
+                                    <label for="female">여성</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-temperature-low"></i> 나의 체질 </label>
+                            <br>
+                            <div class="bodytype-group">
+                                <div class="bodytype-item">
+                                    <input type="radio" id="veryCold" name="bodytype" value="1" onchange="enableSubmitButton()" />
                                     <label for="veryCold">추위를 많이 탄다</label>
                                 </div>
-                                <div>
-                                    <input type="radio" id="cold" name="bodytype" value="2"
-                                           onchange="enableSubmitButton()"/>
+                                <div class="bodytype-item">
+                                    <input type="radio" id="cold" name="bodytype" value="2" onchange="enableSubmitButton()" />
                                     <label for="cold">추위를 조금 탄다</label>
                                 </div>
-                                <div>
-                                    <input type="radio" id="normal" name="bodytype" value="3"
-                                           onchange="enableSubmitButton()"/>
+                                <div class="bodytype-item">
+                                    <input type="radio" id="normal" name="bodytype" value="3" onchange="enableSubmitButton()" />
                                     <label for="normal">보통</label>
                                 </div>
-                                <div>
-                                    <input type="radio" id="hot" name="bodytype" value="4"
-                                           onchange="enableSubmitButton()"/>
+                                <div class="bodytype-item">
+                                    <input type="radio" id="hot" name="bodytype" value="4" onchange="enableSubmitButton()" />
                                     <label for="hot">더위를 조금 탄다</label>
                                 </div>
-                                <div>
-                                    <input type="radio" id="veryHot" name="bodytype" value="5"
-                                           onchange="enableSubmitButton()"/>
+                                <div class="bodytype-item">
+                                    <input type="radio" id="veryHot" name="bodytype" value="5" onchange="enableSubmitButton()" />
                                     <label for="veryHot">더위를 많이 탄다</label>
                                 </div>
                             </div>
