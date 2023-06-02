@@ -1,7 +1,9 @@
 package com.ll.codicaster.boundedContext.member.controller;
 
+import com.ll.codicaster.boundedContext.region.service.RegionService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
+    private final RegionService regionService;
     private final Rq rq;
 
     @PreAuthorize("isAnonymous()")
@@ -49,7 +52,12 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()") // 로그인 해야만 접속가능
     @GetMapping("/me") // 로그인 한 나의 정보 보여주는 페이지
-    public String showMe() {
+    public String showMe(Model model) {
+//        String address = regionService.getAddress(rq.getMember());
+//        if (address == null) {
+//            return null;
+//        }
+//        model.addAttribute("address", address);
         return "usr/member/me";
     }
 

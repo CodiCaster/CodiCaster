@@ -54,6 +54,15 @@ public class RegionService {
         return RsData.of("S-1", "위치 정보가 갱신되었습니다.", region);
     }
 
+    public String getAddress(Member member) {
+        Optional<Region> regionOptional = regionRepository.findById(member.getRegionId());
+        if (!regionOptional.isPresent()) {
+            return null;
+        }
+        Region region = regionOptional.get();
+        return region.getAddress();
+    }
+
     //위도, 경도를 x, y 좌표로 변환
     private Point transferToPoint(int mode, double lat, double lon) {
         double xLat = 0;
