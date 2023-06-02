@@ -48,6 +48,7 @@ public class Member extends BaseEntity {
     @Column(name = "tag_count")
     private Map<String, Integer> tagMap;
 
+
     private Long regionId;
 
     public void updateRegionId(Long regionId) {
