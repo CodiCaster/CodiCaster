@@ -20,5 +20,3 @@ custom:
 api:
   kakao:
     key: 'REST API KEY'
-  weather:
-    key: 'REST API KEY'
