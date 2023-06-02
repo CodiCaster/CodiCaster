@@ -68,7 +68,7 @@
                             닉네임
                         </div>
                         <div class="mt-2">
-<!--                            <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>-->
+                            <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>
                         </div>
                     </div>
 
@@ -78,8 +78,6 @@
                             성별
                         </div>
                         <div class="mt-2">
-<!--                            <span class="badge badge-primary"-->
-<!--                                  th:utext="${@rq.member.instaMember.genderDisplayNameWithIcon}"></span>-->
                         </div>
                     </div>
                     <div class="mt-4">
@@ -88,13 +86,14 @@
                             주 활동 지역 :
                         </div>
                         <div class="mt-2">
-<!--                            <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>-->
                         </div>
                     </div>
                     <div class="mt-4">
                         <div>
                             <i class="fa-brands fa-instagram"></i>
                             현재 위치 :
+<!--                            <span th:if="${@rq.member.getRegionId() == NULL}" class="badge badge-primary"-->
+<!--                                  th:text="서울특별시 동대문구 답십리동"></span>-->
                         </div>
                         <form id="regionDTO" th:action="@{/usr/location/save}" method="post">
                             <input type="hidden" name="latitude" th:value="${latitude}">
@@ -115,7 +114,7 @@
 
                         </form>
                         <div class="mt-2">
-<!--                            <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>-->
+                            <!--                            <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>-->
                         </div>
                     </div>
                     <div class="mt-4">
@@ -124,7 +123,7 @@
                             현재 날씨 :
                         </div>
                         <div class="mt-2">
-<!--                            <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>-->
+                            <!--                            <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>-->
                         </div>
                     </div>
                 </div>

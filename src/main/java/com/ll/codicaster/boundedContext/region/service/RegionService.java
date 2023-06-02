@@ -2,6 +2,7 @@ package com.ll.codicaster.boundedContext.region.service;
 
 import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.member.entity.Member;
+import com.ll.codicaster.boundedContext.member.service.MemberService;
 import com.ll.codicaster.boundedContext.region.dto.LocationDTO;
 import com.ll.codicaster.boundedContext.region.entity.Point;
 import com.ll.codicaster.boundedContext.region.entity.Region;
@@ -16,6 +17,7 @@ import java.util.Optional;
 public class RegionService {
     private final RegionRepository regionRepository;
     private final KakaoAPIService kakaoAPIService;
+    private final MemberService memberService;
 
     public RsData<Region> save(LocationDTO locationDTO, Member member) {
         if (locationDTO.getLatitude().isEmpty() || locationDTO.getLongitude().isEmpty()) {
@@ -31,8 +33,7 @@ public class RegionService {
         String address = kakaoAPIService.loadRegionFromKakao(longitude, latitude);
         Region region = new Region(latitude, longitude, point, address);
         regionRepository.save(region);
-        member.setRegionId(region.getId());
-
+        memberService.updateRegionId(member.getId(), region.getId());
         return RsData.of("S-1", "위치 정보가 등록되었습니다.", region);
     }
 

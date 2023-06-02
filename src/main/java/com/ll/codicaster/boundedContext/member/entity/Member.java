@@ -35,7 +35,7 @@ public class Member extends BaseEntity {
 
     private Long regionId;
 
-    public void setRegionId(Long regionId) {
+    public void updateRegionId(Long regionId) {
         this.regionId = regionId;
     }
 
