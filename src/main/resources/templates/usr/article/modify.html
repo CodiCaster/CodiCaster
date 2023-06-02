@@ -1,44 +1,49 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{usr/layout/layout.html}">
+<html layout:decorate="~{usr/layout/layout.html}">
 <head>
-  <title>Modify an Article</title>
+    <title>게시글 수정하기</title>
 </head>
 <body>
-<div layout:fragment="content">
-  <div class="max-w-md mx-auto">
-    <form th:action="@{/usr/article/modify/{id}(id=${article.id})}" th:object="${article}" method="post" enctype="multipart/form-data">
-      <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
-          Title
-        </label>
-        <input class="shadow appearance-none border border-gray-400 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="title" type="text" th:field="*{title}" placeholder="Title">
-      </div>
-      <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="content">
-          Content
-        </label>
-        <textarea class="shadow appearance-none border border-gray-400 rounded w-full h-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="content" th:field="*{content}" placeholder="Content"></textarea>
-      </div>
-      <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="imageFile">
-          Upload Image
-        </label>
-        <input type="file" id="imageFile" name="imageFile" class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
-      </div>
-      <div th:if="${article.image != null}" class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="currentImage">
-          Current Image
-        </label>
-        <img id="currentImage" th:src="@{${article.image.filepath}}" alt="Article Image" class="w-full rounded-md">
-      </div>
-      <div class="mb-4">
-        <button class="hover:bg-gray-300 text-black font-bold py-2 px-4 rounded border border-gray-400" type="submit">
-          수정
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+<main layout:fragment="main" class="flex-grow flex items-center justify-center">
+    <div class="max-w-md mx-auto">
+        <form th:action="@{/usr/article/modify/{id}(id=${article.id})}" th:object="${article}" method="post"
+              enctype="multipart/form-data">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
+                    제목
+                </label>
+                <input class="input input-bordered w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                       id="title" type="text" th:field="*{title}" placeholder="Title">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="content">
+                    내용
+                </label>
+                <textarea
+                        class="textarea textarea-bordered w-full h-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="content" th:field="*{content}" placeholder="Content"></textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="imageFile">
+                    이미지 업로드
+                </label>
+                <input type="file" id="imageFile" name="imageFile"
+                       class="input input-bordered w-full focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm">
+            </div>
+            <div th:if="${article.image != null}" class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="currentImage">
+                    현재 이미지
+                </label>
+                <img id="currentImage" th:src="@{${article.image.filepath}}" alt="Article Image"
+                     class="w-full rounded-md">
+            </div>
+            <div class="mb-4 flex justify-end">
+                <button class="btn btn-primary" type="submit">
+                    수정
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
 </body>
 </html>
 
