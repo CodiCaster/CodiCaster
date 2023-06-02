@@ -4,6 +4,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -56,6 +57,7 @@ public class ArticleService {
 	public void saveArticle(Member actor, ArticleCreateForm form, MultipartFile imageFile) throws Exception {
 		List<String> TagList = extractHashTagList(form.getContent());
 		updateUserTagMap(actor, TagList);
+
 		Article article = Article.builder()
 			.title(form.getTitle())
 			.content(form.getContent())
@@ -95,8 +97,10 @@ public class ArticleService {
 
 	//게시물 전체 리스트
 	public List<Article> articleList() {
-
-		return articleRepository.findAll();
+		return articleRepository.findAll()
+			.stream()
+			.sorted(Comparator.comparingLong(Article::getId).reversed())
+			.collect(Collectors.toList());
 	}
 
 	//게시물 상세
@@ -204,6 +208,7 @@ public class ArticleService {
 		return articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
 	}
 
+	//일년전 오늘 앞뒤 한달 + 한달전 ~ 오늘 게시물 조회
 	public List<Article> showArticlesNearbyToday() {
 		List<Article> articleLastOneMonth = getArticlesLastOneMonth();
 		List<Article> articleYearAgo = getArticlesYearAgo();
@@ -215,6 +220,7 @@ public class ArticleService {
 
 	}
 
+	//유저 태그맵 업데이트 (게시물 작성 시마다 태그리스트 받아서 가지고 있는지 확인하고 증가)
 	public void updateUserTagMap(Member member, List<String> TagList) {
 		Map<String, Integer> tagMap = member.getTagMap();
 
