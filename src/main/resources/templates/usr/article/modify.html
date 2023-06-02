@@ -6,7 +6,7 @@
 <body>
 <div layout:fragment="content">
   <div class="max-w-md mx-auto">
-    <form th:action="@{/article/modify/{id}(id=${article.id})}" th:object="${article}" method="post" enctype="multipart/form-data">
+    <form th:action="@{/usr/article/modify/{id}(id=${article.id})}" th:object="${article}" method="post" enctype="multipart/form-data">
       <div class="mb-4">
         <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
           Title

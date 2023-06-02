@@ -1,14 +1,23 @@
 package com.ll.codicaster.boundedContext.article.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.ll.codicaster.boundedContext.image.entity.Image;
+import com.ll.codicaster.boundedContext.member.entity.Member;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -33,7 +42,8 @@ public class Article {
 	private String title;
 	private String content;
 
-	private String author;
+	@OneToOne
+	private Member author;
 	private LocalDateTime createDate;
 	private LocalDateTime modifyDate;
 	private Integer likeCount;
@@ -41,9 +51,7 @@ public class Article {
 	@OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
 	private Image image;
 
-
-	//ManyToMany 태그리스트와 연결
-	// @ElementCollection
-	// private List<String> tags;
+	@ElementCollection
+	private Set<String> tagSet;
 
 }

@@ -1,21 +1,33 @@
 package com.ll.codicaster.boundedContext.article.service;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.article.form.ArticleCreateForm;
 import com.ll.codicaster.boundedContext.article.repository.ArticleRepository;
 import com.ll.codicaster.boundedContext.image.entity.Image;
 import com.ll.codicaster.boundedContext.image.repository.ImageRepository;
+import com.ll.codicaster.boundedContext.member.entity.Member;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,15 +38,35 @@ public class ArticleService {
 	private final ArticleRepository articleRepository;
 	private final ImageRepository imageRepository;
 
+	private final Rq rq;
 	@Value("${file.upload-dir}")
 	private String uploadDir;
 
-	public void saveArticle(ArticleCreateForm form, MultipartFile imageFile) throws Exception {
+	public static Set<String> extractHashTagList(String content) {
+		Set<String> tagSet = new HashSet<>();
+
+		Pattern pattern = Pattern.compile("#([ㄱ-ㅎ가-힣a-zA-Z0-9_]+)");
+		Matcher matcher = pattern.matcher(content);
+
+		while (matcher.find()) {
+			String tag = matcher.group(1);
+			tagSet.add(tag);
+		}
+
+		return tagSet;
+	}
+
+	public void saveArticle(Member actor, ArticleCreateForm form, MultipartFile imageFile) throws Exception {
+		Set<String> tagSet = extractHashTagList(form.getContent());
+		updateUserTagMap(actor, tagSet);
+
 		Article article = Article.builder()
 			.title(form.getTitle())
 			.content(form.getContent())
+			.author(actor)
 			.createDate(LocalDateTime.now())
 			.modifyDate(LocalDateTime.now())
+			.tagSet(tagSet)
 			.build();
 
 		articleRepository.save(article);
@@ -50,10 +82,8 @@ public class ArticleService {
 				directory.mkdirs(); // 상위 디렉토리까지 모두 생성
 			}
 
-
 			File saveFile = new File(uploadDir, fileName);
 			imageFile.transferTo(saveFile);
-
 
 			Image image = new Image();
 			image.setFilename(fileName);
@@ -67,21 +97,26 @@ public class ArticleService {
 
 	}
 
-
+	//게시물 전체 리스트
 	public List<Article> articleList() {
-
-		return articleRepository.findAll();
+		return articleRepository.findAll()
+			.stream()
+			.sorted(Comparator.comparingLong(Article::getId).reversed())
+			.collect(Collectors.toList());
 	}
 
+	//게시물 상세
 	public Article articleDetail(Long id) {
 		return articleRepository.findById(id)
 			.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
 	}
 
+	//게시물 수정
 	@Transactional
 	public boolean updateArticle(Long id, ArticleCreateForm form, MultipartFile imageFile) {
 		try {
-			Article article = articleRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
+			Article article = articleRepository.findById(id)
+				.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
 
 			// 게시글의 정보를 수정
 			article.setTitle(form.getTitle());
@@ -147,6 +182,54 @@ public class ArticleService {
 	public Article findArticleById(Long id) {
 		return articleRepository.findById(id)
 			.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
+	}
+
+	//일년전 게시물 조회
+	public List<Article> getArticlesYearAgo() {
+		LocalDate today = LocalDate.now();
+		LocalDate oneYearAgo = today.minusYears(1); // 오늘로부터 1년 전
+		LocalDate oneYearAndMonthAgo = oneYearAgo.minusMonths(1); // 오늘로부터 1년 전 - 한달
+		LocalDate oneYearPlusMonthAgo = oneYearAgo.plusMonths(1);// 오늘로부터 1년 전 + 한달
+		LocalDate startDate = oneYearAndMonthAgo; // 오늘로부터 1년 전 ± 한달
+		LocalDate endDate = oneYearPlusMonthAgo;
+
+		LocalDateTime startDateTime = startDate.atStartOfDay();
+		LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+
+		return articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
+	}
+
+	//한달전 ~ 현재 게시물 조회
+	public List<Article> getArticlesLastOneMonth() {
+		LocalDate today = LocalDate.now();
+		LocalDate oneMonthAgo = today.minusMonths(1); //한달전
+
+		LocalDateTime startDateTime = oneMonthAgo.atStartOfDay();
+		LocalDateTime endDateTime = LocalDateTime.now();
+
+		return articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
+	}
+
+	//일년전 오늘 앞뒤 한달 + 한달전 ~ 오늘 게시물 조회
+	public List<Article> showArticlesNearbyToday() {
+		List<Article> articleLastOneMonth = getArticlesLastOneMonth();
+		List<Article> articleYearAgo = getArticlesYearAgo();
+		//일년전의 게시물도 포함되었으므로 최신순 정렬기능은 넣지 않는다.
+		List<Article> ArticlesNearbyToday = Stream.concat(articleYearAgo.stream(), articleLastOneMonth.stream())
+			.collect(Collectors.toList());
+
+		return ArticlesNearbyToday;
+
+	}
+
+	//유저 태그맵 업데이트 (게시물 작성 시마다 태그리스트 받아서 가지고 있는지 확인하고 증가)
+	public void updateUserTagMap(Member member, Set<String> tagSet) {
+		Map<String, Integer> tagMap = member.getTagMap();
+
+		for (String tag : tagSet) {
+			tagMap.put(tag, tagMap.getOrDefault(tag, 0) + 1);
+		}
+
 	}
 
 }

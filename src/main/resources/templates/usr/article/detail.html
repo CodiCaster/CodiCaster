@@ -16,8 +16,7 @@
       <div class="username-and-date">
         <!-- 사용자 이름 -->
         <div class="username text-lg font-bold">
-          <!--          <span th:text="${article.username}"></span>-->
-          사용자이름
+                    <span th:text="${article.author.nickname}"></span>
         </div>
         <!-- 생성 시간 -->
         <div class="create-datetime text-sm text-gray-600 ml-2">
@@ -54,13 +53,13 @@
 
     <!-- 목록으로 돌아가기 버튼 -->
     <div class="back-to-list mt-4">
-      <a href="/article/list" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">목록으로</a>
+      <a href="/usr/article/list" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">목록으로</a>
 
       <!-- 수정 버튼 -->
-      <a href="/article/modify/{id}" th:href="@{/article/modify/{id}(id=${article.id})}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded ml-4">수정</a>
+      <a href="usr/article/modify/{id}" th:href="@{/usr/article/modify/{id}(id=${article.id})}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded ml-4">수정</a>
 
       <!-- 삭제 버튼 -->
-      <a href="/article/delete/{id}" th:href="@{/article/delete/{id}(id=${article.id})}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4">삭제</a>
+      <a href="usr/article/delete/{id}" th:href="@{/usr/article/delete/{id}(id=${article.id})}" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4">삭제</a>
     </div>
   </div>
 </div>

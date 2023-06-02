@@ -22,7 +22,7 @@ public class QArticle extends EntityPathBase<Article> {
 
     public static final QArticle article = new QArticle("article");
 
-    public final StringPath author = createString("author");
+    public final com.ll.codicaster.boundedContext.member.entity.QMember author;
 
     public final StringPath content = createString("content");
 
@@ -35,6 +35,8 @@ public class QArticle extends EntityPathBase<Article> {
     public final NumberPath<Integer> likeCount = createNumber("likeCount", Integer.class);
 
     public final DateTimePath<java.time.LocalDateTime> modifyDate = createDateTime("modifyDate", java.time.LocalDateTime.class);
+
+    public final SetPath<String, StringPath> tagSet = this.<String, StringPath>createSet("tagSet", String.class, StringPath.class, PathInits.DIRECT2);
 
     public final StringPath title = createString("title");
 
@@ -56,6 +58,7 @@ public class QArticle extends EntityPathBase<Article> {
 
     public QArticle(Class<? extends Article> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.author = inits.isInitialized("author") ? new com.ll.codicaster.boundedContext.member.entity.QMember(forProperty("author")) : null;
         this.image = inits.isInitialized("image") ? new com.ll.codicaster.boundedContext.image.entity.QImage(forProperty("image"), inits.get("image")) : null;
     }
 
