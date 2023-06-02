@@ -6,13 +6,13 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://127.0.0.1:3306/codicaster_dev?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
     username: root
-    password:
+    password: Codi2327~~
   security:
     oauth2:
       client:
         registration:
           kakao:
-            scope: profile_nickname, profile_image, account_email, gender, age_range
+            scope:
             client-name: Kakao
             authorization-grant-type: authorization_code
             redirect-uri: "${custom.site.baseUrl}/{action}/oauth2/code/{registrationId}"
@@ -44,7 +44,7 @@ spring:
 logging:
   level:
     root: INFO
-    com.ll.gramgram_ai: DEBUG
+    com.ll.codicaster: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
     org.hibernate.orm.jdbc.extract: TRACE
 server:
@@ -54,7 +54,7 @@ server:
       enabled: true
       force: true
 file:
-  upload-dir: C:\Users\82102\IdeaProjects\CodiCaster__-main\images
+  upload-dir: /Users/heegwonjo/Desktop/Likelion/codicaster/images
 custom:
   site:
     baseUrl: http://localhost:8080

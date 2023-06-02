@@ -27,9 +27,21 @@
                     <div th:if="${@rq.login}" class="divider"></div>
 
                     <li th:if="${@rq.login}">
-                        <a href="/usr/main/post">
+                        <a href="/usr/article/write">
                             <th:block th:utext="#{c.iconPost}"></th:block>
                             <span th:text="#{c.pageNamePost}"></span>
+                        </a>
+                    </li>
+                    <li th:if="${@rq.login}">
+                        <a href="/usr/article/list">
+                            <th:block th:utext="#{c.iconList}"></th:block>
+                            <span th:text="#{c.pageNameList}"></span>
+                        </a>
+                    </li>
+                    <li th:if="${@rq.login}">
+                        <a href="/usr/article/list">
+                            <th:block th:utext="#{c.iconList}"></th:block>
+                            <span th:text="#{c.pageNameTodayList}"></span>
                         </a>
                     </li>
 
