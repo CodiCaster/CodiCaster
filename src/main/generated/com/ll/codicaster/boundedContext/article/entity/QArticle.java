@@ -36,7 +36,7 @@ public class QArticle extends EntityPathBase<Article> {
 
     public final DateTimePath<java.time.LocalDateTime> modifyDate = createDateTime("modifyDate", java.time.LocalDateTime.class);
 
-    public final ListPath<String, StringPath> tagList = this.<String, StringPath>createList("tagList", String.class, StringPath.class, PathInits.DIRECT2);
+    public final SetPath<String, StringPath> tagSet = this.<String, StringPath>createSet("tagSet", String.class, StringPath.class, PathInits.DIRECT2);
 
     public final StringPath title = createString("title");
 

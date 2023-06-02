@@ -5,9 +5,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,23 +42,23 @@ public class ArticleService {
 	@Value("${file.upload-dir}")
 	private String uploadDir;
 
-	public static List<String> extractHashTagList(String content) {
-		List<String> tagList = new ArrayList<>();
+	public static Set<String> extractHashTagList(String content) {
+		Set<String> tagSet = new HashSet<>();
 
 		Pattern pattern = Pattern.compile("#([ㄱ-ㅎ가-힣a-zA-Z0-9_]+)");
 		Matcher matcher = pattern.matcher(content);
 
 		while (matcher.find()) {
 			String tag = matcher.group(1);
-			tagList.add(tag);
+			tagSet.add(tag);
 		}
 
-		return tagList;
+		return tagSet;
 	}
 
 	public void saveArticle(Member actor, ArticleCreateForm form, MultipartFile imageFile) throws Exception {
-		List<String> TagList = extractHashTagList(form.getContent());
-		updateUserTagMap(actor, TagList);
+		Set<String> tagSet = extractHashTagList(form.getContent());
+		updateUserTagMap(actor, tagSet);
 
 		Article article = Article.builder()
 			.title(form.getTitle())
@@ -64,7 +66,7 @@ public class ArticleService {
 			.author(actor)
 			.createDate(LocalDateTime.now())
 			.modifyDate(LocalDateTime.now())
-			.tagList(TagList)
+			.tagSet(tagSet)
 			.build();
 
 		articleRepository.save(article);
@@ -212,7 +214,7 @@ public class ArticleService {
 	public List<Article> showArticlesNearbyToday() {
 		List<Article> articleLastOneMonth = getArticlesLastOneMonth();
 		List<Article> articleYearAgo = getArticlesYearAgo();
-
+		//일년전의 게시물도 포함되었으므로 최신순 정렬기능은 넣지 않는다.
 		List<Article> ArticlesNearbyToday = Stream.concat(articleYearAgo.stream(), articleLastOneMonth.stream())
 			.collect(Collectors.toList());
 
@@ -221,10 +223,10 @@ public class ArticleService {
 	}
 
 	//유저 태그맵 업데이트 (게시물 작성 시마다 태그리스트 받아서 가지고 있는지 확인하고 증가)
-	public void updateUserTagMap(Member member, List<String> TagList) {
+	public void updateUserTagMap(Member member, Set<String> tagSet) {
 		Map<String, Integer> tagMap = member.getTagMap();
 
-		for (String tag : TagList) {
+		for (String tag : tagSet) {
 			tagMap.put(tag, tagMap.getOrDefault(tag, 0) + 1);
 		}
 
