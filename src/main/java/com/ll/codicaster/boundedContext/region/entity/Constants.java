@@ -5,5 +5,5 @@ public final class Constants {
     public static final Double LONGITUDE = 127.0449526;
     public static final Integer POINT_X = 61;
     public static final Integer POINT_Y = 127;
-    public static final String ADDRESS = "서울특별시 동대문구 답십리동";
+    public static final String ADDRESS = "default 주소";
 }

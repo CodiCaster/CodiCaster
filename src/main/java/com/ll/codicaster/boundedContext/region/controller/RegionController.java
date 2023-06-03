@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 @AllArgsConstructor
@@ -24,10 +26,9 @@ public class RegionController {
     public String saveRegion(LocationDTO locationDTO) {
         RsData<Region> rsData = regionService.save(locationDTO, rq.getMember());
         if (rsData.isFail()) {
-//            return "error/404";
             return rq.historyBack(rsData);
         }
-//        return "error/404";
-        return rq.redirectWithMsg("usr/member/me", rsData);
+        return "redirect:/usr/member/me";
+//        return rq.redirectWithMsg("usr/member/me", rsData);
     }
 }

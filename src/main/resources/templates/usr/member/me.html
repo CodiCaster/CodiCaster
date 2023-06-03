@@ -88,12 +88,11 @@
                         </div>
                         <div>
                             <form id="regionDTO" th:action="@{/usr/location/save}" method="post">
-                                <span th:if="${address != null}" th:text="${address}"></span>
-                                <span th:unless="${address != null}">default 주소</span>
+                                <span th:text="${@rq.getAddress()}"></span>
                                 <input type="hidden" name="latitude" th:value="${latitude}">
                                 <input type="hidden" name="longitude" th:value="${longitude}">
-                                <button id="submitButton" type="button" class="btn btn-active btn-secondary"
-                                        onClick="getLocationAndSubmit()">위치 정보 갱신
+                                <button id="submitButton" type="button" class="btn btn-outline btn-secondary"
+                                        onClick="getLocationAndSubmit()">업데이트
                                 </button>
                                 <div id="loadingSpinner">
                                     <div class="lds-roller">

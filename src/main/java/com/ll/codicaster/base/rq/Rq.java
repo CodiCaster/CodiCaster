@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.ll.codicaster.base.rsData.RsData;
+import com.ll.codicaster.boundedContext.region.entity.Constants;
 import com.ll.codicaster.boundedContext.region.entity.Region;
+import com.ll.codicaster.boundedContext.region.service.RegionService;
 import com.ll.codicaster.standard.util.Ut;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.MessageSource;
@@ -26,6 +28,8 @@ import jakarta.servlet.http.HttpSession;
 @RequestScope
 public class Rq {
     private final MemberService memberService;
+    private final RegionService regionService;
+
     private final MessageSource messageSource;
     private final LocaleResolver localeResolver;
     private Locale locale;
@@ -36,9 +40,11 @@ public class Rq {
     private final User user;
     private Member member = null; // 레이지 로딩, 처음부터 넣지 않고, 요청이 들어올 때 넣는다.
 
-    public Rq(MemberService memberService, MessageSource messageSource, LocaleResolver localeResolver,
+
+    public Rq(MemberService memberService, RegionService regionService, MessageSource messageSource, LocaleResolver localeResolver,
               HttpServletRequest req, HttpServletResponse resp, HttpSession session) {
         this.memberService = memberService;
+        this.regionService = regionService;
         this.messageSource = messageSource;
         this.localeResolver = localeResolver;
         this.req = req;
@@ -75,6 +81,19 @@ public class Rq {
         }
 
         return member;
+    }
+
+    public String getAddress() {
+        if (isLogout()) {
+            return Constants.ADDRESS;
+        }
+        if (member == null) {
+            member = memberService.findByUsername(user.getUsername()).orElseThrow();
+        }
+        if (member.getRegionId() == null) {
+            return Constants.ADDRESS;
+        }
+        return regionService.getAddress(member);
     }
 
     public String getCText(String code, String... args) {

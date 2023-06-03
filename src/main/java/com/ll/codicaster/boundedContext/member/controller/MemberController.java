@@ -52,13 +52,8 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()") // 로그인 해야만 접속가능
     @GetMapping("/me") // 로그인 한 나의 정보 보여주는 페이지
-    public String showMe(Model model) {
-//        String address = regionService.getAddress(rq.getMember());
-//        if (address == null) {
-//            return null;
-//        }
-//        model.addAttribute("address", address);
-        return "usr/member/me";
+    public String showMe() {
+        return "/usr/member/me";
     }
 
 }
