@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
-    private final RegionService regionService;
     private final Rq rq;
 
     @PreAuthorize("isAnonymous()")
@@ -55,5 +54,4 @@ public class MemberController {
     public String showMe() {
         return "/usr/member/me";
     }
-
 }

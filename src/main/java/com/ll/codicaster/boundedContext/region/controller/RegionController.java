@@ -29,6 +29,5 @@ public class RegionController {
             return rq.historyBack(rsData);
         }
         return "redirect:/usr/member/me";
-//        return rq.redirectWithMsg("usr/member/me", rsData);
     }
 }
