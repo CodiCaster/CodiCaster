@@ -30,6 +30,14 @@ public class Location {
         this.address = address;
     }
 
+    public Location(Double latitude, Double longitude, Integer pointX, Integer pointY, String address) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.pointX = pointX;
+        this.pointY = pointY;
+        this.address = address;
+    }
+
     public void update(Double latitude, Double longitude, Point point, String address) {
         this.latitude = latitude;
         this.longitude = longitude;

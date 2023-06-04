@@ -48,7 +48,6 @@ public class Article {
     private LocalDateTime modifyDate;
     private Integer likeCount;
     private Integer weatherId;
-    private Integer locationId;
 
     @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
     private Image image;

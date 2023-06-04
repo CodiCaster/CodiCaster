@@ -7,8 +7,10 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.ll.codicaster.base.rsData.RsData;
-import com.ll.codicaster.boundedContext.location.entity.Constants;
+import com.ll.codicaster.boundedContext.location.entity.LocationConstants;
+import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.service.LocationService;
+import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import com.ll.codicaster.boundedContext.weather.service.WeatherService;
 import com.ll.codicaster.standard.util.Ut;
 import jakarta.servlet.http.HttpServletResponse;
@@ -43,8 +45,8 @@ public class Rq {
     private final HttpSession session;
     private final User user;
     private Member member = null; // 레이지 로딩, 처음부터 넣지 않고, 요청이 들어올 때 넣는다.
-    private String currentAddress = null;
-    private Double currentTemperature = null;
+    private Weather weather = null;
+    private Location location = null;
     private String currentDateStr = null;
 
 
@@ -95,33 +97,38 @@ public class Rq {
     public String update() throws IOException {
         getCurrentDate();
         if (isLogout()) {
-            currentTemperature = weatherService.getApiWeather(Constants.POINT_X, Constants.POINT_Y).getTmp();
-            currentAddress = Constants.ADDRESS;
-            return currentAddress;
+            weather = weatherService.getApiWeather(LocationConstants.POINT_X, LocationConstants.POINT_Y);
+            setLocationDefault();
+            return location.getAddress();
         }
         if (member == null) {
             member = memberService.findByUsername(user.getUsername()).orElseThrow();
         }
         if (member.getLocationId() == null) {
-            currentTemperature = weatherService.getApiWeather(Constants.POINT_X, Constants.POINT_Y).getTmp();
-            currentAddress = Constants.ADDRESS;
-            return currentAddress;
+            weather = weatherService.getApiWeather(LocationConstants.POINT_X, LocationConstants.POINT_Y);
+            setLocationDefault();
+            return location.getAddress();
         }
-        updateCurrentAddress();
-        updateCurrentTemperature();
-        return currentAddress;
+        updateCurrentLocation();
+        updateCurrentWeather();
+        return location.getAddress();
     }
 
-    public void updateCurrentAddress() {
-        currentAddress = locationService.getLocation(member.getLocationId()).getAddress();
+    private void setLocationDefault() {
+        location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
+                LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
     }
 
-    public void updateCurrentTemperature() throws IOException {
-        currentTemperature = weatherService.getWeather(locationService.getLocation(member.getLocationId())).getTmp();
+    public void updateCurrentLocation() {
+        location = locationService.getLocation(member.getLocationId());
+    }
+
+    public void updateCurrentWeather() throws IOException {
+        weather = weatherService.getWeather(location);
     }
 
     public String getCurrentDateAndWeatherToString() {
-        return currentDateStr + " " + currentTemperature + "°C";
+        return currentDateStr + " " + weather.getTmp() + "°C";
     }
 
     public void getCurrentDate() {
@@ -189,5 +196,9 @@ public class Rq {
     // 메세지에 ttl 적용
     private String msgWithTtl(String msg) {
         return Ut.url.encode(msg) + ";ttl=" + new Date().getTime();
+    }
+
+    public void setLocation(Location newLocation) {
+        this.location = newLocation;
     }
 }

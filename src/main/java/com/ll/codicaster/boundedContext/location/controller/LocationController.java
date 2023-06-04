@@ -25,6 +25,7 @@ public class LocationController {
         if (rsData.isFail()) {
             return rq.historyBack(rsData);
         }
+        rq.setLocation(rsData.getData());
         return "redirect:/usr/member/me";
     }
 }

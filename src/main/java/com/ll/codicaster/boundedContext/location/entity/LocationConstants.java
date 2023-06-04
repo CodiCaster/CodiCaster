@@ -1,6 +1,6 @@
 package com.ll.codicaster.boundedContext.location.entity;
 
-public final class Constants {
+public final class LocationConstants {
     public static final Double LATITUDE = 37.5754715;
     public static final Double LONGITUDE = 127.0449526;
     public static final Integer POINT_X = 61;
