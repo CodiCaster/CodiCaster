@@ -33,18 +33,17 @@ public class WeatherService {
     @Value("${api.weather.key}")
     private String REST_KEY;
     private WeatherRepository weatherRepository;
-    private LocationRepository locationRepository;
     private ArticleService articleService;
 
     public Weather getWeather(Location location) throws IOException {
-        Weather weather = getApiWeather(new Point(location.getPointX(), location.getPointY()));
+        Weather weather = getApiWeather(location.getPointX(), location.getPointY());
         return weather;
     }
 
     /**
      * @return weatherInfo
      */
-    public Weather getApiWeather(Point point) throws IOException {
+    public Weather getApiWeather(Integer pointX, Integer pointY) throws IOException {
         String tmp = "";
         String pop = "";
         String pty = "";
@@ -53,8 +52,8 @@ public class WeatherService {
         String tmn = "";
         String tmx = "";
 
-        int xLan = point.getX();
-        int yLon = point.getY();
+        int xLan = pointX;
+        int yLon = pointY;
 
         LocalTime nowTime = LocalTime.now();
         LocalDate nowDate = LocalDate.now();
@@ -65,8 +64,6 @@ public class WeatherService {
         String nowDateStr = nowDate.toString().replaceAll("-", "");
         String nowTimeStr = nowTime.toString().substring(0, 2) + "00";
 
-        System.out.println("nowTime : " + nowTimeStr);
-        System.out.println("nowDate : " + nowDateStr);
         if (nowTime.isBefore(dateStandard)) {
             nowDate = nowDate.minusDays(1);
             baseTime = "2300";
@@ -150,11 +147,11 @@ public class WeatherService {
         return new Weather(tmp, pop, pty, reh, sky, tmn, tmx);
     }
 
-    public RsData<Weather> save(Location location, Article article) throws IOException {
-
-        Weather weather = getApiWeather(new Point(location.getPointX(), location.getPointY()));
-        weatherRepository.save(weather);
-        articleService.updateWeatherId(article.getId(), weather.getId());
-        return RsData.of("S-1", "위치 정보가 등록되었습니다.", location);
-    }
+//    public RsData<Weather> save(Location location, Article article) throws IOException {
+//
+//        Weather weather = getApiWeather(location.getPointX(), location.getPointY());
+//        weatherRepository.save(weather);
+//        articleService.updateWeatherId(article.getId(), weather.getId());
+//        return RsData.of("S-1", "위치 정보가 등록되었습니다.", weather);
+//    }
 }

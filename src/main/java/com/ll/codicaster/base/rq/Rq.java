@@ -2,18 +2,13 @@ package com.ll.codicaster.base.rq;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.location.entity.Constants;
-import com.ll.codicaster.boundedContext.location.entity.Point;
 import com.ll.codicaster.boundedContext.location.service.LocationService;
-import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import com.ll.codicaster.boundedContext.weather.service.WeatherService;
 import com.ll.codicaster.standard.util.Ut;
 import jakarta.servlet.http.HttpServletResponse;
@@ -48,8 +43,9 @@ public class Rq {
     private final HttpSession session;
     private final User user;
     private Member member = null; // 레이지 로딩, 처음부터 넣지 않고, 요청이 들어올 때 넣는다.
-    private Double nowTemperature = null;
-    private String nowWeatherInfo;
+    private String currentAddress = null;
+    private Double currentTemperature = null;
+    private String currentDateStr = null;
 
 
     public Rq(MemberService memberService, LocationService locationService, WeatherService weatherService, MessageSource messageSource, LocaleResolver localeResolver,
@@ -96,37 +92,42 @@ public class Rq {
         return member;
     }
 
-    //타임리프 작동 위해 날씨와 주소 업데이트를 한꺼번에 작성
-    //분리 해야할 필요가 있음
-    public String getAddress() throws IOException {
+    public String update() throws IOException {
+        getCurrentDate();
         if (isLogout()) {
-            nowTemperature = weatherService.getApiWeather(new Point(Constants.POINT_X, Constants.POINT_Y)).getTmp();
-            return Constants.ADDRESS;
+            currentTemperature = weatherService.getApiWeather(Constants.POINT_X, Constants.POINT_Y).getTmp();
+            currentAddress = Constants.ADDRESS;
+            return currentAddress;
         }
         if (member == null) {
             member = memberService.findByUsername(user.getUsername()).orElseThrow();
         }
         if (member.getLocationId() == null) {
-            nowTemperature = weatherService.getApiWeather(new Point(Constants.POINT_X, Constants.POINT_Y)).getTmp();
-            return Constants.ADDRESS;
+            currentTemperature = weatherService.getApiWeather(Constants.POINT_X, Constants.POINT_Y).getTmp();
+            currentAddress = Constants.ADDRESS;
+            return currentAddress;
         }
-        nowTemperature = weatherService.getWeather(locationService.getLocation(member.getLocationId())).getTmp();
-        return locationService.getLocation(member.getLocationId()).getAddress();
+        updateCurrentAddress();
+        updateCurrentTemperature();
+        return currentAddress;
     }
 
-    public String getNowTemperature() {
-        return this.nowTemperature + "°C";
+    public void updateCurrentAddress() {
+        currentAddress = locationService.getLocation(member.getLocationId()).getAddress();
     }
 
-    public String getNowWeatherInfo() {
-        return getNowDate() + " " + getNowTemperature();
+    public void updateCurrentTemperature() throws IOException {
+        currentTemperature = weatherService.getWeather(locationService.getLocation(member.getLocationId())).getTmp();
     }
 
-    public String getNowDate() {
+    public String getCurrentDateAndWeatherToString() {
+        return currentDateStr + " " + currentTemperature + "°C";
+    }
+
+    public void getCurrentDate() {
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd(E)", Locale.KOREAN);
-        String formattedDate = currentDate.format(formatter);
-        return formattedDate;
+        currentDateStr = currentDate.format(formatter);
     }
 
     public String getCText(String code, String... args) {

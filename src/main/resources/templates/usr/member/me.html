@@ -88,7 +88,7 @@
                         </div>
                         <div>
                             <form id="locationDTO" th:action="@{/usr/location/save}" method="post">
-                                <span th:text="${@rq.getAddress()}"></span>
+                                <span th:text="${@rq.update()}"></span>
                                 <input type="hidden" name="latitude" th:value="${latitude}">
                                 <input type="hidden" name="longitude" th:value="${longitude}">
                                 <button id="submitButton" type="button" class="btn btn-outline btn-secondary"
@@ -116,7 +116,7 @@
                         </div>
                         <div>
                             <span class="badge badge-primary"
-                                  th:text="${@rq.getNowWeatherInfo()}"></span>
+                                  th:text="${@rq.currentDateAndWeatherToString}"></span>
                         </div>
                     </div>
                 </div>
