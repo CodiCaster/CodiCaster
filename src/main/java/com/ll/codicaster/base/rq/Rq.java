@@ -110,8 +110,8 @@ public class Rq {
             nowTemperature = weatherService.getApiWeather(new Point(Constants.POINT_X, Constants.POINT_Y)).getTmp();
             return Constants.ADDRESS;
         }
-        nowTemperature = weatherService.getWeather(locationService.getLocation(member)).getTmp();
-        return locationService.getLocation(member).getAddress();
+        nowTemperature = weatherService.getWeather(locationService.getLocation(member.getLocationId())).getTmp();
+        return locationService.getLocation(member.getLocationId()).getAddress();
     }
 
     public String getNowTemperature() {

@@ -2,6 +2,11 @@ package com.ll.codicaster.boundedContext.weather.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ll.codicaster.base.rq.Rq;
+import com.ll.codicaster.base.rsData.RsData;
+import com.ll.codicaster.boundedContext.article.entity.Article;
+import com.ll.codicaster.boundedContext.article.service.ArticleService;
+import com.ll.codicaster.boundedContext.location.dto.LocationDTO;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.entity.Point;
 import com.ll.codicaster.boundedContext.location.repository.LocationRepository;
@@ -29,6 +34,7 @@ public class WeatherService {
     private String REST_KEY;
     private WeatherRepository weatherRepository;
     private LocationRepository locationRepository;
+    private ArticleService articleService;
 
     public Weather getWeather(Location location) throws IOException {
         Weather weather = getApiWeather(new Point(location.getPointX(), location.getPointY()));
@@ -142,5 +148,13 @@ public class WeatherService {
             e.printStackTrace();
         }
         return new Weather(tmp, pop, pty, reh, sky, tmn, tmx);
+    }
+
+    public RsData<Weather> save(Location location, Article article) throws IOException {
+
+        Weather weather = getApiWeather(new Point(location.getPointX(), location.getPointY()));
+        weatherRepository.save(weather);
+        articleService.updateWeatherId(article.getId(), weather.getId());
+        return RsData.of("S-1", "위치 정보가 등록되었습니다.", location);
     }
 }

@@ -54,8 +54,8 @@ public class LocationService {
         return RsData.of("S-1", "위치 정보가 갱신되었습니다.", location);
     }
 
-    public Location getLocation(Member member) {
-        Optional<Location> LocationOptional = locationRepository.findById(member.getLocationId());
+    public Location getLocation(Long locationId) {
+        Optional<Location> LocationOptional = locationRepository.findById(locationId);
         if (!LocationOptional.isPresent()) {
             return null;
         }
