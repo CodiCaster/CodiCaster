@@ -1,4 +1,4 @@
-package com.ll.codicaster.boundedContext.region.entity;
+package com.ll.codicaster.boundedContext.location.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,7 +11,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Data
 @Entity
 @NoArgsConstructor
-public class Region {
+public class Location {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -22,11 +22,19 @@ public class Region {
     private Integer pointY; //y 좌표로 변환된 경도
     private String address; //주소 (~동 까지)
 
-    public Region(Double latitude, Double longitude, Point point, String address) {
+    public Location(Double latitude, Double longitude, Point point, String address) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.pointX = point.getX();
         this.pointY = point.getY();
+        this.address = address;
+    }
+
+    public Location(Double latitude, Double longitude, Integer pointX, Integer pointY, String address) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.pointX = pointX;
+        this.pointY = pointY;
         this.address = address;
     }
 
