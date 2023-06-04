@@ -49,6 +49,7 @@ public class Rq {
     private final User user;
     private Member member = null; // 레이지 로딩, 처음부터 넣지 않고, 요청이 들어올 때 넣는다.
     private Double nowTemperature = null;
+    private String nowWeatherInfo;
 
 
     public Rq(MemberService memberService, LocationService locationService, WeatherService weatherService, MessageSource messageSource, LocaleResolver localeResolver,
@@ -113,8 +114,12 @@ public class Rq {
         return locationService.getLocation(member).getAddress();
     }
 
-    public Double getNowTemperature() {
-        return this.nowTemperature;
+    public String getNowTemperature() {
+        return this.nowTemperature + "°C";
+    }
+
+    public String getNowWeatherInfo() {
+        return getNowDate() + " " + getNowTemperature();
     }
 
     public String getNowDate() {
