@@ -127,7 +127,7 @@ public class Rq {
         weather = weatherService.getWeather(location);
     }
 
-    public String getCurrentDateAndWeatherToString() {
+    public String currentDateAndWeatherToString() {
         return currentDateStr + " " + weather.getTmp() + "°C";
     }
 
@@ -144,7 +144,6 @@ public class Rq {
     private Locale getLocale() {
         if (locale == null)
             locale = localeResolver.resolveLocale(req);
-
         return locale;
     }
 
