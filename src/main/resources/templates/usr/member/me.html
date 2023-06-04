@@ -46,7 +46,7 @@
 </head>
 
 <body>
-<main layout:fragment="main" className="flex-grow flex items-center justify-center ">
+<main layout:fragment="main" class="flex-grow flex items-center justify-center ">
 
     <div th:if="${@rq.isLogin}" class="max-w-2xl w-full px-4">
         <h1 class="mb-4">
@@ -115,7 +115,6 @@
                             현재 날씨
                         </div>
                         <div>
-
                             <span class="badge badge-primary"
                                   th:text="${@rq.getNowWeatherInfo()}"></span>
                         </div>

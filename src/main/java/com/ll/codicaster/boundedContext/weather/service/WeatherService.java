@@ -50,14 +50,28 @@ public class WeatherService {
         int xLan = point.getX();
         int yLon = point.getY();
 
-        String[] bases = calcBaseDateAndTime();
-        String baseDate = bases[0];
-        String baseTime = bases[1];
+        LocalTime nowTime = LocalTime.now();
+        LocalDate nowDate = LocalDate.now();
+
+        LocalTime dateStandard = LocalTime.of(2, 10, 0);
+
+        String baseTime = "0200";
+        String nowDateStr = nowDate.toString().replaceAll("-", "");
+        String nowTimeStr = nowTime.toString().substring(0, 2) + "00";
+
+        System.out.println("nowTime : " + nowTimeStr);
+        System.out.println("nowDate : " + nowDateStr);
+        if (nowTime.isBefore(dateStandard)) {
+            nowDate = nowDate.minusDays(1);
+            baseTime = "2300";
+        }
+        String baseDate = nowDate.toString().replaceAll("-", "");
+
 
         /*URL*/
         String urlString = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" + "?" + URLEncoder.encode("serviceKey", StandardCharsets.UTF_8) + "=" + REST_KEY + /*Service Key*/
                 "&" + URLEncoder.encode("pageNo", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("1", StandardCharsets.UTF_8) + /*페이지번호*/
-                "&" + URLEncoder.encode("numOfRows", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("200", StandardCharsets.UTF_8) + /*한 페이지 결과 수*/
+                "&" + URLEncoder.encode("numOfRows", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("300", StandardCharsets.UTF_8) + /*한 페이지 결과 수*/
                 "&" + URLEncoder.encode("dataType", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("JSON", StandardCharsets.UTF_8) + /*요청자료형식(XML/JSON) Default: XML*/
                 "&" + URLEncoder.encode("base_date", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(baseDate, StandardCharsets.UTF_8) + /*‘XX년 X월 XX일 발표*/
                 "&" + URLEncoder.encode("base_time", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(baseTime, StandardCharsets.UTF_8) + /*XX시 발표*/
@@ -96,20 +110,23 @@ public class WeatherService {
             if (itemNode.isArray()) {
                 for (JsonNode node : itemNode) {
                     String category = node.path("category").asText();
-                    if (category.equals("TMP") && tmp.equals("")) {
-                        tmp = node.path("fcstValue").asText();
-                    }
-                    if (category.equals("POP") && pop.equals("")) {
-                        pop = node.path("fcstValue").asText();
-                    }
-                    if (category.equals("PTY") && pty.equals("")) {
-                        pty = node.path("fcstValue").asText();
-                    }
-                    if (category.equals("REH") && reh.equals("")) {
-                        reh = node.path("fcstValue").asText();
-                    }
-                    if (category.equals("SKY") && sky.equals("")) {
-                        sky = node.path("fcstValue").asText();
+                    if (node.path("fcstDate").asText().equals(nowDateStr)
+                            && node.path("fcstTime").asText().equals(nowTimeStr)) {
+                        if (category.equals("TMP") && tmp.equals("")) {
+                            tmp = node.path("fcstValue").asText();
+                        }
+                        if (category.equals("POP") && pop.equals("")) {
+                            pop = node.path("fcstValue").asText();
+                        }
+                        if (category.equals("PTY") && pty.equals("")) {
+                            pty = node.path("fcstValue").asText();
+                        }
+                        if (category.equals("REH") && reh.equals("")) {
+                            reh = node.path("fcstValue").asText();
+                        }
+                        if (category.equals("SKY") && sky.equals("")) {
+                            sky = node.path("fcstValue").asText();
+                        }
                     }
                     if (category.equals("TMN") && tmn.equals("")) {
                         tmn = node.path("fcstValue").asText();
@@ -126,23 +143,4 @@ public class WeatherService {
         }
         return new Weather(tmp, pop, pty, reh, sky, tmn, tmx);
     }
-
-    /**
-     * @return baseDateAndTime
-     */
-    private String[] calcBaseDateAndTime() {
-        LocalTime nowTime = LocalTime.now();
-        LocalDate nowDate = LocalDate.now();
-
-        LocalTime dateStandard = LocalTime.of(2, 10, 0);
-
-        String baseTime = "0200";
-        if (nowTime.isBefore(dateStandard)) {
-            nowDate = nowDate.minusDays(1);
-            baseTime = "2300";
-        }
-        String baseDate = nowDate.toString().replaceAll("-", "");
-        return new String[]{baseDate, baseTime};
-    }
-
 }
