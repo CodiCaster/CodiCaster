@@ -36,7 +36,7 @@ public class ArticleController {
 		return "usr/article/write";
 	}
 
-
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/writepro")
 	public String articleWriteSave(@ModelAttribute ArticleCreateForm articleCreateForm, @RequestParam("imageFile") MultipartFile imageFile) throws Exception {
 
@@ -65,6 +65,8 @@ public class ArticleController {
 		return "usr/article/todaylist";
 	}
 
+
+
 	@GetMapping("/detail/{id}")
 	public String articleDetail(@PathVariable Long id, Model model) {
 		Article article = articleService.articleDetail(id);
@@ -73,6 +75,7 @@ public class ArticleController {
 		return "usr/article/detail";
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/modify/{id}")
 	public String modifyArticle(@PathVariable("id") Long id, Model model) {
 
@@ -87,6 +90,7 @@ public class ArticleController {
 		return "usr/article/modify";
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/modify/{id}")
 	public String updateArticle(@PathVariable("id") Long id, @ModelAttribute ArticleCreateForm updatedArticle, MultipartFile imageFile) {
 		boolean success = articleService.updateArticle(id, updatedArticle, imageFile);
@@ -98,6 +102,8 @@ public class ArticleController {
 		return "redirect:/usr/article/detail/" + id;
 	}
 
+
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/delete/{id}")
 	public String deleteArticle(@PathVariable("id") Long id) {
 
