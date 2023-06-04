@@ -31,7 +31,7 @@ public class LocationService {
         double longitude = Double.parseDouble(locationDTO.getLongitude());
         Point point = transferToPoint(0, latitude, longitude);
         String address = kakaoAPIService.loadLocationFromKakao(longitude, latitude);
-        Location location = new Location(latitude, longitude, point, address, 1);
+        Location location = new Location(latitude, longitude, point, address);
         locationRepository.save(location);
         memberService.updateLocationId(member.getId(), location.getId());
         return RsData.of("S-1", "위치 정보가 등록되었습니다.", location);
