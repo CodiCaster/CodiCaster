@@ -86,7 +86,7 @@
                             <i class="fa-solid fa-location-dot"></i>
                             현재 위치
                         </div>
-                        <div>
+                        <div class="mt-2">
                             <form id="locationDTO" th:action="@{/usr/location/save}" method="post">
                                 <span th:text="${@rq.update()}"></span>
                                 <input type="hidden" name="latitude" th:value="${latitude}">
@@ -114,7 +114,8 @@
                             <i class="fa-solid fa-temperature-low"></i>
                             현재 날씨
                         </div>
-                        <div>
+
+                        <div class="mt-2">
                             <span class="badge badge-primary"
                                   th:text="${@rq.currentDateAndWeatherToString}"></span>
                         </div>
