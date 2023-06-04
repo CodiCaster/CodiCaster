@@ -33,13 +33,13 @@
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
 
-            var form = document.getElementById('regionDTO');
+            var form = document.getElementById('locationDTO');
             form.latitude.value = latitude;
             form.longitude.value = longitude;
         }
 
         function submitForm() {
-            var form = document.getElementById('regionDTO');
+            var form = document.getElementById('locationDTO');
             form.submit();
         }
     </script>
@@ -87,7 +87,7 @@
                             현재 위치
                         </div>
                         <div>
-                            <form id="regionDTO" th:action="@{/usr/location/save}" method="post">
+                            <form id="locationDTO" th:action="@{/usr/location/save}" method="post">
                                 <span th:text="${@rq.getAddress()}"></span>
                                 <input type="hidden" name="latitude" th:value="${latitude}">
                                 <input type="hidden" name="longitude" th:value="${longitude}">
@@ -112,7 +112,10 @@
                     <div class="mt-4">
                         <div>
                             <i class="fa-solid fa-temperature-low"></i>
-                            현재 날씨 :
+                            현재 날씨
+                        </div>
+                        <div>
+                            <span class="badge badge-primary" th:text="${weather}"></span>
                         </div>
                     </div>
                 </div>

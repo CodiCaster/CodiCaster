@@ -1,4 +1,4 @@
-package com.ll.codicaster.boundedContext.region.entity;
+package com.ll.codicaster.boundedContext.location.entity;
 
 public final class Constants {
     public static final Double LATITUDE = 37.5754715;

@@ -35,23 +35,25 @@ import lombok.Setter;
 @Builder
 public class Article {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	private String title;
-	private String content;
+    private String title;
+    private String content;
 
-	@OneToOne
-	private Member author;
-	private LocalDateTime createDate;
-	private LocalDateTime modifyDate;
-	private Integer likeCount;
+    @OneToOne
+    private Member author;
+    private LocalDateTime createDate;
+    private LocalDateTime modifyDate;
+    private Integer likeCount;
+    private Integer weatherId;
+    private Integer locationId;
 
-	@OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
-	private Image image;
+    @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
+    private Image image;
 
-	@ElementCollection
-	private Set<String> tagSet;
+    @ElementCollection
+    private Set<String> tagSet;
 
 }
