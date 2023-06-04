@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ll.codicaster.base.rq.Rq;
+import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.article.form.ArticleCreateForm;
 import com.ll.codicaster.boundedContext.article.repository.ArticleRepository;
@@ -56,7 +57,8 @@ public class ArticleService {
 		return tagSet;
 	}
 
-	public void saveArticle(Member actor, ArticleCreateForm form, MultipartFile imageFile) throws Exception {
+	public RsData<Article> saveArticle(Member actor, ArticleCreateForm form, MultipartFile imageFile) {
+
 		Set<String> tagSet = extractHashTagList(form.getContent());
 		updateUserTagMap(actor, tagSet);
 
@@ -83,7 +85,11 @@ public class ArticleService {
 			}
 
 			File saveFile = new File(uploadDir, fileName);
-			imageFile.transferTo(saveFile);
+			try {
+				imageFile.transferTo(saveFile);
+			} catch (Exception e) {
+				return RsData.of("F-4", "이미지 업로드에 실패하였습니다");
+			}
 
 			Image image = new Image();
 			image.setFilename(fileName);
@@ -94,6 +100,8 @@ public class ArticleService {
 
 			article.setImage(image); // 이미지 정보를 게시글에 추가
 		}
+
+		return RsData.of("S-1", "성공적으로 저장되었습니다", article);
 
 	}
 
