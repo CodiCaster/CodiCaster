@@ -30,6 +30,7 @@ public class ArticleController {
 	private final Rq rq;
 
 
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/write")
 	public String articleWrite() {
 		return "usr/article/write";
