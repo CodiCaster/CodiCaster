@@ -54,13 +54,13 @@ public class LocationService {
         return RsData.of("S-1", "위치 정보가 갱신되었습니다.", location);
     }
 
-    public String getAddress(Member member) {
+    public Location getLocation(Member member) {
         Optional<Location> LocationOptional = locationRepository.findById(member.getLocationId());
         if (!LocationOptional.isPresent()) {
             return null;
         }
         Location location = LocationOptional.get();
-        return location.getAddress();
+        return location;
     }
 
     //위도, 경도를 x, y 좌표로 변환

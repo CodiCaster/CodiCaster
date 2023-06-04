@@ -2,7 +2,11 @@ package com.ll.codicaster.boundedContext.weather.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.entity.Point;
+import com.ll.codicaster.boundedContext.location.repository.LocationRepository;
+import com.ll.codicaster.boundedContext.member.entity.Member;
+import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import com.ll.codicaster.boundedContext.weather.repository.WeatherRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Optional;
 
 @Service
 public class WeatherService {
@@ -23,13 +28,25 @@ public class WeatherService {
     @Value("${api.weather.key}")
     private String REST_KEY;
     private WeatherRepository weatherRepository;
-    private String temperatureMinimum;
-    private String temperatureMaximum;
+    private LocationRepository locationRepository;
+
+    public Weather getWeather(Location location) throws IOException {
+        Weather weather = getApiWeather(new Point(location.getPointX(), location.getPointY()));
+        return weather;
+    }
 
     /**
      * @return weatherInfo
      */
-    public String[] getApiWeather(Point point) throws IOException {
+    public Weather getApiWeather(Point point) throws IOException {
+        String tmp = "";
+        String pop = "";
+        String pty = "";
+        String reh = "";
+        String sky = "";
+        String tmn = "";
+        String tmx = "";
+
         int xLan = point.getX();
         int yLon = point.getY();
 
@@ -79,12 +96,26 @@ public class WeatherService {
             if (itemNode.isArray()) {
                 for (JsonNode node : itemNode) {
                     String category = node.path("category").asText();
-                    if (category.equals("TMN")) {
-                        temperatureMinimum = node.path("fcstValue").asText();
+                    if (category.equals("TMP") && tmp.equals("")) {
+                        tmp = node.path("fcstValue").asText();
                     }
-                    if (category.equals("TMX")) {
-                        temperatureMaximum = node.path("fcstValue").asText();
-                        break;
+                    if (category.equals("POP") && pop.equals("")) {
+                        pop = node.path("fcstValue").asText();
+                    }
+                    if (category.equals("PTY") && pty.equals("")) {
+                        pty = node.path("fcstValue").asText();
+                    }
+                    if (category.equals("REH") && reh.equals("")) {
+                        reh = node.path("fcstValue").asText();
+                    }
+                    if (category.equals("SKY") && sky.equals("")) {
+                        sky = node.path("fcstValue").asText();
+                    }
+                    if (category.equals("TMN") && tmn.equals("")) {
+                        tmn = node.path("fcstValue").asText();
+                    }
+                    if (category.equals("TMX") && tmx.equals("")) {
+                        tmx = node.path("fcstValue").asText();
                     }
                 }
             } else {
@@ -93,7 +124,7 @@ public class WeatherService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new String[]{temperatureMinimum, temperatureMaximum};
+        return new Weather(tmp, pop, pty, reh, sky, tmn, tmx);
     }
 
     /**
@@ -113,4 +144,5 @@ public class WeatherService {
         String baseDate = nowDate.toString().replaceAll("-", "");
         return new String[]{baseDate, baseTime};
     }
+
 }

@@ -115,7 +115,9 @@
                             현재 날씨
                         </div>
                         <div>
-                            <span class="badge badge-primary" th:text="${weather}"></span>
+
+                            <span class="badge badge-primary" th:text="${@rq.getNowDate()}"></span>
+                            <span class="badge badge-primary" th:text="${@rq.nowTemperature}"></span>
                         </div>
                     </div>
                 </div>

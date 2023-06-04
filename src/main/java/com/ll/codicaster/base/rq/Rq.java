@@ -1,11 +1,20 @@
 package com.ll.codicaster.base.rq;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.location.entity.Constants;
+import com.ll.codicaster.boundedContext.location.entity.Point;
 import com.ll.codicaster.boundedContext.location.service.LocationService;
+import com.ll.codicaster.boundedContext.weather.entity.Weather;
+import com.ll.codicaster.boundedContext.weather.service.WeatherService;
 import com.ll.codicaster.standard.util.Ut;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.MessageSource;
@@ -28,6 +37,7 @@ import jakarta.servlet.http.HttpSession;
 public class Rq {
     private final MemberService memberService;
     private final LocationService locationService;
+    private final WeatherService weatherService;
 
     private final MessageSource messageSource;
     private final LocaleResolver localeResolver;
@@ -38,17 +48,20 @@ public class Rq {
     private final HttpSession session;
     private final User user;
     private Member member = null; // 레이지 로딩, 처음부터 넣지 않고, 요청이 들어올 때 넣는다.
+    private Double nowTemperature = null;
 
 
-    public Rq(MemberService memberService, LocationService locationService, MessageSource messageSource, LocaleResolver localeResolver,
+    public Rq(MemberService memberService, LocationService locationService, WeatherService weatherService, MessageSource messageSource, LocaleResolver localeResolver,
               HttpServletRequest req, HttpServletResponse resp, HttpSession session) {
         this.memberService = memberService;
         this.locationService = locationService;
+        this.weatherService = weatherService;
         this.messageSource = messageSource;
         this.localeResolver = localeResolver;
         this.req = req;
         this.resp = resp;
         this.session = session;
+
         // 현재 로그인한 회원의 인증정보를 가져옴
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -82,17 +95,33 @@ public class Rq {
         return member;
     }
 
-    public String getAddress() {
+    //타임리프 작동 위해 날씨와 주소 업데이트를 한꺼번에 작성
+    //분리 해야할 필요가 있음
+    public String getAddress() throws IOException {
         if (isLogout()) {
+            nowTemperature = weatherService.getApiWeather(new Point(Constants.POINT_X, Constants.POINT_Y)).getTmp();
             return Constants.ADDRESS;
         }
         if (member == null) {
             member = memberService.findByUsername(user.getUsername()).orElseThrow();
         }
         if (member.getLocationId() == null) {
+            nowTemperature = weatherService.getApiWeather(new Point(Constants.POINT_X, Constants.POINT_Y)).getTmp();
             return Constants.ADDRESS;
         }
-        return locationService.getAddress(member);
+        nowTemperature = weatherService.getWeather(locationService.getLocation(member)).getTmp();
+        return locationService.getLocation(member).getAddress();
+    }
+
+    public Double getNowTemperature() {
+        return this.nowTemperature;
+    }
+
+    public String getNowDate() {
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd(E)", Locale.KOREAN);
+        String formattedDate = currentDate.format(formatter);
+        return formattedDate;
     }
 
     public String getCText(String code, String... args) {
