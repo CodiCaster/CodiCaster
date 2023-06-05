@@ -98,7 +98,6 @@ public class Rq {
             location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
                     LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
             setLocation(location);
-
         }
         return location.getAddress();
     }
@@ -177,5 +176,19 @@ public class Rq {
 
     public void setLocation(Location location) {
         session.setAttribute("location", location);
+    }
+
+    public HttpSession getSession() {
+        return this.session;
+    }
+
+    public Location getCurrentLocation() {
+        Location location = (Location) session.getAttribute("location");
+        if (location == null) {
+            location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
+                    LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
+            setLocation(location);
+        }
+        return location;
     }
 }
