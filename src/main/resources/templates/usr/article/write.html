@@ -1,6 +1,31 @@
 <html layout:decorate="~{usr/layout/layout.html}">
 <head>
-    <title>게시글 작성하기</title>
+  <title>게시글 작성하기</title>
+  <script>
+
+    function validateForm() {
+      var title = document.getElementById("title").value;
+      var content = document.getElementById("content").value;
+      var imageFile = document.getElementById("imageFile").value;
+
+      if (title.trim().length === 0) {
+        toastr.warning("제목을 입력해주세요.");
+        return false;
+      }
+
+      if (content.trim().length === 0) {
+        toastr.warning("내용을 입력해주세요.");
+        return false;
+      }
+
+      if (imageFile.trim().length === 0) {
+        toastr.warning("파일을 첨부해주세요.");
+        return false;
+      }
+
+      return true;
+    }
+  </script>
 </head>
 <body>
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">
@@ -13,7 +38,7 @@
             <div class="card bg-base-100 shadow-xl">
                 <div class="card-body">
                     <br>
-                    <form th:action="@{/usr/article/writepro}" method="post" enctype="multipart/form-data">
+                    <form th:action="@{/usr/article/writepro}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
                         <div class="mb-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
                                 제목

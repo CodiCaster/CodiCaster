@@ -1,6 +1,24 @@
 <html layout:decorate="~{usr/layout/layout.html}">
 <head>
     <title>게시글 수정하기</title>
+    <script>
+        function validateForm() {
+            var title = document.getElementById("title").value;
+            var content = document.getElementById("content").value;
+
+            if (title.trim().length === 0) {
+                toastr.warning("제목을 입력해주세요.");
+                return false;
+            }
+
+            if (content.trim().length === 0) {
+                toastr.warning("내용을 입력해주세요.");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
 </head>
 <body>
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">
@@ -14,7 +32,7 @@
                 <div class="card-body">
                     <br>
                     <form th:action="@{/usr/article/modify/{id}(id=${article.id})}" th:object="${article}" method="post"
-                          enctype="multipart/form-data">
+                          enctype="multipart/form-data" onsubmit="return validateForm()">
                         <div class="mb-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
                                 제목

@@ -55,4 +55,5 @@ public class Article {
     @ElementCollection
     private Set<String> tagSet;
 
+
 }
