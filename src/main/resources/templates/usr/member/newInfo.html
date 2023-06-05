@@ -122,7 +122,7 @@
                         <div class="form-group">
                             <label for="nickname"><i class="fa-solid fa-id-badge"></i> 닉네임 </label>
                             <br>
-                            <input type="text" name="nickname" id="nickname" class="input input-bordered w-full max-w-xs" placeholder="닉네임을 입력해주세요" required
+                            <input type="text" name="nickname" id="nickname" class="input input-bordered input-primary w-full max-w-xs" placeholder="수정할 닉네임을 입력해주세요" required
                                    minlength="3" onkeyup="updateNickname()"/>
                             <button type="button" class="btn btn-ghost" onclick="checkNickname()" id="checkNicknameBtn">확인</button>
                         </div>
@@ -145,23 +145,23 @@
                             <br>
                             <div class="bodytype-group">
                                 <div class="bodytype-item">
-                                    <input type="radio" id="veryCold" name="bodytype" value="1" class="radio radio-primary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="veryCold" name="bodytype" value="추위 많이 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
                                     <label for="veryCold">추위 많이 탐</label>
                                 </div>
                                 <div class="bodytype-item">
-                                    <input type="radio" id="cold" name="bodytype" value="2" class="radio radio-primary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="cold" name="bodytype" value="추위 조금 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
                                     <label for="cold">추위 조금 탐</label>
                                 </div>
                                 <div class="bodytype-item">
-                                    <input type="radio" id="normal" name="bodytype" value="3" class="radio radio-primary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="normal" name="bodytype" value="보통" class="radio radio-secondary" onchange="enableSubmitButton()" />
                                     <label for="normal">보통</label>
                                 </div>
                                 <div class="bodytype-item">
-                                    <input type="radio" id="hot" name="bodytype" value="4" class="radio radio-primary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="hot" name="bodytype" value="더위 조금 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
                                     <label for="hot">더위 조금 탐</label>
                                 </div>
                                 <div class="bodytype-item">
-                                    <input type="radio" id="veryHot" name="bodytype" value="5" class="radio radio-primary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="veryHot" name="bodytype" value="더위 많이 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
                                     <label for="veryHot">더위 많이 탐</label>
                                 </div>
                             </div>
