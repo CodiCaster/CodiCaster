@@ -40,3 +40,6 @@ out/
 application-secret.yml
 application.yml
 src/main/generated
+
+# Ignore images folder
+/images/
