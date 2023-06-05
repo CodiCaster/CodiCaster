@@ -3,14 +3,7 @@ package com.ll.codicaster.boundedContext.article.service;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -189,7 +182,14 @@ public class ArticleService {
 
     @Transactional
     public boolean deleteArticle(Long id) {
+        //RsData 사용 필요해보임
+        Article article = articleRepository.findById(id).get();
+        Long locationId = article.getLocationId();
+        Long weatherId = article.getWeatherId();
+
         try {
+            locationService.delete(locationId);
+            weatherService.deleteById(weatherId);
             articleRepository.deleteById(id);
             return true;
         } catch (Exception e) {

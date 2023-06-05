@@ -48,4 +48,9 @@ public class WeatherService {
         return weatherAPIService.getApiWeather(location.getPointX(), location.getPointY());
     }
 
+    @Transactional
+    public RsData deleteById(Long weatherId) {
+        weatherRepository.deleteById(weatherId);
+        return RsData.of("S-1", "날씨 정보를 삭제하였습니다.");
+    }
 }
