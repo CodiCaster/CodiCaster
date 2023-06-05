@@ -18,9 +18,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true) // 아래 메서드들이 전부 readonly 라는 것을 명시, 나중을 위해
 public class MemberService {
     private final PasswordEncoder passwordEncoder;
-
     private final MemberRepository memberRepository;
-    public Member updateMemberInfo;
 
     public Optional<Member> findByUsername(String username) {
         return memberRepository.findByUsername(username);
@@ -83,15 +81,6 @@ public class MemberService {
     public void updateMemberInfo(Long memberId, String nickname, String bodytype, String gender) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. ID=" + memberId));
-
         member.updateInfo(nickname, bodytype, gender);
-    }
-
-    @Transactional
-    public void updateLocationId(Long memberId, Long regionId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. ID=" + memberId));
-        member.updateLocationId(regionId);
-        memberRepository.save(member);
     }
 }

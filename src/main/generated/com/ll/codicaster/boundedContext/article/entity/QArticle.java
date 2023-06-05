@@ -34,13 +34,15 @@ public class QArticle extends EntityPathBase<Article> {
 
     public final NumberPath<Integer> likeCount = createNumber("likeCount", Integer.class);
 
+    public final NumberPath<Long> locationId = createNumber("locationId", Long.class);
+
     public final DateTimePath<java.time.LocalDateTime> modifyDate = createDateTime("modifyDate", java.time.LocalDateTime.class);
 
     public final SetPath<String, StringPath> tagSet = this.<String, StringPath>createSet("tagSet", String.class, StringPath.class, PathInits.DIRECT2);
 
     public final StringPath title = createString("title");
 
-    public final NumberPath<Integer> weatherId = createNumber("weatherId", Integer.class);
+    public final NumberPath<Long> weatherId = createNumber("weatherId", Long.class);
 
     public QArticle(String variable) {
         this(Article.class, forVariable(variable), INITS);

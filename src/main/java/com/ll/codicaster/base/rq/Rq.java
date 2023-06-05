@@ -45,9 +45,6 @@ public class Rq {
     private final HttpSession session;
     private final User user;
     private Member member = null; // 레이지 로딩, 처음부터 넣지 않고, 요청이 들어올 때 넣는다.
-    private Weather weather = null;
-    private Location location = null;
-    private String currentDateStr = null;
 
 
     public Rq(MemberService memberService, LocationService locationService, WeatherService weatherService, MessageSource messageSource, LocaleResolver localeResolver,
@@ -60,6 +57,7 @@ public class Rq {
         this.req = req;
         this.resp = resp;
         this.session = session;
+
 
         // 현재 로그인한 회원의 인증정보를 가져옴
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -94,47 +92,26 @@ public class Rq {
         return member;
     }
 
-    public String update() throws IOException {
-        getCurrentDate();
-        if (isLogout()) {
-            weather = weatherService.getApiWeather(LocationConstants.POINT_X, LocationConstants.POINT_Y);
-            setLocationDefault();
-            return location.getAddress();
+    public String getAddress() {
+        Location location = (Location) session.getAttribute("location");
+        if (location == null) {
+            location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
+                    LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
+            setLocation(location);
         }
-        if (member == null) {
-            member = memberService.findByUsername(user.getUsername()).orElseThrow();
-        }
-        if (member.getLocationId() == null) {
-            weather = weatherService.getApiWeather(LocationConstants.POINT_X, LocationConstants.POINT_Y);
-            setLocationDefault();
-            return location.getAddress();
-        }
-        updateCurrentLocation();
-        updateCurrentWeather();
         return location.getAddress();
     }
 
-    private void setLocationDefault() {
-        location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
-                LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
+    public String getWeather() throws IOException {
+        Location location = (Location) session.getAttribute("location");
+        Weather weather = weatherService.getWeather(location);
+        return getCurrentDate() + " " + weather.getTmp() + "°C";
     }
 
-    public void updateCurrentLocation() {
-        location = locationService.getLocation(member.getLocationId());
-    }
-
-    public void updateCurrentWeather() throws IOException {
-        weather = weatherService.getWeather(location);
-    }
-
-    public String currentDateAndWeatherToString() {
-        return currentDateStr + " " + weather.getTmp() + "°C";
-    }
-
-    public void getCurrentDate() {
+    public String getCurrentDate() {
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd(E)", Locale.KOREAN);
-        currentDateStr = currentDate.format(formatter);
+        return currentDate.format(formatter);
     }
 
     public String getCText(String code, String... args) {
@@ -197,7 +174,21 @@ public class Rq {
         return Ut.url.encode(msg) + ";ttl=" + new Date().getTime();
     }
 
-    public void setLocation(Location newLocation) {
-        this.location = newLocation;
+    public void setLocation(Location location) {
+        session.setAttribute("location", location);
+    }
+
+    public HttpSession getSession() {
+        return this.session;
+    }
+
+    public Location getCurrentLocation() {
+        Location location = (Location) session.getAttribute("location");
+        if (location == null) {
+            location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
+                    LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
+            setLocation(location);
+        }
+        return location;
     }
 }
