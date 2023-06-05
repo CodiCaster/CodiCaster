@@ -1,4 +1,5 @@
-<html layout:decorate="~{usr/layout/layout.html}">
+<html layout:decorate="~{common/layout.html}">
+
 <head>
     <title>가입하기</title>
     <script>
@@ -82,7 +83,7 @@
             margin-right: 10px;
         }
 
-        .bodytype-item label{
+        .bodytype-item label {
             margin-left: 2px;
         }
 
@@ -104,6 +105,20 @@
 
 </head>
 <body>
+<header layout:fragment="header" class="sticky top-0 z-50">
+    <div class="navbar max-w-2xl mx-auto bg-base-100">
+        <div class="navbar-start">
+        </div>
+        <div class="navbar-center">
+            <a href="/usr/member/newInfo" class="btn btn-ghost normal-case text-xl">
+                <span class="hidden min-[339px]:inline" th:utext="#{c.logoTextWithEmojiEn}"></span>
+                <span class="min-[339px]:hidden" th:utext="#{c.logoEmoji}"></span>
+            </a>
+        </div>
+        <div class="navbar-end">
+        </div>
+    </div>
+</header>
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">
     <div class="max-w-2xl w-full px-4">
         <h1 class="mb-4">
@@ -122,20 +137,26 @@
                         <div class="form-group">
                             <label for="nickname"><i class="fa-solid fa-id-badge"></i> 닉네임 </label>
                             <br>
-                            <input type="text" name="nickname" id="nickname" class="input input-bordered input-primary w-full max-w-xs" placeholder="수정할 닉네임을 입력해주세요" required
+                            <input type="text" name="nickname" id="nickname"
+                                   class="input input-bordered input-primary w-full max-w-xs"
+                                   placeholder="수정할 닉네임을 입력해주세요" required
                                    minlength="3" onkeyup="updateNickname()"/>
-                            <button type="button" class="btn btn-ghost" onclick="checkNickname()" id="checkNicknameBtn">확인</button>
+                            <button type="button" class="btn btn-ghost" onclick="checkNickname()" id="checkNicknameBtn">
+                                확인
+                            </button>
                         </div>
                         <div class="form-group">
                             <label><i class="fa-solid fa-venus-mars"></i> 성별</label>
                             <br>
                             <div class="radio-button-group">
                                 <div class="radio-button-item">
-                                    <input type="radio" id="male" name="gender" value="남자" class="radio radio-accent" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="male" name="gender" value="남자" class="radio radio-accent"
+                                           onchange="enableSubmitButton()"/>
                                     <label for="male">남성</label>
                                 </div>
                                 <div class="radio-button-item">
-                                    <input type="radio" id="female" name="gender" value="여자" class="radio radio-accent" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="female" name="gender" value="여자" class="radio radio-accent"
+                                           onchange="enableSubmitButton()"/>
                                     <label for="female">여성</label>
                                 </div>
                             </div>
@@ -145,23 +166,28 @@
                             <br>
                             <div class="bodytype-group">
                                 <div class="bodytype-item">
-                                    <input type="radio" id="veryCold" name="bodytype" value="추위 많이 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="veryCold" name="bodytype" value="추위 많이 탐"
+                                           class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="veryCold">추위 많이 탐</label>
                                 </div>
                                 <div class="bodytype-item">
-                                    <input type="radio" id="cold" name="bodytype" value="추위 조금 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="cold" name="bodytype" value="추위 조금 탐"
+                                           class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="cold">추위 조금 탐</label>
                                 </div>
                                 <div class="bodytype-item">
-                                    <input type="radio" id="normal" name="bodytype" value="보통" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="normal" name="bodytype" value="보통"
+                                           class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="normal">보통</label>
                                 </div>
                                 <div class="bodytype-item">
-                                    <input type="radio" id="hot" name="bodytype" value="더위 조금 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="hot" name="bodytype" value="더위 조금 탐"
+                                           class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="hot">더위 조금 탐</label>
                                 </div>
                                 <div class="bodytype-item">
-                                    <input type="radio" id="veryHot" name="bodytype" value="더위 많이 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="veryHot" name="bodytype" value="더위 많이 탐"
+                                           class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="veryHot">더위 많이 탐</label>
                                 </div>
                             </div>
