@@ -121,15 +121,21 @@ public class ArticleService {
 
 	//게시물 수정
 	@Transactional
-	public boolean updateArticle(Long id, ArticleCreateForm form, MultipartFile imageFile) {
+	public boolean updateArticle(Member actor, Long id, ArticleCreateForm form, MultipartFile imageFile) {
 		try {
 			Article article = articleRepository.findById(id)
 				.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
+
+			Set<String> existingTagSet = article.getTagSet();
+			truncateUserTagMap(actor, existingTagSet);
+			Set<String> newTagSet = extractHashTagList(form.getContent());
+			updateUserTagMap(actor,newTagSet);
 
 			// 게시글의 정보를 수정
 			article.setTitle(form.getTitle());
 			article.setContent(form.getContent());
 			article.setModifyDate(LocalDateTime.now());
+			article.setTagSet(newTagSet);
 
 			// 이미지 파일이 있으면 저장
 			if (!imageFile.isEmpty()) {
@@ -239,7 +245,6 @@ public class ArticleService {
 		for (String tag : tagSet) {
 			tagMap.put(tag, tagMap.getOrDefault(tag, 0) + 1);
 		}
-
 	}
 
 	@Transactional
@@ -282,4 +287,12 @@ public class ArticleService {
 
 
 
+	public void truncateUserTagMap(Member member, Set<String> tagSet) {
+		Map<String, Integer> tagMap = member.getTagMap();
+
+		//값이 0 이하일 때 예외처리 ? 필요한가
+		for (String tag : tagSet) {
+			tagMap.put(tag, tagMap.get(tag) - 1);
+		}
+	}
 }

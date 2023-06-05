@@ -1,6 +1,7 @@
 package com.ll.codicaster.boundedContext.article.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -39,14 +40,13 @@ public class ArticleController {
 
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/writepro")
-	public String articleWriteSave(@ModelAttribute ArticleCreateForm articleCreateForm, @RequestParam("imageFile") MultipartFile imageFile) throws Exception {
+	public String articleWriteSave(@ModelAttribute ArticleCreateForm articleCreateForm,
+		@RequestParam("imageFile") MultipartFile imageFile) throws Exception {
 
-		articleService.saveArticle(rq.getMember(),articleCreateForm, imageFile);
+		articleService.saveArticle(rq.getMember(), articleCreateForm, imageFile);
 
 		return "redirect:/usr/article/list";
 	}
-
-
 
 	@GetMapping("/list")
 	public String articles(Model model) {
@@ -65,8 +65,6 @@ public class ArticleController {
 
 		return "usr/article/todaylist";
 	}
-
-
 
 	@GetMapping("/detail/{id}")
 	public String articleDetail(@PathVariable Long id, Model model) {
@@ -102,8 +100,9 @@ public class ArticleController {
 
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/modify/{id}")
-	public String updateArticle(@PathVariable("id") Long id, @ModelAttribute ArticleCreateForm updatedArticle, MultipartFile imageFile) {
-		boolean success = articleService.updateArticle(id, updatedArticle, imageFile);
+	public String updateArticle(@PathVariable("id") Long id, @ModelAttribute ArticleCreateForm updatedArticle,
+		MultipartFile imageFile) {
+		boolean success = articleService.updateArticle(rq.getMember(), id, updatedArticle, imageFile);
 
 		if (!success) {
 			return "redirect:/error";
@@ -111,7 +110,6 @@ public class ArticleController {
 
 		return "redirect:/usr/article/detail/" + id;
 	}
-
 
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/delete/{id}")
@@ -122,7 +120,6 @@ public class ArticleController {
 		if (!success) {
 			return "redirect:/error";
 		}
-
 
 		return "redirect:/usr/article/list";
 	}
