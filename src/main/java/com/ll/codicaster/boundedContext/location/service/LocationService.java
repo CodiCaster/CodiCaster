@@ -1,8 +1,6 @@
 package com.ll.codicaster.boundedContext.location.service;
 
 import com.ll.codicaster.base.rsData.RsData;
-import com.ll.codicaster.boundedContext.member.entity.Member;
-import com.ll.codicaster.boundedContext.member.service.MemberService;
 import com.ll.codicaster.boundedContext.location.dto.LocationDTO;
 import com.ll.codicaster.boundedContext.location.entity.Point;
 import com.ll.codicaster.boundedContext.location.entity.Location;
@@ -17,50 +15,22 @@ import java.util.Optional;
 public class LocationService {
     private final LocationRepository locationRepository;
     private final KakaoAPIService kakaoAPIService;
-    private final MemberService memberService;
 
-    public RsData<Location> save(LocationDTO locationDTO, Member member) {
+    public RsData<Location> getCurrentLocation(LocationDTO locationDTO) {
         if (locationDTO.getLatitude().isEmpty() || locationDTO.getLongitude().isEmpty()) {
             return RsData.of("F-1", "위치 정보를 불러오지 못했습니다.");
         }
 
-        if (member.getLocationId() != null) {
-            return update(locationDTO, member);
-        }
         double latitude = Double.parseDouble(locationDTO.getLatitude());
         double longitude = Double.parseDouble(locationDTO.getLongitude());
+
         Point point = transferToPoint(0, latitude, longitude);
+
         String address = kakaoAPIService.loadLocationFromKakao(longitude, latitude);
+
         Location location = new Location(latitude, longitude, point, address);
-        locationRepository.save(location);
-        memberService.updateLocationId(member.getId(), location.getId());
-        return RsData.of("S-1", "위치 정보가 등록되었습니다.", location);
-    }
 
-    public RsData<Location> update(LocationDTO locationDTO, Member member) {
-        Optional<Location> LocationOptional = locationRepository.findById(member.getLocationId());
-        if (!LocationOptional.isPresent()) {
-            return RsData.of("F-2", "해당 유저(%s)의 위치 정보가 존재하지 않습니다.".formatted(member.getNickname()));
-        }
-        Location location = LocationOptional.get();
-
-        double latitude = Double.parseDouble(locationDTO.getLatitude());
-        double longitude = Double.parseDouble(locationDTO.getLongitude());
-        Point point = transferToPoint(0, latitude, longitude);
-        String address = kakaoAPIService.loadLocationFromKakao(longitude, latitude);
-        location.update(latitude, longitude, point, address);
-        locationRepository.save(location);
-
-        return RsData.of("S-1", "위치 정보가 갱신되었습니다.", location);
-    }
-
-    public Location getLocation(Long locationId) {
-        Optional<Location> LocationOptional = locationRepository.findById(locationId);
-        if (!LocationOptional.isPresent()) {
-            return null;
-        }
-        Location location = LocationOptional.get();
-        return location;
+        return RsData.of("S-1", "현재 위치 정보가 갱신되었습니다.", location);
     }
 
     //위도, 경도를 x, y 좌표로 변환
