@@ -7,14 +7,29 @@ import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LocationService {
     private final LocationRepository locationRepository;
     private final KakaoAPIService kakaoAPIService;
+
+    @Transactional
+    public Long save(Location location) {
+        Location newLocation = Location.builder()
+                .latitude(location.getLatitude())
+                .longitude(location.getLongitude())
+                .pointX(location.getPointX())
+                .pointY(location.getPointY())
+                .address(location.getAddress())
+                .build();
+        Location savedLocation = locationRepository.save(newLocation);
+        return savedLocation.getId();
+    }
 
     public RsData<Location> getCurrentLocation(LocationDTO locationDTO) {
         if (locationDTO.getLatitude().isEmpty() || locationDTO.getLongitude().isEmpty()) {

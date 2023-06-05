@@ -1,6 +1,9 @@
 package com.ll.codicaster.boundedContext.article.controller;
 
 import java.util.List;
+
+import com.ll.codicaster.boundedContext.location.service.LocationService;
+import com.ll.codicaster.boundedContext.weather.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -26,96 +29,94 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ArticleController {
 
-	private final ArticleService articleService;
-	private final Rq rq;
+    private final ArticleService articleService;
+    private final Rq rq;
 
 
-	@PreAuthorize("isAuthenticated()")
-	@GetMapping("/write")
-	public String articleWrite() {
-		return "usr/article/write";
-	}
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/write")
+    public String articleWrite() {
+        return "usr/article/write";
+    }
 
-	@PreAuthorize("isAuthenticated()")
-	@PostMapping("/writepro")
-	public String articleWriteSave(@ModelAttribute ArticleCreateForm articleCreateForm, @RequestParam("imageFile") MultipartFile imageFile) throws Exception {
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/writepro")
+    public String articleWriteSave(@ModelAttribute ArticleCreateForm articleCreateForm, @RequestParam("imageFile") MultipartFile imageFile) {
 
-		articleService.saveArticle(rq.getMember(),articleCreateForm, imageFile);
+        articleService.saveArticle(rq.getMember(), articleCreateForm, imageFile);
 
-		return "redirect:/usr/article/list";
-	}
-
-
-
-	@GetMapping("/list")
-	public String articles(Model model) {
-
-		List<Article> articles = articleService.articleList();
-		model.addAttribute("articles", articles);
-
-		return "usr/article/list";
-	}
-
-	@GetMapping("/list/nearby")
-	public String showArticlesNearbyToday(Model model) {
-
-		List<Article> articles = articleService.showArticlesNearbyToday();
-		model.addAttribute("articlesNearbyToday", articles);
-
-		return "usr/article/todaylist";
-	}
+        return "redirect:/usr/article/list";
+    }
 
 
+    @GetMapping("/list")
+    public String articles(Model model) {
 
-	@GetMapping("/detail/{id}")
-	public String articleDetail(@PathVariable Long id, Model model) {
-		Article article = articleService.articleDetail(id);
-		model.addAttribute("article", article);
-		model.addAttribute("image", article.getImage());
-		return "usr/article/detail";
-	}
+        List<Article> articles = articleService.articleList();
+        model.addAttribute("articles", articles);
 
-	@PreAuthorize("isAuthenticated()")
-	@GetMapping("/modify/{id}")
-	public String modifyArticle(@PathVariable("id") Long id, Model model) {
+        return "usr/article/list";
+    }
 
-		Article article = articleService.findArticleById(id);
+    @GetMapping("/list/nearby")
+    public String showArticlesNearbyToday(Model model) {
 
-		if (article == null) {
-			return "redirect:/error";
-		}
+        List<Article> articles = articleService.showArticlesNearbyToday();
+        model.addAttribute("articlesNearbyToday", articles);
 
-		model.addAttribute("article", article);
-
-		return "usr/article/modify";
-	}
-
-	@PreAuthorize("isAuthenticated()")
-	@PostMapping("/modify/{id}")
-	public String updateArticle(@PathVariable("id") Long id, @ModelAttribute ArticleCreateForm updatedArticle, MultipartFile imageFile) {
-		boolean success = articleService.updateArticle(id, updatedArticle, imageFile);
-
-		if (!success) {
-			return "redirect:/error";
-		}
-
-		return "redirect:/usr/article/detail/" + id;
-	}
+        return "usr/article/todaylist";
+    }
 
 
-	@PreAuthorize("isAuthenticated()")
-	@GetMapping("/delete/{id}")
-	public String deleteArticle(@PathVariable("id") Long id) {
+    @GetMapping("/detail/{id}")
+    public String articleDetail(@PathVariable Long id, Model model) {
+        Article article = articleService.articleDetail(id);
+        model.addAttribute("article", article);
+        model.addAttribute("image", article.getImage());
+        return "usr/article/detail";
+    }
 
-		boolean success = articleService.deleteArticle(id);
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/modify/{id}")
+    public String modifyArticle(@PathVariable("id") Long id, Model model) {
 
-		if (!success) {
-			return "redirect:/error";
-		}
+        Article article = articleService.findArticleById(id);
+
+        if (article == null) {
+            return "redirect:/error";
+        }
+
+        model.addAttribute("article", article);
+
+        return "usr/article/modify";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/modify/{id}")
+    public String updateArticle(@PathVariable("id") Long id, @ModelAttribute ArticleCreateForm updatedArticle, MultipartFile imageFile) {
+        boolean success = articleService.updateArticle(id, updatedArticle, imageFile);
+
+        if (!success) {
+            return "redirect:/error";
+        }
+
+        return "redirect:/usr/article/detail/" + id;
+    }
 
 
-		return "redirect:/usr/article/list";
-	}
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/delete/{id}")
+    public String deleteArticle(@PathVariable("id") Long id) {
+
+        boolean success = articleService.deleteArticle(id);
+
+        if (!success) {
+            return "redirect:/error";
+        }
+
+
+        return "redirect:/usr/article/list";
+    }
 
 
 }
