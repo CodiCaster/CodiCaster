@@ -60,7 +60,7 @@
                             <!-- 좋아요 버튼 -->
                             <button id="like-button" class="heart-icon text-red-500 mr-1">
                                 <!-- 좋아요 상태에 따라 아이콘 변경 -->
-                                <span th:if="${isLiked}">❤️</span>
+                                <span th:if="${isLiked}">💕</span>
                                 <span th:unless="${isLiked}">🤍</span>
                             </button>
                             <!-- 좋아요 수 -->
@@ -122,7 +122,7 @@
                         $('#like-count').text(isLiked ? likeCount + 1 : likeCount - 1);
 
                         // 좋아요 상태에 따라 버튼 아이콘 변경
-                        $('#like-button').html(isLiked ? '❤️' : '🤍');
+                        $('#like-button').html(isLiked ? '💕' : '🤍');
                     },
                     error: function (error) {
                         // 에러 처리
