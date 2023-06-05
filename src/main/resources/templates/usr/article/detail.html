@@ -39,6 +39,10 @@
                                 <div class="create-datetime text-sm text-gray-600 ml-2">
                                     <span th:text="${#temporals.format(article.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
                                 </div>
+                                <div>
+                                    <span th:text="${address}"></span>
+                                    <span th:text="${temperature}"></span>
+                                </div>
                             </div>
                         </div>
 

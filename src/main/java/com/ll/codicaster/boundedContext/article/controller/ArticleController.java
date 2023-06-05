@@ -2,9 +2,6 @@ package com.ll.codicaster.boundedContext.article.controller;
 
 import java.util.List;
 
-import com.ll.codicaster.boundedContext.location.service.LocationService;
-import com.ll.codicaster.boundedContext.weather.service.WeatherService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +17,6 @@ import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.article.form.ArticleCreateForm;
 import com.ll.codicaster.boundedContext.article.service.ArticleService;
-import com.ll.codicaster.boundedContext.member.entity.Member;
 
 import lombok.RequiredArgsConstructor;
 
@@ -73,6 +69,8 @@ public class ArticleController {
         Article article = articleService.articleDetail(id);
         model.addAttribute("article", article);
         model.addAttribute("image", article.getImage());
+        model.addAttribute("address", articleService.getAddress(id));
+        model.addAttribute("temperature", articleService.getTemperature(id));
         return "usr/article/detail";
     }
 

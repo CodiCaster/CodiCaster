@@ -1,6 +1,5 @@
 package com.ll.codicaster.base.rq;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -102,10 +101,16 @@ public class Rq {
         return location.getAddress();
     }
 
-    public String getWeather() throws IOException {
+    public String getDateAndWeather() {
         Location location = (Location) session.getAttribute("location");
         Weather weather = weatherService.getWeather(location);
         return getCurrentDate() + " " + weather.getTmp() + "°C";
+    }
+
+    public String getTemperature() {
+        Location location = (Location) session.getAttribute("location");
+        Weather weather = weatherService.getWeather(location);
+        return weather.getTmp() + "°C";
     }
 
     public String getCurrentDate() {

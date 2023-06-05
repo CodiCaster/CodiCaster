@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -53,6 +54,11 @@ public class LocationService {
 
         return RsData.of("S-1", "현재 위치 정보가 갱신되었습니다.", location);
     }
+
+    public Location getLocation(Long id) {
+        return locationRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Location Found with id: " + id));
+    }
+
 
     //위도, 경도를 x, y 좌표로 변환
     private Point transferToPoint(int mode, double lat, double lon) {

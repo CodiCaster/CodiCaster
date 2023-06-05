@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -46,6 +47,11 @@ public class WeatherService {
 
     public Weather getWeather(Location location) {
         return weatherAPIService.getApiWeather(location.getPointX(), location.getPointY());
+    }
+
+    public Weather getWeather(Long id) {
+        return weatherRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Weather Found with id: " + id));
+
     }
 
     @Transactional

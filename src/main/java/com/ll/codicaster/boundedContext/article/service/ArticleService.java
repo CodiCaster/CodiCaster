@@ -199,6 +199,16 @@ public class ArticleService {
 
     }
 
+    public String getAddress(Long id) {
+        Article article = articleRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Article Found with id: " + id));
+        return locationService.getLocation(article.getLocationId()).getAddress();
+    }
+
+    public String getTemperature(Long id) {
+        Article article = articleRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Article Found with id: " + id));
+        return weatherService.getWeather(article.getLocationId()).getTmp() + "°C";
+    }
+
     public Article findArticleById(Long id) {
         return articleRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
