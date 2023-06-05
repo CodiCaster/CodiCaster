@@ -34,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ArticleService {
 
 	private final ArticleRepository articleRepository;
@@ -57,6 +58,7 @@ public class ArticleService {
 		return tagSet;
 	}
 
+	@Transactional
 	public RsData<Article> saveArticle(Member actor, ArticleCreateForm form, MultipartFile imageFile) {
 
 		Set<String> tagSet = extractHashTagList(form.getContent());
@@ -239,6 +241,7 @@ public class ArticleService {
 	}
 
 	//유저 태그맵 업데이트 (게시물 작성 시마다 태그리스트 받아서 가지고 있는지 확인하고 증가)
+	@Transactional
 	public void updateUserTagMap(Member member, Set<String> tagSet) {
 		Map<String, Integer> tagMap = member.getTagMap();
 
@@ -247,6 +250,7 @@ public class ArticleService {
 		}
 	}
 
+	@Transactional
 	@Transactional
 	public boolean likeArticle(Member actor, Long articleId) {
 		try {
