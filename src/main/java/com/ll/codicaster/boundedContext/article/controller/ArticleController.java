@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ll.codicaster.base.rq.Rq;
@@ -71,9 +72,11 @@ public class ArticleController {
 	public String articleDetail(@PathVariable Long id, Model model) {
 		Article article = articleService.articleDetail(id);
 		model.addAttribute("article", article);
-		model.addAttribute("image", article.getImage());
+
 		return "usr/article/detail";
 	}
+
+
 
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/modify/{id}")
@@ -115,6 +118,32 @@ public class ArticleController {
 
 
 		return "redirect:/usr/article/list";
+	}
+
+	// 좋아요 추가
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/like/{id}")
+	public String likeArticle(@PathVariable("id") Long id) {
+		boolean success = articleService.likeArticle(rq.getMember(), id);
+
+		if (!success) {
+			return "redirect:/error";
+		}
+
+		return "redirect:/usr/article/detail/" + id;
+	}
+
+	// 좋아요 취소
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/unlike/{id}")
+	public String unlikeArticle(@PathVariable("id") Long id) {
+		boolean success = articleService.unlikeArticle(rq.getMember(), id);
+
+		if (!success) {
+			return "redirect:/error";
+		}
+
+		return "redirect:/usr/article/detail/" + id;
 	}
 
 

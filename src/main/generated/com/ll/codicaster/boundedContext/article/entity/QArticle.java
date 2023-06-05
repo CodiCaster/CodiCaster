@@ -32,7 +32,7 @@ public class QArticle extends EntityPathBase<Article> {
 
     public final com.ll.codicaster.boundedContext.image.entity.QImage image;
 
-    public final NumberPath<Integer> likeCount = createNumber("likeCount", Integer.class);
+    public final SetPath<com.ll.codicaster.boundedContext.member.entity.Member, com.ll.codicaster.boundedContext.member.entity.QMember> likedMembers = this.<com.ll.codicaster.boundedContext.member.entity.Member, com.ll.codicaster.boundedContext.member.entity.QMember>createSet("likedMembers", com.ll.codicaster.boundedContext.member.entity.Member.class, com.ll.codicaster.boundedContext.member.entity.QMember.class, PathInits.DIRECT2);
 
     public final DateTimePath<java.time.LocalDateTime> modifyDate = createDateTime("modifyDate", java.time.LocalDateTime.class);
 
