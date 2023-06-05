@@ -39,8 +39,8 @@
                         </a>
                     </li>
                     <li th:if="${@rq.login}">
-                        <a href="/usr/article/list">
-                            <th:block th:utext="#{c.iconList}"></th:block>
+                        <a href="/usr/article/todaylist">
+                            <th:block th:utext="#{c.iconTodayList}"></th:block>
                             <span th:text="#{c.pageNameTodayList}"></span>
                         </a>
                     </li>
@@ -64,7 +64,7 @@
             </div>
         </div>
         <div class="navbar-center">
-            <a href="/" class="btn btn-ghost normal-case text-xl">
+            <a href="/usr/main" class="btn btn-ghost normal-case text-xl">
                 <span class="hidden min-[339px]:inline" th:utext="#{c.logoTextWithEmojiEn}"></span>
                 <span class="min-[339px]:hidden" th:utext="#{c.logoEmoji}"></span>
             </a>
