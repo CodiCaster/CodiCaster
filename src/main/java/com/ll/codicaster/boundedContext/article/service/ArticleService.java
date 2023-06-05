@@ -93,10 +93,12 @@ public class ArticleService {
 				return RsData.of("F-4", "이미지 업로드에 실패하였습니다");
 			}
 
-			Image image = new Image();
-			image.setFilename(fileName);
-			image.setFilepath("/images/" + fileName);
-			image.setArticle(article);  // Image 객체와 Article 객체를 연결
+			Image image = Image.builder()
+				.filename(fileName)
+				.filepath("/images/" + fileName)
+				.article(article)
+				.build();
+
 
 			image = imageRepository.save(image);  // 이미지를 DB에 저장
 
@@ -299,4 +301,16 @@ public class ArticleService {
 			tagMap.put(tag, tagMap.get(tag) - 1);
 		}
 	}
+
+	// public List<Article> sortArticlesByUserTypeAndDistance(List<Article> articleList, Member searchingUser) {
+	// 	return articleList.stream()
+	// 		.sorted(Comparator.comparing(article -> {
+	// 			int userTypeDifference = Math.abs(article.getAuthor().getUserType() - searchingUser.getUserType());
+	// 			double distance = getDistance(article.getLocation(), searchingUser.getLocation());
+	// 			int distanceScore = distance <= 10 ? 1 : 0;  // 거리가 10km 이내인 경우 1점 부여
+	// 			int userTypeScore = userTypeDifference == 0 ? 1 : 0; // userType이 같을 때 1점 부여
+	// 			return userTypeDifference + distanceScore + userTypeScore;  // 총 합 점수로 비교
+	// 		}))
+	// 		.collect(Collectors.toList());
+	// }
 }
