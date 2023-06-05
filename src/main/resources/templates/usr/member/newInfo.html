@@ -120,7 +120,7 @@
                     <br>
                     <form th:action="@{/usr/member/newInfo}" th:object="${user}" method="post">
                         <div class="form-group">
-                            <label for="nickname"><i class="fa-regular fa-id-badge"></i> 닉네임 </label>
+                            <label for="nickname"><i class="fa-solid fa-id-badge"></i> 닉네임 </label>
                             <br>
                             <input type="text" name="nickname" id="nickname" class="input input-bordered w-full max-w-xs" placeholder="닉네임을 입력해주세요" required
                                    minlength="3" onkeyup="updateNickname()"/>
@@ -131,11 +131,11 @@
                             <br>
                             <div class="radio-button-group">
                                 <div class="radio-button-item">
-                                    <input type="radio" id="male" name="gender" value="male" class="radio radio-accent" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="male" name="gender" value="남자" class="radio radio-accent" onchange="enableSubmitButton()" />
                                     <label for="male">남성</label>
                                 </div>
                                 <div class="radio-button-item">
-                                    <input type="radio" id="female" name="gender" value="female" class="radio radio-accent" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="female" name="gender" value="여자" class="radio radio-accent" onchange="enableSubmitButton()" />
                                     <label for="female">여성</label>
                                 </div>
                             </div>
