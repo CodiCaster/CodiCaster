@@ -70,8 +70,15 @@ public class ArticleController {
 
 	@GetMapping("/detail/{id}")
 	public String articleDetail(@PathVariable Long id, Model model) {
+
 		Article article = articleService.articleDetail(id);
+		Member currentMember = rq.getMember();  // 현재 사용자 가져오기
+		boolean isLiked = article.getLikedMembers().contains(currentMember);  // 현재 사용자가 이 게시글에 좋아요를 눌렀는지 판단
+
 		model.addAttribute("article", article);
+		model.addAttribute("image", article.getImage());
+		model.addAttribute("likeCount", article.getLikesCount());
+		model.addAttribute("isLiked", isLiked);
 
 		return "usr/article/detail";
 	}

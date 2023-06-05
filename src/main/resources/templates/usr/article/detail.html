@@ -64,7 +64,7 @@
                                 <span th:unless="${isLiked}">🤍</span>
                             </button>
                             <!-- 좋아요 수 -->
-                            <span id="like-count" th:text="${likeCount != null ? likeCount : 0}">0</span>
+                            <span id="like-count" th:text="${article.getLikedMembers().size() != null ? article.getLikedMembers().size() : 0}">0</span>
                         </div>
 
 

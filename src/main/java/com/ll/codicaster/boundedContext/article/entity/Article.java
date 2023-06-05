@@ -3,11 +3,14 @@ package com.ll.codicaster.boundedContext.article.entity;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.ll.codicaster.boundedContext.image.entity.Image;
 import com.ll.codicaster.boundedContext.member.entity.Member;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,7 +46,9 @@ public class Article {
     private Member author;
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
-    private Integer weatherId;
+    private Integer likeCount;
+    private Long weatherId;
+    private Long locationId;
 
     @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
     private Image image;
@@ -57,6 +63,11 @@ public class Article {
         inverseJoinColumns = @JoinColumn(name = "member_id")
     )
     private Set<Member> likedMembers = new HashSet<>();
+
+
+    public int getLikesCount() {
+        return likedMembers.size();
+    }
 
 
 
