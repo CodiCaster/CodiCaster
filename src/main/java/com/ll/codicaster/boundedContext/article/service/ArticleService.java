@@ -296,7 +296,7 @@ public class ArticleService {
 	public void truncateUserTagMap(Member member, Set<String> tagSet) {
 		Map<String, Integer> tagMap = member.getTagMap();
 
-		//값이 0 이하일 때 예외처리 ? 필요한가
+		//값이 0 이하일 때 예외처리 ? 필요한가 => 필요없을 듯, 큰 순서대로 사용할 예
 		for (String tag : tagSet) {
 			tagMap.put(tag, tagMap.get(tag) - 1);
 		}
@@ -308,8 +308,9 @@ public class ArticleService {
 	// 			int userTypeDifference = Math.abs(article.getAuthor().getUserType() - searchingUser.getUserType());
 	// 			double distance = getDistance(article.getLocation(), searchingUser.getLocation());
 	// 			int distanceScore = distance <= 10 ? 1 : 0;  // 거리가 10km 이내인 경우 1점 부여
+	//			int userTypeDifferenceScore = userTypeDifference == 1 ? 1 : 0; //±1이면 1점 부여
 	// 			int userTypeScore = userTypeDifference == 0 ? 1 : 0; // userType이 같을 때 1점 부여
-	// 			return userTypeDifference + distanceScore + userTypeScore;  // 총 합 점수로 비교
+	// 			return userTypeDifferenceScore + distanceScore + userTypeScore;  // 총 합 점수로 비교
 	// 		}))
 	// 		.collect(Collectors.toList());
 	// }

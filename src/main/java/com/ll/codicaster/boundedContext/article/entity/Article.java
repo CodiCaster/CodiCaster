@@ -46,6 +46,8 @@ public class Article {
     private Member author;
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
+    private Long weatherId;
+    private Long locationId;
 
     @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
     private Image image;
