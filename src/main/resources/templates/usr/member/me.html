@@ -78,7 +78,7 @@
                             성별
                         </div>
                         <div class="mt-2">
-                            <span class="badge badge-primary" th:text="${@rq.member.gender}"></span>
+                            <span class="badge badge-accent" th:text="${@rq.member.gender}"></span>
                         </div>
                     </div>
                     <div class="mt-4">
@@ -88,7 +88,7 @@
                         </div>
                         <div class="mt-2">
                             <form id="locationDTO" th:action="@{/usr/location/update}" method="post">
-                                <span th:text="${@rq.getAddress()}"></span>
+                                <span class="badge badge-ghost" th:text="${@rq.getAddress()}"></span>
                                 <input type="hidden" name="latitude" th:value="${latitude}">
                                 <input type="hidden" name="longitude" th:value="${longitude}">
                                 <button id="submitButton" type="button" class="btn btn-outline btn-secondary"
@@ -116,7 +116,7 @@
                         </div>
 
                         <div class="mt-2">
-                            <span th:text="${@rq.getWeather}"></span>
+                            <span class="badge badge-secondary" th:text="${@rq.getWeather}"></span>
                         </div>
                     </div>
                 </div>
