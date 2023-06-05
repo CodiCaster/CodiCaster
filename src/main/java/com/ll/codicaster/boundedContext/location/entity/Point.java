@@ -1,4 +1,4 @@
-package com.ll.codicaster.boundedContext.region.entity;
+package com.ll.codicaster.boundedContext.location.entity;
 
 import lombok.Data;
 

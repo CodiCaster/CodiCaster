@@ -1,10 +1,17 @@
 package com.ll.codicaster.base.rq;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 
 import com.ll.codicaster.base.rsData.RsData;
-import com.ll.codicaster.boundedContext.region.entity.Region;
+import com.ll.codicaster.boundedContext.location.entity.LocationConstants;
+import com.ll.codicaster.boundedContext.location.entity.Location;
+import com.ll.codicaster.boundedContext.location.service.LocationService;
+import com.ll.codicaster.boundedContext.weather.entity.Weather;
+import com.ll.codicaster.boundedContext.weather.service.WeatherService;
 import com.ll.codicaster.standard.util.Ut;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.MessageSource;
@@ -26,6 +33,9 @@ import jakarta.servlet.http.HttpSession;
 @RequestScope
 public class Rq {
     private final MemberService memberService;
+    private final LocationService locationService;
+    private final WeatherService weatherService;
+
     private final MessageSource messageSource;
     private final LocaleResolver localeResolver;
     private Locale locale;
@@ -35,15 +45,22 @@ public class Rq {
     private final HttpSession session;
     private final User user;
     private Member member = null; // 레이지 로딩, 처음부터 넣지 않고, 요청이 들어올 때 넣는다.
+    private Weather weather = null;
+    private Location location = null;
+    private String currentDateStr = null;
 
-    public Rq(MemberService memberService, MessageSource messageSource, LocaleResolver localeResolver,
+
+    public Rq(MemberService memberService, LocationService locationService, WeatherService weatherService, MessageSource messageSource, LocaleResolver localeResolver,
               HttpServletRequest req, HttpServletResponse resp, HttpSession session) {
         this.memberService = memberService;
+        this.locationService = locationService;
+        this.weatherService = weatherService;
         this.messageSource = messageSource;
         this.localeResolver = localeResolver;
         this.req = req;
         this.resp = resp;
         this.session = session;
+
         // 현재 로그인한 회원의 인증정보를 가져옴
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -77,6 +94,49 @@ public class Rq {
         return member;
     }
 
+    public String update() throws IOException {
+        getCurrentDate();
+        if (isLogout()) {
+            weather = weatherService.getApiWeather(LocationConstants.POINT_X, LocationConstants.POINT_Y);
+            setLocationDefault();
+            return location.getAddress();
+        }
+        if (member == null) {
+            member = memberService.findByUsername(user.getUsername()).orElseThrow();
+        }
+        if (member.getLocationId() == null) {
+            weather = weatherService.getApiWeather(LocationConstants.POINT_X, LocationConstants.POINT_Y);
+            setLocationDefault();
+            return location.getAddress();
+        }
+        updateCurrentLocation();
+        updateCurrentWeather();
+        return location.getAddress();
+    }
+
+    private void setLocationDefault() {
+        location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
+                LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
+    }
+
+    public void updateCurrentLocation() {
+        location = locationService.getLocation(member.getLocationId());
+    }
+
+    public void updateCurrentWeather() throws IOException {
+        weather = weatherService.getWeather(location);
+    }
+
+    public String currentDateAndWeatherToString() {
+        return currentDateStr + " " + weather.getTmp() + "°C";
+    }
+
+    public void getCurrentDate() {
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd(E)", Locale.KOREAN);
+        currentDateStr = currentDate.format(formatter);
+    }
+
     public String getCText(String code, String... args) {
         return messageSource.getMessage(code, args, getLocale());
     }
@@ -84,7 +144,6 @@ public class Rq {
     private Locale getLocale() {
         if (locale == null)
             locale = localeResolver.resolveLocale(req);
-
         return locale;
     }
 
@@ -136,5 +195,9 @@ public class Rq {
     // 메세지에 ttl 적용
     private String msgWithTtl(String msg) {
         return Ut.url.encode(msg) + ";ttl=" + new Date().getTime();
+    }
+
+    public void setLocation(Location newLocation) {
+        this.location = newLocation;
     }
 }

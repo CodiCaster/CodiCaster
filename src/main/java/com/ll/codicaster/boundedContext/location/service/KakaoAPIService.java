@@ -1,4 +1,4 @@
-package com.ll.codicaster.boundedContext.region.service;
+package com.ll.codicaster.boundedContext.location.service;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,7 +16,7 @@ public class KakaoAPIService {
     @Value("${api.kakao.key}")
     private String REST_KEY;
 
-    public String loadRegionFromKakao(double longitude, double latitude) {
+    public String loadLocationFromKakao(double longitude, double latitude) {
         String regionDetail = "";
         String urlString = "https://dapi.kakao.com/v2/local/geo/coord2regioncode?x=" + longitude + "&y=" + latitude;
 
