@@ -38,7 +38,7 @@ public class MemberController {
     @PostMapping("/newInfo")
     public String updateInfo(@RequestParam String nickname, @RequestParam(required = false) String bodytype, @RequestParam String gender) {
         memberService.updateMemberInfo(rq.getLoginedMemberId(), nickname, bodytype, gender);
-        return "redirect:/usr/main";
+        return "redirect:/usr/member/me";
     }
 
     // 중복 확인 요청을 처리하는 핸들러
