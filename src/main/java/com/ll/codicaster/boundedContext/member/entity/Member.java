@@ -1,7 +1,6 @@
 package com.ll.codicaster.boundedContext.member.entity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,10 +14,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.MapKeyColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -50,10 +46,10 @@ public class Member extends BaseEntity {
     @Column(name = "tag_count")
     private Map<String, Integer> tagMap;
 
-    private Long regionId;
+    private Long locationId;
 
-    public void updateRegionId(Long regionId) {
-        this.regionId = regionId;
+    public void updateLocationId(Long locationId) {
+        this.locationId = locationId;
     }
 
     // 이 함수 자체는 만들어야 한다. 스프링 시큐리티 규격
