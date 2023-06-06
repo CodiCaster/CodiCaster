@@ -40,7 +40,7 @@ public class WeatherAPIService {
         LocalTime nowTime = LocalTime.now();
         LocalDate nowDate = LocalDate.now();
 
-        LocalTime dateStandard = LocalTime.of(2, 10, 0);
+        LocalTime dateStandard = LocalTime.of(5, 10, 0);
 
         String baseTime = "0200";
         String nowDateStr = nowDate.toString().replaceAll("-", "");
