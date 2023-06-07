@@ -20,6 +20,7 @@ import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.article.form.ArticleCreateForm;
 import com.ll.codicaster.boundedContext.article.service.ArticleService;
 import com.ll.codicaster.boundedContext.member.entity.Member;
+import com.ll.codicaster.boundedContext.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class ArticleController {
 
 	private final ArticleService articleService;
+	private final MemberService memberService;
 	private final Rq rq;
 
 
@@ -129,6 +131,11 @@ public class ArticleController {
 
 		List<Article> articles = articleService.showMyList();
 		model.addAttribute("myarticles", articles);
+
+		List<String> mostUsedTags = memberService.getMostUsedTags();
+		model.addAttribute("mostUsedTags", mostUsedTags);
+
+
 
 		return "usr/article/mylist";
 	}

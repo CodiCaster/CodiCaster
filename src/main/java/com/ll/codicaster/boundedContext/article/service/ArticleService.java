@@ -252,7 +252,7 @@ public class ArticleService {
 		}
 	}
 
-	@Transactional
+
 	@Transactional
 	public boolean likeArticle(Member actor, Long articleId) {
 		try {
@@ -308,10 +308,19 @@ public class ArticleService {
 	// 			int userTypeDifference = Math.abs(article.getAuthor().getUserType() - searchingUser.getUserType());
 	// 			double distance = getDistance(article.getLocation(), searchingUser.getLocation());
 	// 			int distanceScore = distance <= 10 ? 1 : 0;  // 거리가 10km 이내인 경우 1점 부여
-	//			int userTypeDifferenceScore = userTypeDifference == 1 ? 1 : 0; //±1이면 1점 부여
+	// 			int userTypeDifferenceScore = userTypeDifference == 1 ? 1 : 0; //±1이면 1점 부여
 	// 			int userTypeScore = userTypeDifference == 0 ? 1 : 0; // userType이 같을 때 1점 부여
 	// 			return userTypeDifferenceScore + distanceScore + userTypeScore;  // 총 합 점수로 비교
 	// 		}))
 	// 		.collect(Collectors.toList());
 	// }
+
+	public List<Article> showMyList() {
+		return articleRepository.findByAuthorId(rq.getMember().getId())
+			.stream()
+			.sorted(Comparator.comparingLong(Article::getId).reversed())
+			.collect(Collectors.toList());
+	}
+
+
 }

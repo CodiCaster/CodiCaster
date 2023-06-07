@@ -9,6 +9,13 @@
             <i class="fa-solid fa-shirt"></i>
             나의 게시물
         </h1>
+        <div>
+
+            <div class="flex">
+                <span class="mr-2">가장 많이 이용한 태그: </span>
+                <span class="mr-1" th:each="tag : ${mostUsedTags}" th:text="'#'+${tag}"></span>
+            </div>
+        </div>
         <div class="flex flex-col gap-4">
             <div class="card bg-base-100 shadow-xl">
                 <div class="card-body">
