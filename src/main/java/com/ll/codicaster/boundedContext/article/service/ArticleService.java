@@ -240,4 +240,44 @@ public class ArticleService {
 
 	}
 
+	@Transactional
+	public boolean likeArticle(Member actor, Long articleId) {
+		try {
+
+			Article article = articleRepository.findById(articleId)
+				.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
+
+
+			Set<Member> likeSet = article.getLikedMembers();
+			likeSet.add(actor);
+			article.setLikedMembers(likeSet);
+
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	@Transactional
+	public boolean unlikeArticle(Member actor, Long articleId) {
+		try {
+
+			Article article = articleRepository.findById(articleId)
+				.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
+
+
+			Set<Member> likeSet = article.getLikedMembers();
+			likeSet.remove(actor);
+			article.setLikedMembers(likeSet);
+
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+
+
+
+
 }
