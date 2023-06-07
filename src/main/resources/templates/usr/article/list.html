@@ -21,6 +21,10 @@
                                          class="w-full h-32 object-cover"/>
                                     <div class="px-6 py-4">
                                         <div class="font-bold text-xl mb-2 truncate" th:text="${article.title}"></div>
+                                        <div class="like-info flex items-center">
+                                            <span class="heart-icon text-red-500 mr-1">💕</span>
+                                            <span th:text="${article.getLikedMembers().size()}"></span>
+                                        </div>
                                     </div>
                                 </a>
                             </div>

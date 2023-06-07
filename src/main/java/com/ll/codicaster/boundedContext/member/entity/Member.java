@@ -1,19 +1,23 @@
 package com.ll.codicaster.boundedContext.member.entity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.ll.codicaster.base.baseEntity.BaseEntity;
+import com.ll.codicaster.boundedContext.article.entity.Article;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.MapKeyColumn;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -92,5 +96,13 @@ public class Member extends BaseEntity {
 
         return mostUsedTags;
     }
+
+    @ManyToMany(mappedBy = "likedMembers")
+    private Set<Article> likedArticles = new HashSet<>();
+
+
+
+
+
 
 }
