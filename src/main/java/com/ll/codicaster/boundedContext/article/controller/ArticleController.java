@@ -124,6 +124,15 @@ public class ArticleController {
 		return "redirect:/usr/article/list";
 	}
 
+	@RequestMapping("/mylist")
+	public String showMyArticle(Model model) {
+
+		List<Article> articles = articleService.showMyList();
+		model.addAttribute("myarticles", articles);
+
+		return "usr/article/mylist";
+	}
+
 	// 좋아요 추가
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/like/{id}")

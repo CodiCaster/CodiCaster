@@ -7,7 +7,7 @@
     <div class="max-w-2xl w-full px-4">
         <h1 class="mb-4">
             <i class="fa-solid fa-shirt"></i>
-            오늘의 코디
+            나의 게시물
         </h1>
         <div class="flex flex-col gap-4">
             <div class="card bg-base-100 shadow-xl">
@@ -15,7 +15,7 @@
                     <br>
                     <div class="max-w-3xl mx-auto py-6 px-4">
                         <div class="grid grid-cols-3 gap-4">
-                            <div th:each="article : ${articlesNearbyToday}" class="rounded overflow-hidden shadow-lg">
+                            <div th:each="article : ${myarticles}" class="rounded overflow-hidden shadow-lg">
                                 <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
                                     <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
                                          class="w-full h-32 object-cover"/>
