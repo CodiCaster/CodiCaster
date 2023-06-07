@@ -34,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ArticleService {
 
 	private final ArticleRepository articleRepository;
@@ -57,6 +58,7 @@ public class ArticleService {
 		return tagSet;
 	}
 
+	@Transactional
 	public RsData<Article> saveArticle(Member actor, ArticleCreateForm form, MultipartFile imageFile) {
 
 		Set<String> tagSet = extractHashTagList(form.getContent());
@@ -91,10 +93,12 @@ public class ArticleService {
 				return RsData.of("F-4", "이미지 업로드에 실패하였습니다");
 			}
 
-			Image image = new Image();
-			image.setFilename(fileName);
-			image.setFilepath("/images/" + fileName);
-			image.setArticle(article);  // Image 객체와 Article 객체를 연결
+			Image image = Image.builder()
+				.filename(fileName)
+				.filepath("/images/" + fileName)
+				.article(article)
+				.build();
+
 
 			image = imageRepository.save(image);  // 이미지를 DB에 저장
 
@@ -121,15 +125,21 @@ public class ArticleService {
 
 	//게시물 수정
 	@Transactional
-	public boolean updateArticle(Long id, ArticleCreateForm form, MultipartFile imageFile) {
+	public boolean updateArticle(Member actor, Long id, ArticleCreateForm form, MultipartFile imageFile) {
 		try {
 			Article article = articleRepository.findById(id)
 				.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
+
+			Set<String> existingTagSet = article.getTagSet();
+			truncateUserTagMap(actor, existingTagSet);
+			Set<String> newTagSet = extractHashTagList(form.getContent());
+			updateUserTagMap(actor,newTagSet);
 
 			// 게시글의 정보를 수정
 			article.setTitle(form.getTitle());
 			article.setContent(form.getContent());
 			article.setModifyDate(LocalDateTime.now());
+			article.setTagSet(newTagSet);
 
 			// 이미지 파일이 있으면 저장
 			if (!imageFile.isEmpty()) {
@@ -218,12 +228,14 @@ public class ArticleService {
 		return articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
 	}
 
-	//일년전 오늘 앞뒤 한달 + 한달전 ~ 오늘 게시물 조회
-	public List<Article> showArticlesNearbyToday() {
+	// 일년전 오늘 앞뒤 한달 + 한달전 ~ 오늘 게시물 조회 + 성별 필터링 => 1차 필터링
+	// 추가로 위치 순 정렬 필요
+	public List<Article> showArticlesNearbyToday(Member member) {
 		List<Article> articleLastOneMonth = getArticlesLastOneMonth();
 		List<Article> articleYearAgo = getArticlesYearAgo();
 		//일년전의 게시물도 포함되었으므로 최신순 정렬기능은 넣지 않는다.
 		List<Article> ArticlesNearbyToday = Stream.concat(articleYearAgo.stream(), articleLastOneMonth.stream())
+			.filter(article -> article.getAuthor().getGender().equals(member.getGender()))
 			.collect(Collectors.toList());
 
 		return ArticlesNearbyToday;
@@ -231,14 +243,15 @@ public class ArticleService {
 	}
 
 	//유저 태그맵 업데이트 (게시물 작성 시마다 태그리스트 받아서 가지고 있는지 확인하고 증가)
+	@Transactional
 	public void updateUserTagMap(Member member, Set<String> tagSet) {
 		Map<String, Integer> tagMap = member.getTagMap();
 
 		for (String tag : tagSet) {
 			tagMap.put(tag, tagMap.getOrDefault(tag, 0) + 1);
 		}
-
 	}
+
 
 	@Transactional
 	public boolean likeArticle(Member actor, Long articleId) {
@@ -278,6 +291,36 @@ public class ArticleService {
 
 
 
+
+
+	public void truncateUserTagMap(Member member, Set<String> tagSet) {
+		Map<String, Integer> tagMap = member.getTagMap();
+
+		//값이 0 이하일 때 예외처리 ? 필요한가 => 필요없을 듯, 큰 순서대로 사용할 예
+		for (String tag : tagSet) {
+			tagMap.put(tag, tagMap.get(tag) - 1);
+		}
+	}
+
+	// public List<Article> sortArticlesByUserTypeAndDistance(List<Article> articleList, Member searchingUser) {
+	// 	return articleList.stream()
+	// 		.sorted(Comparator.comparing(article -> {
+	// 			int userTypeDifference = Math.abs(article.getAuthor().getUserType() - searchingUser.getUserType());
+	// 			double distance = getDistance(article.getLocation(), searchingUser.getLocation());
+	// 			int distanceScore = distance <= 10 ? 1 : 0;  // 거리가 10km 이내인 경우 1점 부여
+	// 			int userTypeDifferenceScore = userTypeDifference == 1 ? 1 : 0; //±1이면 1점 부여
+	// 			int userTypeScore = userTypeDifference == 0 ? 1 : 0; // userType이 같을 때 1점 부여
+	// 			return userTypeDifferenceScore + distanceScore + userTypeScore;  // 총 합 점수로 비교
+	// 		}))
+	// 		.collect(Collectors.toList());
+	// }
+
+	public List<Article> showMyList() {
+		return articleRepository.findByAuthorId(rq.getMember().getId())
+			.stream()
+			.sorted(Comparator.comparingLong(Article::getId).reversed())
+			.collect(Collectors.toList());
+	}
 
 
 }

@@ -1,6 +1,7 @@
 package com.ll.codicaster.boundedContext.article.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.article.form.ArticleCreateForm;
 import com.ll.codicaster.boundedContext.article.service.ArticleService;
 import com.ll.codicaster.boundedContext.member.entity.Member;
+import com.ll.codicaster.boundedContext.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class ArticleController {
 
 	private final ArticleService articleService;
+	private final MemberService memberService;
 	private final Rq rq;
 
 
@@ -39,14 +42,13 @@ public class ArticleController {
 
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/writepro")
-	public String articleWriteSave(@ModelAttribute ArticleCreateForm articleCreateForm, @RequestParam("imageFile") MultipartFile imageFile) throws Exception {
+	public String articleWriteSave(@ModelAttribute ArticleCreateForm articleCreateForm,
+		@RequestParam("imageFile") MultipartFile imageFile) throws Exception {
 
-		articleService.saveArticle(rq.getMember(),articleCreateForm, imageFile);
+		articleService.saveArticle(rq.getMember(), articleCreateForm, imageFile);
 
 		return "redirect:/usr/article/list";
 	}
-
-
 
 	@GetMapping("/list")
 	public String articles(Model model) {
@@ -57,16 +59,14 @@ public class ArticleController {
 		return "usr/article/list";
 	}
 
-	@GetMapping("/list/nearby")
+	@GetMapping("/todaylist")
 	public String showArticlesNearbyToday(Model model) {
 
-		List<Article> articles = articleService.showArticlesNearbyToday();
+		List<Article> articles = articleService.showArticlesNearbyToday(rq.getMember());
 		model.addAttribute("articlesNearbyToday", articles);
 
 		return "usr/article/todaylist";
 	}
-
-
 
 	@GetMapping("/detail/{id}")
 	public String articleDetail(@PathVariable Long id, Model model) {
@@ -102,8 +102,9 @@ public class ArticleController {
 
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/modify/{id}")
-	public String updateArticle(@PathVariable("id") Long id, @ModelAttribute ArticleCreateForm updatedArticle, MultipartFile imageFile) {
-		boolean success = articleService.updateArticle(id, updatedArticle, imageFile);
+	public String updateArticle(@PathVariable("id") Long id, @ModelAttribute ArticleCreateForm updatedArticle,
+		MultipartFile imageFile) {
+		boolean success = articleService.updateArticle(rq.getMember(), id, updatedArticle, imageFile);
 
 		if (!success) {
 			return "redirect:/error";
@@ -111,7 +112,6 @@ public class ArticleController {
 
 		return "redirect:/usr/article/detail/" + id;
 	}
-
 
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/delete/{id}")
@@ -123,8 +123,21 @@ public class ArticleController {
 			return "redirect:/error";
 		}
 
-
 		return "redirect:/usr/article/list";
+	}
+
+	@RequestMapping("/mylist")
+	public String showMyArticle(Model model) {
+
+		List<Article> articles = articleService.showMyList();
+		model.addAttribute("myarticles", articles);
+
+		List<String> mostUsedTags = memberService.getMostUsedTags();
+		model.addAttribute("mostUsedTags", mostUsedTags);
+
+
+
+		return "usr/article/mylist";
 	}
 
 	// 좋아요 추가

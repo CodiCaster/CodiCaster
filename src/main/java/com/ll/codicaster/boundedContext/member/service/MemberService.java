@@ -1,5 +1,8 @@
 package com.ll.codicaster.boundedContext.member.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -7,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.member.entity.Member;
 import com.ll.codicaster.boundedContext.member.repository.MemberRepository;
@@ -19,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
+    private  final Rq rq;
 
     public Optional<Member> findByUsername(String username) {
         return memberRepository.findByUsername(username);
@@ -82,5 +87,26 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. ID=" + memberId));
         member.updateInfo(nickname, bodytype, gender);
+    }
+
+    //유저가 가장 많이 이용한 태그
+    public List<String> getMostUsedTags() {
+        List<String> mostUsedTags = new ArrayList<>();
+        int maxCount = 0;
+
+        Map<String, Integer> tagMap = rq.getMember().getTagMap();
+
+        for (Map.Entry<String, Integer> entry : tagMap.entrySet()) {
+            int count = entry.getValue();
+            if (count > maxCount) {
+                maxCount = count;
+                mostUsedTags.clear();
+                mostUsedTags.add(entry.getKey());
+            } else if (count == maxCount) {
+                mostUsedTags.add(entry.getKey());
+            }
+        }
+
+        return mostUsedTags;
     }
 }
