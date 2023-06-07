@@ -30,9 +30,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ArticleController {
 
-	private final ArticleService articleService;
-	private final MemberService memberService;
-	private final Rq rq;
+    private final ArticleService articleService;
+    private final MemberService memberService;
+    private final Rq rq;
 
 
     @PreAuthorize("isAuthenticated()")
@@ -41,18 +41,18 @@ public class ArticleController {
         return "usr/article/write";
     }
 
-	@PreAuthorize("isAuthenticated()")
-	@PostMapping("/writepro")
-	public String articleWriteSave(@ModelAttribute ArticleCreateForm articleCreateForm,
-		@RequestParam("imageFile") MultipartFile imageFile) throws Exception {
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/writepro")
+    public String articleWriteSave(@ModelAttribute ArticleCreateForm articleCreateForm,
+                                   @RequestParam("imageFile") MultipartFile imageFile) throws Exception {
 
-		articleService.saveArticle(rq.getMember(), articleCreateForm, imageFile);
+        articleService.saveArticle(rq.getMember(), articleCreateForm, imageFile);
 
         return "redirect:/usr/article/list";
     }
 
-	@GetMapping("/list")
-	public String articles(Model model) {
+    @GetMapping("/list")
+    public String articles(Model model) {
 
         List<Article> articles = articleService.articleList();
         model.addAttribute("articles", articles);
@@ -60,112 +60,112 @@ public class ArticleController {
         return "usr/article/list";
     }
 
-	@GetMapping("/todaylist")
-	public String showArticlesNearbyToday(Model model) {
+    @GetMapping("/todaylist")
+    public String showArticlesNearbyToday(Model model) {
 
-		List<Article> articles = articleService.showArticlesNearbyToday(rq.getMember());
-		model.addAttribute("articlesNearbyToday", articles);
+        List<Article> articles = articleService.showArticlesNearbyToday(rq.getMember());
+        model.addAttribute("articlesNearbyToday", articles);
 
-		return "usr/article/todaylist";
-	}
+        return "usr/article/todaylist";
+    }
 
-	@GetMapping("/detail/{id}")
-	public String articleDetail(@PathVariable Long id, Model model) {
+    @GetMapping("/detail/{id}")
+    public String articleDetail(@PathVariable Long id, Model model) {
 
-		Article article = articleService.articleDetail(id);
-		Member currentMember = rq.getMember();  // 현재 사용자 가져오기
-		boolean isLiked = article.getLikedMembers().contains(currentMember);  // 현재 사용자가 이 게시글에 좋아요를 눌렀는지 판단
+        Article article = articleService.articleDetail(id);
+        Member currentMember = rq.getMember();  // 현재 사용자 가져오기
+        boolean isLiked = article.getLikedMembers().contains(currentMember);  // 현재 사용자가 이 게시글에 좋아요를 눌렀는지 판단
+        String[] weatherInfo = articleService.getWeatherInfo(id);
+        model.addAttribute("article", article);
+        model.addAttribute("image", article.getImage());
+        model.addAttribute("likeCount", article.getLikesCount());
+        model.addAttribute("isLiked", isLiked);
+        model.addAttribute("address", articleService.getAddress(id));
+        model.addAttribute("sky", weatherInfo[0]);
+        model.addAttribute("temperature", weatherInfo[1]);
 
-		model.addAttribute("article", article);
-		model.addAttribute("image", article.getImage());
-		model.addAttribute("likeCount", article.getLikesCount());
-		model.addAttribute("isLiked", isLiked);
-		model.addAttribute("address", articleService.getAddress(id));
-		model.addAttribute("temperature", articleService.getTemperature(id));
+        return "usr/article/detail";
+    }
 
-		return "usr/article/detail";
-	}
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/modify/{id}")
+    public String modifyArticle(@PathVariable("id") Long id, Model model) {
 
-	@PreAuthorize("isAuthenticated()")
-	@GetMapping("/modify/{id}")
-	public String modifyArticle(@PathVariable("id") Long id, Model model) {
+        Article article = articleService.findArticleById(id);
 
-		Article article = articleService.findArticleById(id);
+        if (article == null) {
+            return "redirect:/error";
+        }
 
-		if (article == null) {
-			return "redirect:/error";
-		}
+        model.addAttribute("article", article);
 
-		model.addAttribute("article", article);
+        return "usr/article/modify";
+    }
 
-		return "usr/article/modify";
-	}
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/modify/{id}")
+    public String updateArticle(@PathVariable("id") Long id, @ModelAttribute ArticleCreateForm updatedArticle,
+                                MultipartFile imageFile) {
+        boolean success = articleService.updateArticle(rq.getMember(), id, updatedArticle, imageFile);
 
-	@PreAuthorize("isAuthenticated()")
-	@PostMapping("/modify/{id}")
-	public String updateArticle(@PathVariable("id") Long id, @ModelAttribute ArticleCreateForm updatedArticle,
-		MultipartFile imageFile) {
-		boolean success = articleService.updateArticle(rq.getMember(), id, updatedArticle, imageFile);
+        if (!success) {
+            return "redirect:/error";
+        }
 
-		if (!success) {
-			return "redirect:/error";
-		}
+        return "redirect:/usr/article/detail/" + id;
+    }
 
-		return "redirect:/usr/article/detail/" + id;
-	}
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/delete/{id}")
+    public String deleteArticle(@PathVariable("id") Long id) {
 
-	@PreAuthorize("isAuthenticated()")
-	@GetMapping("/delete/{id}")
-	public String deleteArticle(@PathVariable("id") Long id) {
+        boolean success = articleService.deleteArticle(id);
 
-		boolean success = articleService.deleteArticle(id);
+        if (!success) {
+            return "redirect:/error";
+        }
 
-		if (!success) {
-			return "redirect:/error";
-		}
+        return "redirect:/usr/article/list";
+    }
 
-		return "redirect:/usr/article/list";
-	}
+    @RequestMapping("/mylist")
+    public String showMyArticle(Model model) {
 
-	@RequestMapping("/mylist")
-	public String showMyArticle(Model model) {
+        List<Article> articles = articleService.showMyList();
+        model.addAttribute("myarticles", articles);
 
-		List<Article> articles = articleService.showMyList();
-		model.addAttribute("myarticles", articles);
-
-		List<String> mostUsedTags = memberService.getMostUsedTags();
-		model.addAttribute("mostUsedTags", mostUsedTags);
+        List<String> mostUsedTags = memberService.getMostUsedTags();
+        model.addAttribute("mostUsedTags", mostUsedTags);
 
 
+        return "usr/article/mylist";
+    }
 
-		return "usr/article/mylist";
-	}
+    // 좋아요 추가
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/like/{id}")
+    public String likeArticle(@PathVariable("id") Long id) {
+        boolean success = articleService.likeArticle(rq.getMember(), id);
 
-	// 좋아요 추가
-	@PreAuthorize("isAuthenticated()")
-	@PostMapping("/like/{id}")
-	public String likeArticle(@PathVariable("id") Long id) {
-		boolean success = articleService.likeArticle(rq.getMember(), id);
+        if (!success) {
+            return "redirect:/error";
+        }
 
-		if (!success) {
-			return "redirect:/error";
-		}
+        return "redirect:/usr/article/detail/" + id;
+    }
 
-		return "redirect:/usr/article/detail/" + id;
-	}
+    // 좋아요 취소
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/unlike/{id}")
+    public String unlikeArticle(@PathVariable("id") Long id) {
+        boolean success = articleService.unlikeArticle(rq.getMember(), id);
 
-	// 좋아요 취소
-	@PreAuthorize("isAuthenticated()")
-	@PostMapping("/unlike/{id}")
-	public String unlikeArticle(@PathVariable("id") Long id) {
-		boolean success = articleService.unlikeArticle(rq.getMember(), id);
+        if (!success) {
+            return "redirect:/error";
+        }
 
-		if (!success) {
-			return "redirect:/error";
-		}
-
-		return "redirect:/usr/article/detail/" + id;
-	}
+        return "redirect:/usr/article/detail/" + id;
+    }
 
 
 }

@@ -51,7 +51,11 @@ public class WeatherService {
 
     public Weather getWeather(Long id) {
         return weatherRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Weather Found with id: " + id));
+    }
 
+    public String[] getCurrentWeatherInfo(Long id) {
+        Weather weather = weatherRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Weather Found with id: " + id));
+        return new String[]{String.valueOf(weather.getSky()), String.valueOf(weather.getTmp())};
     }
 
     @Transactional
