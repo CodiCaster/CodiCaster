@@ -46,7 +46,6 @@ public class Article {
     private Member author;
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
-    private Integer likeCount;
     private Long weatherId;
     private Long locationId;
 
