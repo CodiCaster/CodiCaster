@@ -1,13 +1,11 @@
 <html layout:decorate="~{usr/layout/layout.html}">
 <head>
     <title>게시글 상세보기</title>
-    <script>
-        function confirmDelete() {
-            return confirm("게시글을 삭제하시겠습니까?"); // 사용자에게 알림 대화상자를 표시합니다.
-        }
-    </script>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
+
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">
     <div class="max-w-2xl w-full px-4">
         <h1 class="mb-4">
@@ -62,13 +60,17 @@
                         </div>
 
                         <!-- 상호작용 영역 (좋아요) -->
-                        <div class="interaction mt-4 flex items-center">
-                            <div class="like">
-                                <span class="heart-icon text-red-500 mr-1">❤️</span>
-                                좋아요 숫자
-                                <!-- <span th:text="${article.likes}"></span> -->
-                            </div>
+                        <div class="like">
+                            <!-- 좋아요 버튼 -->
+                            <button id="like-button" class="heart-icon text-red-500 mr-1">
+                                <!-- 좋아요 상태에 따라 아이콘 변경 -->
+                                <span th:if="${isLiked}">💕</span>
+                                <span th:unless="${isLiked}">🤍</span>
+                            </button>
+                            <!-- 좋아요 수 -->
+                            <span id="like-count" th:text="${article.getLikedMembers().size() != null ? article.getLikedMembers().size() : 0}">0</span>
                         </div>
+
 
                         <div class="back-to-list mt-4 flex justify-end">
                             <!-- 목록으로 돌아가기 버튼 -->
@@ -85,6 +87,55 @@
             </div>
         </div>
     </div>
+    <script th:inline="javascript">
+        function confirmDelete() {
+            return confirm("게시글을 삭제하시겠습니까?"); // 사용자에게 알림 대화상자를 표시
+        }
+
+        $(document).ready(function () {
+            // 좋아요 상태
+            let isLiked = /*[[${isLiked}]]*/ null;
+            console.log(isLiked)
+
+            // 좋아요 버튼 클릭 이벤트 처리
+            $('#like-button').click(function () {
+                // 좋아요 상태 변경
+                isLiked = !isLiked;
+
+                // 좋아요 상태에 따라 요청 URL 변경
+                let url = isLiked ? '/usr/article/like/' : '/usr/article/unlike/';
+
+                // 좋아요 수
+                let likeCount = parseInt($('#like-count').text());
+
+                let id = /*[[${article.id}]]*/ null;
+                console.log(id)
+                var csrfToken = $("meta[name='_csrf']").attr("content");
+                var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+                $.ajax({
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(csrfHeader, csrfToken);
+                    },
+                    url: url + id,  // 게시글 ID를 URL에 포함
+                    type: 'POST',
+                    headers: { // 헤더 설정 변경
+                        [csrfHeader]: csrfToken // 올바른 헤더 설정
+                    },
+                    success: function (response) {
+                        // 좋아요 상태에 따라 좋아요 수 변경
+                        $('#like-count').text(isLiked ? likeCount + 1 : likeCount - 1);
+
+                        // 좋아요 상태에 따라 버튼 아이콘 변경
+                        $('#like-button').html(isLiked ? '💕' : '🤍');
+                    },
+                    error: function (error) {
+                        // 에러 처리
+                        console.error(error);
+                    }
+                });
+            });
+        });
+    </script>
 </main>
 </body>
 </html>

@@ -1,8 +1,7 @@
 package com.ll.codicaster.boundedContext.article.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -46,7 +46,6 @@ public class Article {
     private Member author;
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
-    private Integer likeCount;
     private Long weatherId;
     private Long locationId;
 
@@ -55,5 +54,20 @@ public class Article {
 
     @ElementCollection
     private Set<String> tagSet;
+
+    @ManyToMany
+    @JoinTable(
+        name = "article_likes",
+        joinColumns = @JoinColumn(name = "article_id"),
+        inverseJoinColumns = @JoinColumn(name = "member_id")
+    )
+    private Set<Member> likedMembers = new HashSet<>();
+
+
+    public int getLikesCount() {
+        return likedMembers.size();
+    }
+
+
 
 }
