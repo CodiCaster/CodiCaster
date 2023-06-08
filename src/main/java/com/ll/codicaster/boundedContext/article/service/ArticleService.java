@@ -81,6 +81,7 @@ public class ArticleService {
                 .author(actor)
                 .createDate(LocalDateTime.now())
                 .modifyDate(LocalDateTime.now())
+                .address(rq.getAddress())
 //                .customDate(form.getCustomDate())
                 .tagSet(tagSet)
                 .build();
@@ -212,11 +213,6 @@ public class ArticleService {
             return false;
         }
 
-    }
-
-    public String getAddress(Long id) {
-        Article article = articleRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Article Found with id: " + id));
-        return locationService.getLocation(article.getLocationId()).getAddress();
     }
 
     public String getWeatherInfo(Article article) {

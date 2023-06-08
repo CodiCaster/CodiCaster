@@ -82,7 +82,7 @@ public class ArticleController {
         model.addAttribute("image", article.getImage());
         model.addAttribute("likeCount", article.getLikesCount());
         model.addAttribute("isLiked", isLiked);
-        model.addAttribute("address", articleService.getAddress(id));
+        model.addAttribute("address", article.getAddress());
         model.addAttribute("weatherInfo", weatherInfo);
 
         return "usr/article/detail";

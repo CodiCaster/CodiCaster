@@ -51,6 +51,7 @@ public class Article {
 //    private LocalDate customDate;
     private Long weatherId;
     private Long locationId;
+    private String address;
 
     @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
     private Image image;
