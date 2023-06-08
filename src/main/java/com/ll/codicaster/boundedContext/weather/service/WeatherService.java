@@ -45,14 +45,20 @@ public class WeatherService {
     }
 
     public String getWeatherInfo(Weather weather) {
-        String weatherInfo = "";
+        String weatherInfo = " " + weather.getTmp() + "°C";
 
-        if (weather.getSky() < 5) {
-            weatherInfo += "️️\uD83C\uDF24 ";
-        } else {
-            weatherInfo += "☁️ ";
+        if (weather.getPty() == 1 || weather.getPty() == 4) {
+            return "\uD83C\uDF27️" + weatherInfo;
         }
-        weatherInfo += weather.getTmp() + "°C";
-        return weatherInfo;
+        if (weather.getPty() == 2 || weather.getPty() == 3) {
+            return "️️\uD83C\uDF28️" + weatherInfo;
+        }
+        if (weather.getSky() == 1) {
+            return "\uD83C\uDF24" + weatherInfo;
+        }
+        if (weather.getSky() == 3) {
+            return "\uD83C\uDF1E" + weatherInfo;
+        }
+        return "\u2601" + weatherInfo;
     }
 }
