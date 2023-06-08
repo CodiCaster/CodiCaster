@@ -1,10 +1,13 @@
 package com.ll.codicaster.boundedContext.weather.service;
 
+import com.ll.codicaster.base.event.EventAfterSaveWeather;
+import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import com.ll.codicaster.boundedContext.weather.repository.WeatherRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +20,7 @@ public class WeatherService {
 
     private final WeatherRepository weatherRepository;
     private final WeatherAPIService weatherAPIService;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public Long save(Location location) {
@@ -59,6 +63,14 @@ public class WeatherService {
         if (weather.getSky() == 3) {
             return "\uD83C\uDF1E" + weatherInfo;
         }
-        return "\u2601" + weatherInfo;
+        return "☁" + weatherInfo;
+    }
+
+    public void whenAfterWrite(Rq rq, Long articleId) {
+        Location location = rq.getCurrentLocation();
+        Weather weather = getWeather(location);
+        weather.setArticleId(articleId);
+        Weather savedWeather = weatherRepository.save(weather);
+        publisher.publishEvent(new EventAfterSaveWeather(this, savedWeather.getId(), articleId));
     }
 }

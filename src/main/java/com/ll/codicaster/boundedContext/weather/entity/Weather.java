@@ -15,6 +15,7 @@ public class Weather {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+    private Long articleId;
     private Double tmp;     // 온도 TMP
     private Double pop;     // 강수 확률
     private Integer pty;    //강수 형태 0 ~ 4

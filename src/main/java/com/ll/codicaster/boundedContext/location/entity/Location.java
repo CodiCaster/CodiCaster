@@ -18,6 +18,7 @@ public class Location {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+    private Long articleId;
     private Double latitude; //gps 로 반환받은 위도
     private Double longitude; //gps 로 반환받은 경도
     private Integer pointX; //x 좌표로 변환된 위도

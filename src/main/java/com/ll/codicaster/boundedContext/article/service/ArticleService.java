@@ -17,11 +17,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.ll.codicaster.base.event.EventAfterWrite;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.service.LocationService;
 import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import com.ll.codicaster.boundedContext.weather.service.WeatherService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,7 +48,7 @@ public class ArticleService {
     private final LocationService locationService;
     private final WeatherService weatherService;
     private final ImageRepository imageRepository;
-
+    private final ApplicationEventPublisher publisher;
     private final Rq rq;
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -71,9 +73,6 @@ public class ArticleService {
         Set<String> tagSet = extractHashTagList(form.getContent());
         updateUserTagMap(actor, tagSet);
 
-        Location location = rq.getCurrentLocation();
-        Long locationId = locationService.save(location);
-        Long weatherId = weatherService.save(location);
 
         Article article = Article.builder()
                 .title(form.getTitle())
@@ -83,11 +82,10 @@ public class ArticleService {
                 .modifyDate(LocalDateTime.now())
 //                .customDate(form.getCustomDate())
                 .tagSet(tagSet)
-                .locationId(locationId)
-                .weatherId(weatherId)
                 .build();
 
-        articleRepository.save(article);
+        Long id = articleRepository.save(article).getId();
+        publisher.publishEvent(new EventAfterWrite(this, rq, id));
 
         // 이미지 파일이 있으면 저장
         if (!imageFile.isEmpty()) {
@@ -354,4 +352,15 @@ public class ArticleService {
     }
 
 
+    public void whenAfterSaveLocation(Long locationId, Long articleId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
+        article.setLocationId(locationId);
+    }
+
+    public void whenAfterSaveWeather(Long weatherId, Long articleId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
+        article.setWeatherId(weatherId);
+    }
 }

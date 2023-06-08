@@ -1,6 +1,9 @@
 package com.ll.codicaster.boundedContext.location.service;
 
+import com.ll.codicaster.base.event.EventAfterSaveLocation;
+import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.base.rsData.RsData;
+import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.location.dto.LocationDTO;
 import com.ll.codicaster.boundedContext.location.entity.Point;
 import com.ll.codicaster.boundedContext.location.entity.Location;
@@ -8,6 +11,7 @@ import com.ll.codicaster.boundedContext.location.repository.LocationRepository;
 import com.ll.codicaster.boundedContext.member.entity.Member;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +24,12 @@ import java.util.Optional;
 public class LocationService {
     private final LocationRepository locationRepository;
     private final KakaoAPIService kakaoAPIService;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
-    public Long save(Location location) {
+    public Long save(Location location, Long articleId) {
         Location newLocation = Location.builder()
+                .articleId(articleId)
                 .latitude(location.getLatitude())
                 .longitude(location.getLongitude())
                 .pointX(location.getPointX())
@@ -38,6 +44,13 @@ public class LocationService {
     public RsData delete(Long locationId) {
         locationRepository.deleteById(locationId);
         return RsData.of("S-1", "위치 정보를 삭제하였습니다.");
+    }
+
+    public void whenAfterWrite(Rq rq, Long articleId) {
+        Location location = rq.getCurrentLocation();
+        location.setArticleId(articleId);
+        Long newId = save(location, articleId);
+        publisher.publishEvent(new EventAfterSaveLocation(this, newId, articleId));
     }
 
     public RsData<Location> getCurrentLocation(LocationDTO locationDTO) {
@@ -164,11 +177,12 @@ public class LocationService {
 
 
     //10진수를 radian(라디안)으로 변환
-    private static double deg2rad(double deg){
-        return (deg * Math.PI/180.0);
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
     }
+
     //radian(라디안)을 10진수로 변환
-    private static double rad2deg(double rad){
+    private static double rad2deg(double rad) {
         return (rad * 180 / Math.PI);
     }
 
