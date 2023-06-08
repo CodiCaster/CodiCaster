@@ -71,7 +71,6 @@ public class ArticleService {
         Set<String> tagSet = extractHashTagList(form.getContent());
         updateUserTagMap(actor, tagSet);
 
-
         Location location = rq.getCurrentLocation();
         Long locationId = locationService.save(location);
         Long weatherId = weatherService.save(location);
@@ -82,7 +81,7 @@ public class ArticleService {
                 .author(actor)
                 .createDate(LocalDateTime.now())
                 .modifyDate(LocalDateTime.now())
-                .customDate(form.getCustomDate())
+//                .customDate(form.getCustomDate())
                 .tagSet(tagSet)
                 .locationId(locationId)
                 .weatherId(weatherId)
@@ -227,7 +226,9 @@ public class ArticleService {
     public String getWeatherInfo(Article article) {
         Weather weather = weatherService.getWeather(article.getWeatherId());
         String weatherInfo = weatherService.getWeatherInfo(weather);
-        return article.getCustomDate() + weatherInfo;
+        //날짜 선택 기능 - 고도화 작업
+        //weatherInfo = article.getCustomDate() + weatherInfo;
+        return weatherInfo;
     }
 
     public Article findArticleById(Long id) {

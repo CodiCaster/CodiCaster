@@ -35,9 +35,10 @@ public class ArticleController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/write")
-    public String articleWrite(Model model) {
-        LocalDate currentDate = LocalDate.now();
-        model.addAttribute("currentDate", currentDate);
+    public String articleWrite() {
+//        날짜 선택 기능 - 고도화 작업에 해당
+//        LocalDate currentDate = LocalDate.now();
+//        model.addAttribute("currentDate", currentDate);
         return "usr/article/write";
     }
 

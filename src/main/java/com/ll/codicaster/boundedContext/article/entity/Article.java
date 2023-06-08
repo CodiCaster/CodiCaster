@@ -47,7 +47,8 @@ public class Article {
     private Member author;
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
-    private LocalDate customDate;
+    //    날짜 선택 기능 구현시 사용
+//    private LocalDate customDate;
     private Long weatherId;
     private Long locationId;
 

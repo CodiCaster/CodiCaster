@@ -5,7 +5,8 @@
 
         function validateForm() {
             var title = document.getElementById("title").value;
-            var customDate = document.getElementById("customDate").value;
+            //날짜 선택하는 기능
+            // var customDate = document.getElementById("customDate").value;
             var content = document.getElementById("content").value;
             var imageFile = document.getElementById("imageFile").value;
 
@@ -13,10 +14,11 @@
                 toastr.warning("제목을 입력해주세요.");
                 return false;
             }
-            if (customDate.trim().length === 0) {
-                toastr.warning("널짜를 선택해주세요.");
-                return false;
-            }
+            //날짜 선택하는 기능
+            // if (customDate.trim().length === 0) {
+            //     toastr.warning("널짜를 선택해주세요.");
+            //     return false;
+            // }
 
             if (content.trim().length === 0) {
                 toastr.warning("내용을 입력해주세요.");
@@ -52,12 +54,13 @@
                             <input class="input input-bordered w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                    id="title" type="text" placeholder="Title" name="title">
                         </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" htmlFor="customDate">
-                                날짜
-                            </label>
-                            <input type="date" id="customDate" name="customDate" max="${currentDate}">
-                        </div>
+                        <!--날짜 선택하는 기능-->
+<!--                        <div class="mb-4">-->
+<!--                            <label class="block text-gray-700 text-sm font-bold mb-2" htmlFor="customDate">-->
+<!--                                날짜-->
+<!--                            </label>-->
+<!--                            <input type="date" id="customDate" name="customDate" max="${currentDate}">-->
+<!--                        </div>-->
                         <div>
 
                         </div>
