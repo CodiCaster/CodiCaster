@@ -89,6 +89,13 @@ public class MemberService {
         member.updateInfo(nickname, bodytype, gender);
     }
 
+    @Transactional
+    public void deleteMember(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. ID=" + memberId));
+        memberRepository.delete(member);
+    }
+
     //유저가 가장 많이 이용한 태그
     public List<String> getMostUsedTags() {
         List<String> mostUsedTags = new ArrayList<>();

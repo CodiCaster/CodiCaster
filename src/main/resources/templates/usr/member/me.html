@@ -105,6 +105,15 @@
             isNicknameValid = false;
             enableSubmitButton();
         }
+
+        function confirmDelete() {
+            if (confirm('정말로 탈퇴하시겠습니까?')) {
+                document.getElementById('deleteAccountForm').submit();
+            } else {
+                window.location.href = '/usr/member/login';
+            }
+        }
+
     </script>
     <style>
         .form-group {
@@ -228,6 +237,11 @@
                         <div class="mt-2">
                             <span class="badge badge-ghost" th:text="${@rq.getWeather}"></span>
                         </div>
+                    </div>
+                    <div class="mt-4">
+                        <form id="deleteAccountForm" th:action="@{/usr/member/deleteAccount}" method="post">
+                            <button type="submit" class="btn btn-danger" onclick="confirmDelete()">회원탈퇴</button>
+                        </form>
                     </div>
                 </div>
             </div>
