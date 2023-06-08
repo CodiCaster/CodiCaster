@@ -1,5 +1,6 @@
 package com.ll.codicaster.boundedContext.article.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +47,7 @@ public class Article {
     private Member author;
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
+    private LocalDate customDate;
     private Long weatherId;
     private Long locationId;
 
@@ -57,17 +59,14 @@ public class Article {
 
     @ManyToMany
     @JoinTable(
-        name = "article_likes",
-        joinColumns = @JoinColumn(name = "article_id"),
-        inverseJoinColumns = @JoinColumn(name = "member_id")
+            name = "article_likes",
+            joinColumns = @JoinColumn(name = "article_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id")
     )
     private Set<Member> likedMembers = new HashSet<>();
-
 
     public int getLikesCount() {
         return likedMembers.size();
     }
-
-
 
 }

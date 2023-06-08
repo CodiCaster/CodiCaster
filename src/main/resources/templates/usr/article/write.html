@@ -1,31 +1,36 @@
 <html layout:decorate="~{usr/layout/layout.html}">
 <head>
-  <title>게시글 작성하기</title>
-  <script>
+    <title>게시글 작성하기</title>
+    <script>
 
-    function validateForm() {
-      var title = document.getElementById("title").value;
-      var content = document.getElementById("content").value;
-      var imageFile = document.getElementById("imageFile").value;
+        function validateForm() {
+            var title = document.getElementById("title").value;
+            var customDate = document.getElementById("customDate").value;
+            var content = document.getElementById("content").value;
+            var imageFile = document.getElementById("imageFile").value;
 
-      if (title.trim().length === 0) {
-        toastr.warning("제목을 입력해주세요.");
-        return false;
-      }
+            if (title.trim().length === 0) {
+                toastr.warning("제목을 입력해주세요.");
+                return false;
+            }
+            if (customDate.trim().length === 0) {
+                toastr.warning("널짜를 선택해주세요.");
+                return false;
+            }
 
-      if (content.trim().length === 0) {
-        toastr.warning("내용을 입력해주세요.");
-        return false;
-      }
+            if (content.trim().length === 0) {
+                toastr.warning("내용을 입력해주세요.");
+                return false;
+            }
 
-      if (imageFile.trim().length === 0) {
-        toastr.warning("파일을 첨부해주세요.");
-        return false;
-      }
+            if (imageFile.trim().length === 0) {
+                toastr.warning("파일을 첨부해주세요.");
+                return false;
+            }
 
-      return true;
-    }
-  </script>
+            return true;
+        }
+    </script>
 </head>
 <body>
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">
@@ -38,16 +43,26 @@
             <div class="card bg-base-100 shadow-xl">
                 <div class="card-body">
                     <br>
-                    <form th:action="@{/usr/article/writepro}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+                    <form th:action="@{/usr/article/writepro}" method="post" encType="multipart/form-data"
+                          onSubmit="return validateForm()">
                         <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
                                 제목
                             </label>
                             <input class="input input-bordered w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                    id="title" type="text" placeholder="Title" name="title">
                         </div>
                         <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="content">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" htmlFor="customDate">
+                                날짜
+                            </label>
+                            <input type="date" id="customDate" name="customDate" max="${currentDate}">
+                        </div>
+                        <div>
+
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
                                 내용
                             </label>
                             <textarea
@@ -55,7 +70,7 @@
                                     id="content" placeholder="Content" name="content"></textarea>
                         </div>
                         <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="imageFile">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" htmlFor="imageFile">
                                 이미지 업로드
                             </label>
                             <input type="file" id="imageFile" name="imageFile"

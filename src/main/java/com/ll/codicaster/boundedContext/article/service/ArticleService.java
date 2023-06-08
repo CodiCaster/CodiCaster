@@ -1,3 +1,4 @@
+
 package com.ll.codicaster.boundedContext.article.service;
 
 import java.io.File;
@@ -81,6 +82,7 @@ public class ArticleService {
                 .author(actor)
                 .createDate(LocalDateTime.now())
                 .modifyDate(LocalDateTime.now())
+                .customDate(form.getCustomDate())
                 .tagSet(tagSet)
                 .locationId(locationId)
                 .weatherId(weatherId)
@@ -222,9 +224,10 @@ public class ArticleService {
         return locationService.getLocation(article.getLocationId()).getAddress();
     }
 
-    public String getWeatherInfo(Long weatherId) {
-        Weather weather = weatherService.getWeather(weatherId);
-        return weatherService.getWeatherInfo(weather);
+    public String getWeatherInfo(Article article) {
+        Weather weather = weatherService.getWeather(article.getWeatherId());
+        String weatherInfo = weatherService.getWeatherInfo(weather);
+        return article.getCustomDate() + weatherInfo;
     }
 
     public Article findArticleById(Long id) {
