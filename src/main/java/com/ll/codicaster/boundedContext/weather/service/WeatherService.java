@@ -53,14 +53,26 @@ public class WeatherService {
         return weatherRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Weather Found with id: " + id));
     }
 
-    public String[] getCurrentWeatherInfo(Long id) {
-        Weather weather = weatherRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Weather Found with id: " + id));
-        return new String[]{String.valueOf(weather.getSky()), String.valueOf(weather.getTmp())};
-    }
-
     @Transactional
     public RsData deleteById(Long weatherId) {
         weatherRepository.deleteById(weatherId);
         return RsData.of("S-1", "날씨 정보를 삭제하였습니다.");
+    }
+
+    public String getWeatherInfo(Location location) {
+        Weather weather = getWeather(location);
+        return getWeatherInfo(weather);
+    }
+
+    public String getWeatherInfo(Weather weather) {
+        String weatherInfo = "";
+
+        if (weather.getSky() < 5) {
+            weatherInfo += "️️\uD83C\uDF24 ";
+        } else {
+            weatherInfo += "☁️ ";
+        }
+        weatherInfo += weather.getTmp() + "°C";
+        return weatherInfo;
     }
 }

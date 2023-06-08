@@ -196,4 +196,9 @@ public class Rq {
         }
         return location;
     }
+
+    public String getWeatherInfo() {
+        Location location = (Location) session.getAttribute("location");
+        return weatherService.getWeatherInfo(location);
+    }
 }

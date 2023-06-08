@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.service.LocationService;
+import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import com.ll.codicaster.boundedContext.weather.service.WeatherService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -221,17 +222,9 @@ public class ArticleService {
         return locationService.getLocation(article.getLocationId()).getAddress();
     }
 
-    public String[] getWeatherInfo(Long id) {
-        String[] weatherInfo = weatherService.getCurrentWeatherInfo(id);
-
-        if (weatherInfo[0].compareTo("5") < 0) {
-            weatherInfo[0] = "1";
-        } else {
-            weatherInfo[0] = "2";
-        }
-        weatherInfo[1] += "°C";
-
-        return weatherInfo;
+    public String getWeatherInfo(Long weatherId) {
+        Weather weather = weatherService.getWeather(weatherId);
+        return weatherService.getWeatherInfo(weather);
     }
 
     public Article findArticleById(Long id) {
