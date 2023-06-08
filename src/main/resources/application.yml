@@ -1,8 +1,4 @@
 spring:
-  mvc:
-    hiddenmethod:
-      filter:
-        enabled: true
   profiles:
     active: dev
     include: secret
@@ -48,7 +44,7 @@ spring:
 logging:
   level:
     root: INFO
-    com.project.codycaster: DEBUG
+    com.ll.codicaster: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
     org.hibernate.orm.jdbc.extract: TRACE
 server:
@@ -58,7 +54,8 @@ server:
       enabled: true
       force: true
 file:
-  upload-dir: C:\Users\82102\IdeaProjects\CodiCaster__-main\images
+  upload-dir: /Users/hojun/Desktop/CodiCaster/images
 custom:
   site:
     baseUrl: http://localhost:8080
+

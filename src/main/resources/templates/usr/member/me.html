@@ -1,7 +1,7 @@
 <html layout:decorate="~{usr/layout/layout.html}">
 
 <head>
-    <title>내 정보</title>
+    <title>마이페이지</title>
 
     <script>
         function showLoadingSpinner() {
@@ -33,25 +33,133 @@
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
 
-            var form = document.getElementById('regionDTO');
+            var form = document.getElementById('locationDTO');
             form.latitude.value = latitude;
             form.longitude.value = longitude;
         }
 
         function submitForm() {
-            var form = document.getElementById('regionDTO');
+            var form = document.getElementById('locationDTO');
             form.submit();
         }
+
+        var isNicknameValid = false; // 닉네임 중복 여부를 저장하는 변수
+
+        function checkNickname() {
+            var nickname = document.getElementById('nickname').value;
+            var submitBtn = document.getElementById('submitBtn');
+
+            nickname = nickname.trim(); // 좌우 공백 제거
+
+            if (nickname.length === 0) {
+                toastWarning('닉네임을 입력해주세요.');
+                submitBtn.disabled = true;
+                return;
+            }
+
+            if (nickname.length < 4) {
+                toastWarning('닉네임을 4자 이상 입력해주세요.');
+                submitBtn.disabled = true;
+                return;
+            }
+
+            if (nickname.indexOf(' ') !== -1) {
+                toastWarning('닉네임에는 공백을 사용할 수 없습니다.');
+                submitBtn.disabled = true;
+                return false;
+            }
+
+
+            // AJAX request
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/usr/member/checkNickname?nickname=' + encodeURIComponent(nickname), true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.resultCode === 'F-1') {
+                        toastWarning(response.msg);
+                        submitBtn.disabled = true;
+                        isNicknameValid = false;
+                    } else {
+                        toastNotice(response.msg);
+                        isNicknameValid = true;
+                        enableSubmitButton();
+                    }
+                }
+            };
+            xhr.send();
+        }
+
+        function enableSubmitButton() {
+            var submitBtn = document.getElementById('submitBtn');
+            var bodyTypeChecked = document.querySelector('input[name="bodytype"]:checked');
+
+            if (isNicknameValid && bodyTypeChecked) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        function updateNickname() {
+            isNicknameValid = false;
+            enableSubmitButton();
+        }
+
+        function confirmDelete() {
+            if (confirm('정말로 탈퇴하시겠습니까?')) {
+                document.getElementById('deleteAccountForm').submit();
+            } else {
+                window.location.href = '/usr/member/login';
+            }
+        }
+
     </script>
+    <style>
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .bodytype-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bodytype-item {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+
+        .bodytype-item label{
+            margin-left: 2px;
+        }
+
+        .radio-button-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .radio-button-item {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+
+        .radio-button-item label {
+            margin-left: 2px;
+        }
+    </style>
 </head>
 
 <body>
-<main layout:fragment="main" className="flex-grow flex items-center justify-center ">
+<main layout:fragment="main" class="flex-grow flex items-center justify-center ">
 
     <div th:if="${@rq.isLogin}" class="max-w-2xl w-full px-4">
         <h1 class="mb-4">
             <i class="fa-solid fa-user"></i>
-            내 정보
+            마이페이지
         </h1>
 
         <div class="flex flex-col gap-4">
@@ -64,7 +172,7 @@
 
                     <div class="mt-4">
                         <div>
-                            <i class="fa-brands fa-instagram"></i>
+                            <i class="fa-solid fa-id-badge"></i>
                             닉네임
                         </div>
                         <div class="mt-2">
@@ -74,64 +182,139 @@
 
                     <div class="mt-4">
                         <div>
-                            <i class="fa-solid fa-person-half-dress"></i>
+                            <i class="fa-solid fa-venus-mars"></i>
                             성별
                         </div>
                         <div class="mt-2">
+                            <span class="badge badge-accent" th:text="${@rq.member.gender}"></span>
                         </div>
                     </div>
-                    <div class="mt-4">
-                        <div>
-                            <i class="fa-brands fa-instagram"></i>
-                            주 활동 지역 :
-                        </div>
-                        <div class="mt-2">
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <div>
-                            <i class="fa-brands fa-instagram"></i>
-                            현재 위치 :
-<!--                            <span th:if="${@rq.member.getRegionId() == NULL}" class="badge badge-primary"-->
-<!--                                  th:text="서울특별시 동대문구 답십리동"></span>-->
-                        </div>
-                        <form id="regionDTO" th:action="@{/usr/location/save}" method="post">
-                            <input type="hidden" name="latitude" th:value="${latitude}">
-                            <input type="hidden" name="longitude" th:value="${longitude}">
-                            <button id="submitButton" type="button" onClick="getLocationAndSubmit()">위치 정보 갱신</button>
-                            <div id="loadingSpinner">
-                                <div class="lds-roller">
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                </div>
-                            </div>
 
-                        </form>
+                    <div class="mt-4">
+                        <div>
+                            <i class="fa-solid fa-temperature-low"></i>
+                            나의 체질
+                        </div>
                         <div class="mt-2">
-                            <!--                            <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>-->
+                            <span class="badge badge-secondary" th:text="${@rq.member.bodytype}"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <div>
+                            <i class="fa-solid fa-location-dot"></i>
+                            현재 위치
+                        </div>
+                        <div class="mt-2">
+                            <form id="locationDTO" th:action="@{/usr/location/update}" method="post">
+                                <span class="badge badge-ghost" th:text="${@rq.getAddress()}"></span>
+                                <input type="hidden" name="latitude" th:value="${latitude}">
+                                <input type="hidden" name="longitude" th:value="${longitude}">
+                                <button id="submitButton" type="button" class="btn btn-link"
+                                        onClick="getLocationAndSubmit()">업데이트
+                                </button>
+                                <div id="loadingSpinner">
+                                    <div class="lds-roller">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     <div class="mt-4">
                         <div>
-                            <i class="fa-brands fa-instagram"></i>
-                            현재 날씨 :
+                            <i class="fa-solid fa-cloud"></i>
+                            현재 날씨
                         </div>
+
                         <div class="mt-2">
-                            <!--                            <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>-->
+                            <span class="badge badge-ghost" th:text="${@rq.getWeatherInfo}"></span>
                         </div>
+                    </div>
+                    <div class="mt-4 text-right">
+                        <form id="deleteAccountForm" th:action="@{/usr/member/deleteAccount}" method="post">
+                            <button type="submit" class="btn btn-danger" onclick="confirmDelete()">회원탈퇴</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
 
-        <a href="/usr/member/pop" class="mt-10 mb-4 block">
-            <i class="fa-solid fa-chart-line"></i>
+        <div class="my-4"></div>
+
+        <div class="flex flex-col gap-4">
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <i class="fa-solid fa-user-plus"></i>
+                        수정하기
+                    </h2>
+                    <br>
+                    <form th:action="@{/usr/member/newInfo}" th:object="${user}" method="post">
+                        <div class="form-group">
+                            <label for="nickname"><i class="fa-solid fa-id-badge"></i> 닉네임 </label>
+                            <br>
+                            <input type="text" name="nickname" id="nickname" class="input input-bordered input-primary w-full max-w-xs" placeholder="수정할 닉네임을 입력해주세요" required
+                                   minlength="3" onkeyup="updateNickname()"/>
+                            <button type="button" class="btn btn-ghost" onclick="checkNickname()" id="checkNicknameBtn">확인</button>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-venus-mars"></i> 성별</label>
+                            <br>
+                            <div class="radio-button-group">
+                                <div class="radio-button-item">
+                                    <input type="radio" id="male" name="gender" value="남자" class="radio radio-accent" onchange="enableSubmitButton()" />
+                                    <label for="male">남성</label>
+                                </div>
+                                <div class="radio-button-item">
+                                    <input type="radio" id="female" name="gender" value="여자" class="radio radio-accent" onchange="enableSubmitButton()" />
+                                    <label for="female">여성</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-temperature-low"></i> 나의 체질 </label>
+                            <br>
+                            <div class="bodytype-group">
+                                <div class="bodytype-item">
+                                    <input type="radio" id="veryCold" name="bodytype" value="추위 많이 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <label for="veryCold">추위 많이 탐</label>
+                                </div>
+                                <div class="bodytype-item">
+                                    <input type="radio" id="cold" name="bodytype" value="추위 조금 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <label for="cold">추위 조금 탐</label>
+                                </div>
+                                <div class="bodytype-item">
+                                    <input type="radio" id="normal" name="bodytype" value="보통" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <label for="normal">보통</label>
+                                </div>
+                                <div class="bodytype-item">
+                                    <input type="radio" id="hot" name="bodytype" value="더위 조금 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <label for="hot">더위 조금 탐</label>
+                                </div>
+                                <div class="bodytype-item">
+                                    <input type="radio" id="veryHot" name="bodytype" value="더위 많이 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <label for="veryHot">더위 많이 탐</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group flex justify-end">
+                            <button type="submit" class="btn btn-primary" id="submitBtn" disabled>수정 완료</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <a href="/usr/article/mylist" class="mt-10 mb-4 block">
+            <i class="fa-solid fa-list"></i>
             내 게시글
 
             <span class="float-right text-sm">

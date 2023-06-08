@@ -36,7 +36,14 @@ out/
 ### VS Code ###
 .vscode/
 
+
+
 ### Custom ###
 application-secret.yml
-
+application.yml
 src/main/generated
+src/main/resources/application.yml
+src/main/resources/application-secret.yml
+src/main/resources/application-secert.yml.default
+# Ignore images folder
+/images/

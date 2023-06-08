@@ -1,5 +1,8 @@
 package com.ll.codicaster.boundedContext.member.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -7,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.member.entity.Member;
 import com.ll.codicaster.boundedContext.member.repository.MemberRepository;
@@ -18,9 +22,8 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true) // 아래 메서드들이 전부 readonly 라는 것을 명시, 나중을 위해
 public class MemberService {
     private final PasswordEncoder passwordEncoder;
-
     private final MemberRepository memberRepository;
-    public Member updateMemberInfo;
+    private  final Rq rq;
 
     public Optional<Member> findByUsername(String username) {
         return memberRepository.findByUsername(username);
@@ -80,19 +83,37 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateMemberInfo(Long memberId, String nickname, String bodytype) {
+    public void updateMemberInfo(Long memberId, String nickname, String bodytype, String gender) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. ID=" + memberId));
-
-        member.updateInfo(nickname, bodytype);
+        member.updateInfo(nickname, bodytype, gender);
     }
 
     @Transactional
-    public void updateRegionId(Long memberId, Long regionId) {
+    public void deleteMember(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. ID=" + memberId));
-        member.updateRegionId(regionId);
-        memberRepository.save(member);
+            .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. ID=" + memberId));
+        memberRepository.delete(member);
     }
 
+    //유저가 가장 많이 이용한 태그
+    public List<String> getMostUsedTags() {
+        List<String> mostUsedTags = new ArrayList<>();
+        int maxCount = 0;
+
+        Map<String, Integer> tagMap = rq.getMember().getTagMap();
+
+        for (Map.Entry<String, Integer> entry : tagMap.entrySet()) {
+            int count = entry.getValue();
+            if (count > maxCount) {
+                maxCount = count;
+                mostUsedTags.clear();
+                mostUsedTags.add(entry.getKey());
+            } else if (count == maxCount) {
+                mostUsedTags.add(entry.getKey());
+            }
+        }
+
+        return mostUsedTags;
+    }
 }

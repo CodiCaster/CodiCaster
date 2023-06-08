@@ -1,10 +1,16 @@
 package com.ll.codicaster.base.rq;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 
 import com.ll.codicaster.base.rsData.RsData;
-import com.ll.codicaster.boundedContext.region.entity.Region;
+import com.ll.codicaster.boundedContext.location.entity.LocationConstants;
+import com.ll.codicaster.boundedContext.location.entity.Location;
+import com.ll.codicaster.boundedContext.location.service.LocationService;
+import com.ll.codicaster.boundedContext.weather.entity.Weather;
+import com.ll.codicaster.boundedContext.weather.service.WeatherService;
 import com.ll.codicaster.standard.util.Ut;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.MessageSource;
@@ -26,6 +32,9 @@ import jakarta.servlet.http.HttpSession;
 @RequestScope
 public class Rq {
     private final MemberService memberService;
+    private final LocationService locationService;
+    private final WeatherService weatherService;
+
     private final MessageSource messageSource;
     private final LocaleResolver localeResolver;
     private Locale locale;
@@ -36,14 +45,19 @@ public class Rq {
     private final User user;
     private Member member = null; // 레이지 로딩, 처음부터 넣지 않고, 요청이 들어올 때 넣는다.
 
-    public Rq(MemberService memberService, MessageSource messageSource, LocaleResolver localeResolver,
+
+    public Rq(MemberService memberService, LocationService locationService, WeatherService weatherService, MessageSource messageSource, LocaleResolver localeResolver,
               HttpServletRequest req, HttpServletResponse resp, HttpSession session) {
         this.memberService = memberService;
+        this.locationService = locationService;
+        this.weatherService = weatherService;
         this.messageSource = messageSource;
         this.localeResolver = localeResolver;
         this.req = req;
         this.resp = resp;
         this.session = session;
+
+
         // 현재 로그인한 회원의 인증정보를 가져옴
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -77,6 +91,22 @@ public class Rq {
         return member;
     }
 
+    public String getAddress() {
+        Location location = (Location) session.getAttribute("location");
+        if (location == null) {
+            location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
+                    LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
+            setLocation(location);
+        }
+        return location.getAddress();
+    }
+
+    public String getCurrentDate() {
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd(E)", Locale.KOREAN);
+        return currentDate.format(formatter);
+    }
+
     public String getCText(String code, String... args) {
         return messageSource.getMessage(code, args, getLocale());
     }
@@ -84,7 +114,6 @@ public class Rq {
     private Locale getLocale() {
         if (locale == null)
             locale = localeResolver.resolveLocale(req);
-
         return locale;
     }
 
@@ -136,5 +165,28 @@ public class Rq {
     // 메세지에 ttl 적용
     private String msgWithTtl(String msg) {
         return Ut.url.encode(msg) + ";ttl=" + new Date().getTime();
+    }
+
+    public void setLocation(Location location) {
+        session.setAttribute("location", location);
+    }
+
+    public HttpSession getSession() {
+        return this.session;
+    }
+
+    public Location getCurrentLocation() {
+        Location location = (Location) session.getAttribute("location");
+        if (location == null) {
+            location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
+                    LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
+            setLocation(location);
+        }
+        return location;
+    }
+
+    public String getWeatherInfo() {
+        Location location = (Location) session.getAttribute("location");
+        return weatherService.getWeatherInfo(location);
     }
 }

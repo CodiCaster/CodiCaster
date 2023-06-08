@@ -1,15 +1,24 @@
 package com.ll.codicaster.boundedContext.member.entity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.ll.codicaster.base.baseEntity.BaseEntity;
+import com.ll.codicaster.boundedContext.article.entity.Article;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.MapKeyColumn;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -33,11 +42,14 @@ public class Member extends BaseEntity {
 
     private String bodytype;
 
-    private Long regionId;
+    private String gender;
 
-    public void updateRegionId(Long regionId) {
-        this.regionId = regionId;
-    }
+    @ElementCollection
+    @CollectionTable(name = "member_tagMap", joinColumns = @JoinColumn(name = "member_id"))
+    @MapKeyColumn(name = "tag_type")
+    @Column(name = "tag_count")
+    private Map<String, Integer> tagMap;
+
 
     // 이 함수 자체는 만들어야 한다. 스프링 시큐리티 규격
     public List<? extends GrantedAuthority> getGrantedAuthorities() {
@@ -58,8 +70,39 @@ public class Member extends BaseEntity {
         return "admin".equals(username);
     }
 
-    public void updateInfo(String nickname, String bodytype) {
+    public void updateInfo(String nickname, String bodytype, String gender) {
         this.nickname = nickname;
         this.bodytype = bodytype;
+        this.gender = gender;
     }
+
+    //유저가 가장 많이 이용한 태그
+    public List<String> getMostUsedTags() {
+        List<String> mostUsedTags = new ArrayList<>();
+        int maxCount = 0;
+
+        Map<String, Integer> tagMap = this.getTagMap();
+
+        for (Map.Entry<String, Integer> entry : tagMap.entrySet()) {
+            int count = entry.getValue();
+            if (count > maxCount) {
+                maxCount = count;
+                mostUsedTags.clear();
+                mostUsedTags.add(entry.getKey());
+            } else if (count == maxCount) {
+                mostUsedTags.add(entry.getKey());
+            }
+        }
+
+        return mostUsedTags;
+    }
+
+    @ManyToMany(mappedBy = "likedMembers")
+    private Set<Article> likedArticles = new HashSet<>();
+
+
+
+
+
+
 }
