@@ -40,6 +40,7 @@ out/
 
 ### Custom ###
 application-secret.yml
+application.yml
 src/main/generated
 src/main/resources/application.yml
 src/main/resources/application-secret.yml
