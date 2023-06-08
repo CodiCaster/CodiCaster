@@ -3,16 +3,16 @@ spring:
     active: dev
     include: secret
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/codicaster_dev?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://127.0.0.1:3306/codicaster_dev?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
     username: root
-    password: 1234
+    password:
   security:
     oauth2:
       client:
         registration:
           kakao:
-            scope:
+            scope: profile_nickname, profile_image, account_email, gender, age_range
             client-name: Kakao
             authorization-grant-type: authorization_code
             redirect-uri: "${custom.site.baseUrl}/{action}/oauth2/code/{registrationId}"
@@ -44,7 +44,7 @@ spring:
 logging:
   level:
     root: INFO
-    com.ll.codicaster: DEBUG
+    com.ll.gramgram_ai: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
     org.hibernate.orm.jdbc.extract: TRACE
 server:
@@ -54,8 +54,10 @@ server:
       enabled: true
       force: true
 file:
-  upload-dir: /Users/hojun/Desktop/CodiCaster/images
+  upload-dir: C:\Users\82102\IdeaProjects\CodiCaster__-main\images
 custom:
   site:
     baseUrl: http://localhost:8080
-
+naver-cloud-platform:
+  bucket-name: bucket-s
+  object-storage-url: https://kr.object.ncloudstorage.com
