@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.ll.codicaster.base.event.EventAfterDelete;
 import com.ll.codicaster.base.event.EventAfterWrite;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.service.LocationService;
@@ -201,12 +202,9 @@ public class ArticleService {
     public boolean deleteArticle(Long id) {
         //RsData 사용 필요해보임
         Article article = articleRepository.findById(id).get();
-        Long locationId = article.getLocationId();
-        Long weatherId = article.getWeatherId();
+        publisher.publishEvent(new EventAfterDelete(this, article.getId()));
 
         try {
-            locationService.delete(locationId);
-            weatherService.deleteById(weatherId);
             articleRepository.deleteById(id);
             return true;
         } catch (Exception e) {

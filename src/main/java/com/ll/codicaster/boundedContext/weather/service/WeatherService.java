@@ -73,4 +73,8 @@ public class WeatherService {
         Weather savedWeather = weatherRepository.save(weather);
         publisher.publishEvent(new EventAfterSaveWeather(this, savedWeather.getId(), articleId));
     }
+
+    public void whenAfterDelete(Long articleId) {
+        weatherRepository.deleteByArticleId(articleId);
+    }
 }

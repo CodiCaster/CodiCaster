@@ -1,7 +1,6 @@
 package com.ll.codicaster.base.event;
 
 import com.ll.codicaster.base.rq.Rq;
-import com.ll.codicaster.boundedContext.location.entity.Location;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 

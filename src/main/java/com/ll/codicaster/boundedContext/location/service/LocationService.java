@@ -53,6 +53,10 @@ public class LocationService {
         publisher.publishEvent(new EventAfterSaveLocation(this, newId, articleId));
     }
 
+    public void whenAfterDelete(Long articleId) {
+        locationRepository.deleteByArticleId(articleId);
+    }
+
     public RsData<Location> getCurrentLocation(LocationDTO locationDTO) {
         if (locationDTO.getLatitude().isEmpty() || locationDTO.getLongitude().isEmpty()) {
             return RsData.of("F-1", "위치 정보를 불러오지 못했습니다.");

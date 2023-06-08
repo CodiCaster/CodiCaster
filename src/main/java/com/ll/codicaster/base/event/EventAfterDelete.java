@@ -4,13 +4,11 @@ import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
 @Getter
-public class EventAfterSaveLocation extends ApplicationEvent {
-    private final Long locationId;
+public class EventAfterDelete extends ApplicationEvent {
     private final Long articleId;
 
-    public EventAfterSaveLocation(Object source, Long locationId, Long articleId) {
+    public EventAfterDelete(Object source, Long articleId) {
         super(source);
-        this.locationId = locationId;
         this.articleId = articleId;
     }
 }
