@@ -76,14 +76,13 @@ public class ArticleController {
         Article article = articleService.articleDetail(id);
         Member currentMember = rq.getMember();  // 현재 사용자 가져오기
         boolean isLiked = article.getLikedMembers().contains(currentMember);  // 현재 사용자가 이 게시글에 좋아요를 눌렀는지 판단
-        String weatherInfo = articleService.getWeatherInfo(article);
 
         model.addAttribute("article", article);
         model.addAttribute("image", article.getImage());
         model.addAttribute("likeCount", article.getLikesCount());
         model.addAttribute("isLiked", isLiked);
         model.addAttribute("address", article.getAddress());
-        model.addAttribute("weatherInfo", weatherInfo);
+        model.addAttribute("weatherInfo", article.getWeatherInfo());
 
         return "usr/article/detail";
     }

@@ -19,10 +19,6 @@ import java.util.stream.Stream;
 
 import com.ll.codicaster.base.event.EventAfterDelete;
 import com.ll.codicaster.base.event.EventAfterWrite;
-import com.ll.codicaster.boundedContext.location.entity.Location;
-import com.ll.codicaster.boundedContext.location.service.LocationService;
-import com.ll.codicaster.boundedContext.weather.entity.Weather;
-import com.ll.codicaster.boundedContext.weather.service.WeatherService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -46,8 +42,6 @@ import lombok.RequiredArgsConstructor;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final LocationService locationService;
-    private final WeatherService weatherService;
     private final ImageRepository imageRepository;
     private final ApplicationEventPublisher publisher;
     private final Rq rq;
@@ -82,7 +76,7 @@ public class ArticleService {
                 .createDate(LocalDateTime.now())
                 .modifyDate(LocalDateTime.now())
                 .address(rq.getAddress())
-//                .customDate(form.getCustomDate())
+                .weatherInfo(rq.getWeatherInfo())
                 .tagSet(tagSet)
                 .build();
 
@@ -213,14 +207,6 @@ public class ArticleService {
             return false;
         }
 
-    }
-
-    public String getWeatherInfo(Article article) {
-        Weather weather = weatherService.getWeather(article.getWeatherId());
-        String weatherInfo = weatherService.getWeatherInfo(weather);
-        //날짜 선택 기능 - 고도화 작업
-        //weatherInfo = article.getCustomDate() + weatherInfo;
-        return weatherInfo;
     }
 
     public Article findArticleById(Long id) {
