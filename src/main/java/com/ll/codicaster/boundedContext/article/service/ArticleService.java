@@ -1,4 +1,3 @@
-
 package com.ll.codicaster.boundedContext.article.service;
 
 import java.io.File;
@@ -118,7 +117,7 @@ public class ArticleService {
             article.setImage(image); // 이미지 정보를 게시글에 추가
         }
 
-        return RsData.of("S-1", "성공적으로 저장되었습니다", article);
+		return RsData.of("S-1", "성공적으로 저장되었습니다", article);
 
     }
 
@@ -275,16 +274,17 @@ public class ArticleService {
 			Article article = articleRepository.findById(articleId)
 				.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
 
+			Set<Member> likeSet = article.getLikedMembers();
+			likeSet.add(actor);
+			article.setLikedMembers(likeSet);
+			//이벤트 발행
+			publisher.publishEvent(new EventAfterLike(this, actor, article));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 
-            Set<Member> likeSet = article.getLikedMembers();
-            likeSet.add(actor);
-            article.setLikedMembers(likeSet);
-
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
+	}
 
 	@Transactional
 	public boolean unlikeArticle(Member actor, Long articleId) {
