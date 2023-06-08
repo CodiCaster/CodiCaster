@@ -40,11 +40,15 @@ public class WeatherAPIService {
         LocalTime nowTime = LocalTime.now();
         LocalDate nowDate = LocalDate.now();
 
-        LocalTime dateStandard = LocalTime.of(5, 10, 0);
+        LocalTime dateStandard = LocalTime.of(3, 10, 0);
 
         String baseTime = "0200";
         String nowDateStr = nowDate.toString().replaceAll("-", "");
+        if (nowTime.getMinute() >= 30) {
+            nowTime = nowTime.plusHours(1);
+        }
         String nowTimeStr = nowTime.toString().substring(0, 2) + "00";
+
 
         if (nowTime.isBefore(dateStandard)) {
             nowDate = nowDate.minusDays(1);
