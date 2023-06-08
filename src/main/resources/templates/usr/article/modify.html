@@ -1,0 +1,78 @@
+<html layout:decorate="~{usr/layout/layout.html}">
+<head>
+    <title>게시글 수정하기</title>
+    <script>
+        function validateForm() {
+            var title = document.getElementById("title").value;
+            var content = document.getElementById("content").value;
+
+            if (title.trim().length === 0) {
+                toastr.warning("제목을 입력해주세요.");
+                return false;
+            }
+
+            if (content.trim().length === 0) {
+                toastr.warning("내용을 입력해주세요.");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</head>
+<body>
+<main layout:fragment="main" class="flex-grow flex items-center justify-center">
+    <div class="max-w-2xl w-full px-4">
+        <h1 class="mb-4">
+            <i class="fa-solid fa-pen-to-square"></i>
+            게시글 수정하기
+        </h1>
+        <div class="flex flex-col gap-4">
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <br>
+                    <form th:action="@{/usr/article/modify/{id}(id=${article.id})}" th:object="${article}" method="post"
+                          enctype="multipart/form-data" onsubmit="return validateForm()">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
+                                제목
+                            </label>
+                            <input class="input input-bordered w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                   id="title" type="text" th:field="*{title}" placeholder="Title">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="content">
+                                내용
+                            </label>
+                            <textarea
+                                    class="textarea textarea-bordered w-full h-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="content" th:field="*{content}" placeholder="Content"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="imageFile">
+                                이미지 업로드
+                            </label>
+                            <input type="file" id="imageFile" name="imageFile"
+                                   class="file-input file-input-bordered file-input-accent w-full max-w-xs">
+                        </div>
+                        <div th:if="${article.image != null}" class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="currentImage">
+                                현재 이미지
+                            </label>
+                            <img id="currentImage" th:src="@{${article.image.filepath}}" alt="Article Image"
+                                 class="w-full rounded-md">
+                        </div>
+                        <div class="mb-4 flex justify-end">
+                            <button class="btn btn-primary" type="submit">
+                                수정
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
+

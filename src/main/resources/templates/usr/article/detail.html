@@ -1,0 +1,137 @@
+<html layout:decorate="~{usr/layout/layout.html}">
+<head>
+    <title>게시글 상세보기</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+<body>
+
+<main layout:fragment="main" class="flex-grow flex items-center justify-center">
+    <div class="max-w-2xl w-full px-4">
+        <h1 class="mb-4">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            게시글 상세보기
+        </h1>
+        <div class="flex flex-col gap-4">
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <i class="fa-solid fa-message-smile"></i>
+                        <span th:text="${article.title}"></span>
+                    </h2>
+                    <br>
+                    <div class="article-detail ml-4">
+                        <!-- 사용자 정보 영역 -->
+                        <div class="user-info flex items-start mb-4">
+                            <!-- 프로필 사진 -->
+                            <!-- <div class="profile-pic mr-2">
+                                <img src="/images/default-profile-pic.png" alt="User Image" class="w-24 h-24" />
+                            </div> -->
+                            <!-- 사용자 이름 및 생성 시간 -->
+                            <div class="username-and-date">
+                                <!-- 사용자 이름 -->
+                                <div class="username text-lg font-bold">
+                                    <span th:text="${article.author.nickname}"></span>
+                                </div>
+                                <!-- 생성 시간 -->
+                                <div class="create-datetime text-sm text-gray-600 ml-2">
+                                    <span th:text="${#temporals.format(article.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 게시글 내용 영역 -->
+                        <div class="article-content text-center">
+                            <!-- 게시글 이미지 -->
+                            <div class="article-image mb-2 relative flex justify-center items-center"
+                                 style="padding-top: 5%;">
+                                <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
+                                     alt="Article Image" class="object-scale-down"/>
+                            </div>
+
+                            <!-- 내용 -->
+                            <div class="content text-base" style="padding-top: 5%;">
+                                <span th:text="${article.content}"></span>
+                            </div>
+                        </div>
+
+                        <!-- 상호작용 영역 (좋아요) -->
+                        <div class="like">
+                            <!-- 좋아요 버튼 -->
+                            <button id="like-button" class="heart-icon text-red-500 mr-1">
+                                <!-- 좋아요 상태에 따라 아이콘 변경 -->
+                                <span th:if="${isLiked}">💕</span>
+                                <span th:unless="${isLiked}">🤍</span>
+                            </button>
+                            <!-- 좋아요 수 -->
+                            <span id="like-count" th:text="${article.getLikedMembers().size() != null ? article.getLikedMembers().size() : 0}">0</span>
+                        </div>
+
+
+                        <div class="back-to-list mt-4 flex justify-end">
+                            <!-- 목록으로 돌아가기 버튼 -->
+                            <a href="/usr/article/list" class="btn btn-primary mr-4">목록으로</a>
+                            <!-- 수정 버튼 -->
+                            <a href="usr/article/modify/{id}" th:href="@{/usr/article/modify/{id}(id=${article.id})}"
+                               class="btn btn-warning">수정</a>
+                            <!-- 삭제 버튼 -->
+                            <a href="usr/article/delete/{id}" th:href="@{/usr/article/delete/{id}(id=${article.id})}"
+                               class="btn btn-danger ml-4" onclick="return confirmDelete()">삭제</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        function confirmDelete() {
+            return confirm("게시글을 삭제하시겠습니까?"); // 사용자에게 알림 대화상자를 표시
+        }
+
+        $(document).ready(function () {
+            // 좋아요 상태
+            let isLiked = /*[[${isLiked}]]*/ null;
+            console.log(isLiked)
+
+            // 좋아요 버튼 클릭 이벤트 처리
+            $('#like-button').click(function () {
+                // 좋아요 상태 변경
+                isLiked = !isLiked;
+
+                // 좋아요 상태에 따라 요청 URL 변경
+                let url = isLiked ? '/usr/article/like/' : '/usr/article/unlike/';
+
+                // 좋아요 수
+                let likeCount = parseInt($('#like-count').text());
+
+                let id = /*[[${article.id}]]*/ null;
+                console.log(id)
+                var csrfToken = $("meta[name='_csrf']").attr("content");
+                var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+                $.ajax({
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(csrfHeader, csrfToken);
+                    },
+                    url: url + id,  // 게시글 ID를 URL에 포함
+                    type: 'POST',
+                    headers: { // 헤더 설정 변경
+                        [csrfHeader]: csrfToken // 올바른 헤더 설정
+                    },
+                    success: function (response) {
+                        // 좋아요 상태에 따라 좋아요 수 변경
+                        $('#like-count').text(isLiked ? likeCount + 1 : likeCount - 1);
+
+                        // 좋아요 상태에 따라 버튼 아이콘 변경
+                        $('#like-button').html(isLiked ? '💕' : '🤍');
+                    },
+                    error: function (error) {
+                        // 에러 처리
+                        console.error(error);
+                    }
+                });
+            });
+        });
+    </script>
+</main>
+</body>
+</html>
