@@ -133,7 +133,7 @@ public class ArticleController {
 
         List<Article> articles = articleService.showMyList();
         model.addAttribute("myarticles", articles);
-
+		//TODO: 이벤트 리스너 만들어서 멤버의 태그 호출?
         List<String> mostUsedTags = memberService.getMostUsedTags();
         model.addAttribute("mostUsedTags", mostUsedTags);
 
