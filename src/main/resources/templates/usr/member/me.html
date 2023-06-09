@@ -63,6 +63,12 @@
                 return;
             }
 
+            if (nickname.length > 10) {
+                toastWarning('닉네임을 10자 이하 입력해주세요.');
+                submitBtn.disabled = true;
+                return;
+            }
+
             if (nickname.indexOf(' ') !== -1) {
                 toastWarning('닉네임에는 공백을 사용할 수 없습니다.');
                 submitBtn.disabled = true;
