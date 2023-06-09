@@ -1,18 +1,106 @@
 <html layout:decorate="~{usr/layout/layout.html}">
 
 <head>
-    <title th:text="#{c.whatIsThisService}"></title>
+    <title th:text="#{c.logoText}"></title>
+    <script>
+        function showLoadingSpinner() {
+            var spinner = document.getElementById('loadingSpinner');
+            spinner.style.display = 'block';
+        }
+
+        function hideLoadingSpinner() {
+            var spinner = document.getElementById('loadingSpinner');
+            spinner.style.display = 'none';
+        }
+
+        function getLocationAndSubmit() {
+            if (navigator.geolocation) {
+                showLoadingSpinner();
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    sendLocationToServer(position);
+                    submitForm();
+                }, function (error) {
+                    hideLoadingSpinner();
+                    console.log('위치 정보 가져오기 실패:', error.message);
+                });
+            } else {
+                console.log('연결 안됨. 위치 정보 제공 동의 필요');
+            }
+        }
+
+        function sendLocationToServer(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+
+            var form = document.getElementById('locationDTO');
+            form.latitude.value = latitude;
+            form.longitude.value = longitude;
+        }
+
+        function submitForm() {
+            var form = document.getElementById('locationDTO');
+            form.submit();
+        }
+
+    </script>
 </head>
 
 <body>
+<main layout:fragment="main" class="flex-grow flex items-center justify-center ">
+    <div class="max-w-2xl w-full px-4">
+        <div class="flex flex-col gap-4">
+            <div class="card bg-base-100 shadow-xl">
+                <div class="mt-2">
+                    <form id="locationDTO" th:action="@{/usr/location/update/main}" method="post">
+                        <div class="flex">
+                            <div class="flex flex-col ml-2">
+                                <h2 class="card-title flex items-center">
+                                    <span class="text-4xl" th:text="${@rq.getAddress}"></span>
+                                </h2>
+                                <h2 class="card-title flex items-center">
+                                    <span class="text-2xl" th:text="${@rq.getCurrentDate}"></span>
+                                    <span class="text-2xl" th:text="${@rq.getWeatherInfo}"></span>
+                                </h2>
+                            </div>
+                            <div class="flex flex-grow justify-end items-center">
+                                <button id="submitButton" type="button" class="btn btn-link h-full"
+                                        onClick="getLocationAndSubmit()">
+                                   <span class="text-xl">
+                                       위치 업데이트
+                                   </span>
+                                </button>
+                            </div>
+                            <input type="hidden" name="latitude" th:value="${latitude}">
+                            <input type="hidden" name="longitude" th:value="${longitude}">
+                        </div>
+                        <div id="loadingSpinner">
+                            <div class="lds-roller">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div>
+            여기는 로그인 안해도 보여져
+        </div>
 
-<main layout:fragment="main" class="flex-grow flex items-center justify-center">
-    <div class="text-center">
-        <i class="fa-regular fa-face-laugh"></i> 코디캐스터는 날씨에 알맞은 최적의 옷을 추천해드립니다!
+
+        <div th:if="${@rq.isLogin}" class="max-w-2xl w-full px-4">
+            <div>여기는 로그인 했을 때 보여줄 페이지야</div>
+        </div>
+
     </div>
-</main>
 
+</main>
 </body>
 
 </html>
-

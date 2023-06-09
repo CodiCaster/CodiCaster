@@ -17,8 +17,19 @@ public class LocationController {
     private final Rq rq;
     private final LocationService locationService;
 
-    @PostMapping("/update")
-    public String update(LocationDTO locationDTO) {
+    @PostMapping("/update/main")
+    public String updateMain(LocationDTO locationDTO) {
+        RsData<Location> rsData = locationService.getCurrentLocation(locationDTO);
+        if (rsData.isFail()) {
+            return rq.historyBack(rsData);
+        }
+        Location location = rsData.getData();
+        rq.setLocation(location);
+        return "redirect:/usr/main";
+    }
+
+    @PostMapping("/update/me")
+    public String updateMe(LocationDTO locationDTO) {
         RsData<Location> rsData = locationService.getCurrentLocation(locationDTO);
         if (rsData.isFail()) {
             return rq.historyBack(rsData);

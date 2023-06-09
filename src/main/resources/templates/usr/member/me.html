@@ -206,7 +206,7 @@
                             현재 위치
                         </div>
                         <div class="mt-2">
-                            <form id="locationDTO" th:action="@{/usr/location/update}" method="post">
+                            <form id="locationDTO" th:action="@{/usr/location/update/me}" method="post">
                                 <span class="badge badge-ghost" th:text="${@rq.getAddress()}"></span>
                                 <input type="hidden" name="latitude" th:value="${latitude}">
                                 <input type="hidden" name="longitude" th:value="${longitude}">

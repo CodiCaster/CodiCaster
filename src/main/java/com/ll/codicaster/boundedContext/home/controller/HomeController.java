@@ -16,8 +16,8 @@ import lombok.RequiredArgsConstructor;
 public class HomeController {
     private final Rq rq;
 
-    @GetMapping("/main")
-    public String mainTest() {
+    @GetMapping("usr/main")
+    public String mainTestLogin() {
 
         return "/usr/home/main";
     }
