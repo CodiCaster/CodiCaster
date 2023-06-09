@@ -40,7 +40,8 @@ public class Member extends BaseEntity {
     @Column(unique = true)
     private String nickname;
 
-    private String bodyType;
+	@Column
+    private int bodyType;
 
     private String gender;
 
@@ -70,7 +71,7 @@ public class Member extends BaseEntity {
         return "admin".equals(username);
     }
 
-    public void updateInfo(String nickname, String bodyType, String gender) {
+    public void updateInfo(String nickname, int bodyType, String gender) {
         this.nickname = nickname;
         this.bodyType = bodyType;
         this.gender = gender;
@@ -81,8 +82,12 @@ public class Member extends BaseEntity {
         List<String> mostUsedTags = new ArrayList<>();
         int maxCount = 0;
 
-        Map<String, Integer> tagMap = this.getTagMap();
+		Map<String, Integer> tagMap = this.tagMap;
 
+        return countUsedTags(mostUsedTags, maxCount, tagMap);
+    }
+    //태그 사용 횟수 확인 => 최대값 리스트 반환
+    public static List<String> countUsedTags(List<String> mostUsedTags, int maxCount, Map<String, Integer> tagMap) {
         for (Map.Entry<String, Integer> entry : tagMap.entrySet()) {
             int count = entry.getValue();
             if (count > maxCount) {
@@ -99,6 +104,17 @@ public class Member extends BaseEntity {
 
     @ManyToMany(mappedBy = "likedMembers")
     private Set<Article> likedArticles = new HashSet<>();
+
+    public String getBodyTypeDisplayName(){
+        return switch (bodyType){
+            case 1 -> "추위 많이 탐";
+            case 2 -> "추위 조금 탐";
+            case 3 -> "보통";
+            case 4 -> "더위 조금 탐";
+            default -> "더위 많이탐";
+        };
+    }
+
 
 
 
