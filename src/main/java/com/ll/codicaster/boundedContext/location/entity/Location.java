@@ -1,8 +1,7 @@
 package com.ll.codicaster.boundedContext.location.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.ll.codicaster.boundedContext.article.entity.Article;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -18,6 +17,9 @@ public class Location {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+    @OneToOne
+    @JoinColumn(name = "article_id")
+    private Article article;
     private Double latitude; //gps 로 반환받은 위도
     private Double longitude; //gps 로 반환받은 경도
     private Integer pointX; //x 좌표로 변환된 위도

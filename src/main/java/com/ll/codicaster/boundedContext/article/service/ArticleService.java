@@ -1,9 +1,9 @@
+
 package com.ll.codicaster.boundedContext.article.service;
 
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -16,11 +16,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.ll.codicaster.base.event.EventAfterWrite;
 import com.ll.codicaster.boundedContext.location.entity.Location;
-import com.ll.codicaster.boundedContext.location.service.LocationService;
 import com.ll.codicaster.boundedContext.weather.entity.Weather;
-import com.ll.codicaster.boundedContext.weather.service.WeatherService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,10 +42,8 @@ import lombok.RequiredArgsConstructor;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final LocationService locationService;
-    private final WeatherService weatherService;
     private final ImageRepository imageRepository;
-
+    private final ApplicationEventPublisher publisher;
     private final Rq rq;
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -71,22 +69,19 @@ public class ArticleService {
         updateUserTagMap(actor, tagSet);
 
 
-        Location location = rq.getCurrentLocation();
-        Long locationId = locationService.save(location);
-        Long weatherId = weatherService.save(location);
-
         Article article = Article.builder()
                 .title(form.getTitle())
                 .content(form.getContent())
                 .author(actor)
                 .createDate(LocalDateTime.now())
                 .modifyDate(LocalDateTime.now())
+                .address(rq.getAddress())
+                .weatherInfo(rq.getWeatherInfo())
                 .tagSet(tagSet)
-                .locationId(locationId)
-                .weatherId(weatherId)
                 .build();
 
-        articleRepository.save(article);
+        Article savedArticle = articleRepository.save(article);
+        publisher.publishEvent(new EventAfterWrite(this, rq, savedArticle));
 
         // 이미지 파일이 있으면 저장
         if (!imageFile.isEmpty()) {
@@ -201,13 +196,7 @@ public class ArticleService {
     @Transactional
     public boolean deleteArticle(Long id) {
         //RsData 사용 필요해보임
-        Article article = articleRepository.findById(id).get();
-        Long locationId = article.getLocationId();
-        Long weatherId = article.getWeatherId();
-
         try {
-            locationService.delete(locationId);
-            weatherService.deleteById(weatherId);
             articleRepository.deleteById(id);
             return true;
         } catch (Exception e) {
@@ -215,16 +204,6 @@ public class ArticleService {
             return false;
         }
 
-    }
-
-    public String getAddress(Long id) {
-        Article article = articleRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No Article Found with id: " + id));
-        return locationService.getLocation(article.getLocationId()).getAddress();
-    }
-
-    public String getWeatherInfo(Long weatherId) {
-        Weather weather = weatherService.getWeather(weatherId);
-        return weatherService.getWeatherInfo(weather);
     }
 
     public Article findArticleById(Long id) {
@@ -350,4 +329,15 @@ public class ArticleService {
     }
 
 
+    public void whenAfterSaveLocation(Location location, Long articleId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
+        article.setLocation(location);
+    }
+
+    public void whenAfterSaveWeather(Weather weather, Long articleId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
+        article.setWeather(weather);
+    }
 }

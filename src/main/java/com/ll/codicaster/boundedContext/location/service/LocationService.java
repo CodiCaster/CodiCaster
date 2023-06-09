@@ -1,11 +1,12 @@
 package com.ll.codicaster.boundedContext.location.service;
 
+import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.base.rsData.RsData;
+import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.location.dto.LocationDTO;
 import com.ll.codicaster.boundedContext.location.entity.Point;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.repository.LocationRepository;
-import com.ll.codicaster.boundedContext.member.entity.Member;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,23 +22,17 @@ public class LocationService {
     private final LocationRepository locationRepository;
     private final KakaoAPIService kakaoAPIService;
 
-    @Transactional
-    public Long save(Location location) {
+    public void whenAfterWrite(Rq rq, Article article) {
+        Location location = rq.getCurrentLocation();
         Location newLocation = Location.builder()
+                .article(article)
                 .latitude(location.getLatitude())
                 .longitude(location.getLongitude())
                 .pointX(location.getPointX())
                 .pointY(location.getPointY())
                 .address(location.getAddress())
                 .build();
-        Location savedLocation = locationRepository.save(newLocation);
-        return savedLocation.getId();
-    }
-
-    @Transactional
-    public RsData delete(Long locationId) {
-        locationRepository.deleteById(locationId);
-        return RsData.of("S-1", "위치 정보를 삭제하였습니다.");
+        locationRepository.save(newLocation);
     }
 
     public RsData<Location> getCurrentLocation(LocationDTO locationDTO) {
@@ -164,11 +159,12 @@ public class LocationService {
 
 
     //10진수를 radian(라디안)으로 변환
-    private static double deg2rad(double deg){
-        return (deg * Math.PI/180.0);
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
     }
+
     //radian(라디안)을 10진수로 변환
-    private static double rad2deg(double rad){
+    private static double rad2deg(double rad) {
         return (rad * 180 / Math.PI);
     }
 
