@@ -40,7 +40,7 @@ public class Member extends BaseEntity {
     @Column(unique = true)
     private String nickname;
 
-    private String bodytype;
+    private String bodyType;
 
     private String gender;
 
@@ -70,9 +70,9 @@ public class Member extends BaseEntity {
         return "admin".equals(username);
     }
 
-    public void updateInfo(String nickname, String bodytype, String gender) {
+    public void updateInfo(String nickname, String bodyType, String gender) {
         this.nickname = nickname;
-        this.bodytype = bodytype;
+        this.bodyType = bodyType;
         this.gender = gender;
     }
 

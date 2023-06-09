@@ -1,12 +1,8 @@
 package com.ll.codicaster.boundedContext.home.controller;
 
 import java.util.Enumeration;
-import java.util.List;
 
-import com.ll.codicaster.boundedContext.article.entity.Article;
-import com.ll.codicaster.boundedContext.article.service.ArticleService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -18,8 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
-    private final ArticleService articleService;
-    private final Rq rq;
+	private final Rq rq;
 
     @GetMapping("/usr/main")
     public String mainTestLogin() {
