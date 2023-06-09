@@ -49,10 +49,7 @@ public class ArticleService {
     private final ImageRepository imageRepository;
 
     private final AmazonS3Service amazonS3Service;
-
     private final Rq rq;
-    @Value("${file.upload-dir}")
-    private String uploadDir;
 
     public static Set<String> extractHashTagList(String content) {
         Set<String> tagSet = new HashSet<>();
