@@ -1,6 +1,5 @@
 package com.ll.codicaster.boundedContext.location.event;
 
-import com.ll.codicaster.base.event.EventAfterDelete;
 import com.ll.codicaster.base.event.EventAfterWrite;
 import com.ll.codicaster.boundedContext.location.service.LocationService;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +15,6 @@ public class LocationEventListener {
 
     @EventListener
     public void listen(EventAfterWrite event) {
-        locationService.whenAfterWrite(event.getRq(), event.getArticleId());
-    }
-    @EventListener
-    public void listen(EventAfterDelete event) {
-        locationService.whenAfterDelete(event.getArticleId());
+        locationService.whenAfterWrite(event.getRq(), event.getArticle());
     }
 }

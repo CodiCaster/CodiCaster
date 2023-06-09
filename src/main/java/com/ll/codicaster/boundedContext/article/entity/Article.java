@@ -8,8 +8,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.ll.codicaster.boundedContext.image.entity.Image;
+import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.member.entity.Member;
 
+import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;
@@ -47,8 +49,11 @@ public class Article {
     private Member author;
     private LocalDateTime createDate;
     private LocalDateTime modifyDate;
-    private Long weatherId;
-    private Long locationId;
+
+    @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
+    private Location location;
+    @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
+    private Weather weather;
     private String address;
     private String weatherInfo;
 

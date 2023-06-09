@@ -1,8 +1,7 @@
 package com.ll.codicaster.boundedContext.weather.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.ll.codicaster.boundedContext.article.entity.Article;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +14,9 @@ public class Weather {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private Long articleId;
+    @OneToOne
+    @JoinColumn(name = "article_id")
+    private Article article;
     private Double tmp;     // 온도 TMP
     private Double pop;     // 강수 확률
     private Integer pty;    //강수 형태 0 ~ 4

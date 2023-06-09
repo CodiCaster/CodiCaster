@@ -1,6 +1,5 @@
 package com.ll.codicaster.boundedContext.location.service;
 
-import com.ll.codicaster.base.event.EventAfterSaveLocation;
 import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.article.entity.Article;
@@ -8,10 +7,8 @@ import com.ll.codicaster.boundedContext.location.dto.LocationDTO;
 import com.ll.codicaster.boundedContext.location.entity.Point;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.repository.LocationRepository;
-import com.ll.codicaster.boundedContext.member.entity.Member;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,37 +21,18 @@ import java.util.Optional;
 public class LocationService {
     private final LocationRepository locationRepository;
     private final KakaoAPIService kakaoAPIService;
-    private final ApplicationEventPublisher publisher;
 
-    @Transactional
-    public Long save(Location location, Long articleId) {
+    public void whenAfterWrite(Rq rq, Article article) {
+        Location location = rq.getCurrentLocation();
         Location newLocation = Location.builder()
-                .articleId(articleId)
+                .article(article)
                 .latitude(location.getLatitude())
                 .longitude(location.getLongitude())
                 .pointX(location.getPointX())
                 .pointY(location.getPointY())
                 .address(location.getAddress())
                 .build();
-        Location savedLocation = locationRepository.save(newLocation);
-        return savedLocation.getId();
-    }
-
-    @Transactional
-    public RsData delete(Long locationId) {
-        locationRepository.deleteById(locationId);
-        return RsData.of("S-1", "위치 정보를 삭제하였습니다.");
-    }
-
-    public void whenAfterWrite(Rq rq, Long articleId) {
-        Location location = rq.getCurrentLocation();
-        location.setArticleId(articleId);
-        Long newId = save(location, articleId);
-        publisher.publishEvent(new EventAfterSaveLocation(this, newId, articleId));
-    }
-
-    public void whenAfterDelete(Long articleId) {
-        locationRepository.deleteByArticleId(articleId);
+        locationRepository.save(newLocation);
     }
 
     public RsData<Location> getCurrentLocation(LocationDTO locationDTO) {

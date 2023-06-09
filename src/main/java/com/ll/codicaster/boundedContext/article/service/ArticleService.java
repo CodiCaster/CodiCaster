@@ -4,7 +4,6 @@ package com.ll.codicaster.boundedContext.article.service;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -17,8 +16,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.ll.codicaster.base.event.EventAfterDelete;
 import com.ll.codicaster.base.event.EventAfterWrite;
+import com.ll.codicaster.boundedContext.location.entity.Location;
+import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -80,8 +80,8 @@ public class ArticleService {
                 .tagSet(tagSet)
                 .build();
 
-        Long id = articleRepository.save(article).getId();
-        publisher.publishEvent(new EventAfterWrite(this, rq, id));
+        Article savedArticle = articleRepository.save(article);
+        publisher.publishEvent(new EventAfterWrite(this, rq, savedArticle));
 
         // 이미지 파일이 있으면 저장
         if (!imageFile.isEmpty()) {
@@ -196,9 +196,6 @@ public class ArticleService {
     @Transactional
     public boolean deleteArticle(Long id) {
         //RsData 사용 필요해보임
-        Article article = articleRepository.findById(id).get();
-        publisher.publishEvent(new EventAfterDelete(this, article.getId()));
-
         try {
             articleRepository.deleteById(id);
             return true;
@@ -332,15 +329,15 @@ public class ArticleService {
     }
 
 
-    public void whenAfterSaveLocation(Long locationId, Long articleId) {
+    public void whenAfterSaveLocation(Location location, Long articleId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
-        article.setLocationId(locationId);
+        article.setLocation(location);
     }
 
-    public void whenAfterSaveWeather(Long weatherId, Long articleId) {
+    public void whenAfterSaveWeather(Weather weather, Long articleId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
-        article.setWeatherId(weatherId);
+        article.setWeather(weather);
     }
 }
