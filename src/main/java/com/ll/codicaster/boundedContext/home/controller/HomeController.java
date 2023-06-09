@@ -14,23 +14,22 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
-	private final Rq rq;
+    private final Rq rq;
 
-    @GetMapping("/usr/main")
-    public String mainTestLogin() {
+    @GetMapping("/main")
+    public String showMain() {
         return "/usr/home/main";
     }
 
     @GetMapping("/")
-    public String showMain() {
+    public String redirectToMain() {
         if (rq.isLogout()) {
-            return "redirect:/usr/member/login";
+            return "redirect:/main";
         }
-
-        // if (rq.getMember().getNickname() != null || rq.getMember().getBodytype() != null)
-        // 	return "usr/home/about";
-
-        return "redirect:/usr/member/newInfo";
+        if (rq.getNickname() == null) {
+            return "redirect:/usr/member/newInfo";
+        }
+        return "redirect:/main";
     }
 
     @GetMapping("/usr/home/about")
