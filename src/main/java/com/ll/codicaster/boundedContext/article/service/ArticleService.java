@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.ll.codicaster.base.event.EventAfterWrite;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.service.LocationService;
 import com.ll.codicaster.boundedContext.weather.entity.Weather;
@@ -92,11 +93,16 @@ public class ArticleService {
             UUID uuid = UUID.randomUUID();
             String fileName = uuid + "_" + imageFile.getOriginalFilename();
 
+<<<<<<< HEAD
             File directory = new File(uploadDir);
             // 디렉토리가 존재하지 않으면 생성
             if (!directory.exists()) {
                 directory.mkdirs(); // 상위 디렉토리까지 모두 생성
             }
+=======
+        Article savedArticle = articleRepository.save(article);
+        publisher.publishEvent(new EventAfterWrite(this, rq, savedArticle));
+>>>>>>> 050be45 ([fix]병합 이전 커밋)
 
             File saveFile = new File(uploadDir, fileName);
             try {
@@ -267,50 +273,86 @@ public class ArticleService {
 		}
 	}
 
-	@Transactional
-	public boolean likeArticle(Member actor, Long articleId) {
-		try {
 
-			Article article = articleRepository.findById(articleId)
-				.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
+    @Transactional
+    public boolean likeArticle(Member actor, Long articleId) {
+        try {
 
-			Set<Member> likeSet = article.getLikedMembers();
-			likeSet.add(actor);
-			article.setLikedMembers(likeSet);
-			//이벤트 발행
-			publisher.publishEvent(new EventAfterLike(this, actor, article));
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+            Article article = articleRepository.findById(articleId)
+                    .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
 
-	}
 
-	@Transactional
-	public boolean unlikeArticle(Member actor, Long articleId) {
-		try {
+            Set<Member> likeSet = article.getLikedMembers();
+            likeSet.add(actor);
+            article.setLikedMembers(likeSet);
 
-			Article article = articleRepository.findById(articleId)
-				.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-			Set<Member> likeSet = article.getLikedMembers();
-			likeSet.remove(actor);
-			article.setLikedMembers(likeSet);
+    @Transactional
+    public boolean unlikeArticle(Member actor, Long articleId) {
+        try {
 
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+            Article article = articleRepository.findById(articleId)
+                    .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
 
-	public void truncateUserTagMap(Member member, Set<String> tagSet) {
-		Map<String, Integer> tagMap = member.getTagMap();
 
-		//값이 0 이하일 때 예외처리 ? 필요한가 => 필요없을 듯, 큰 순서대로 사용할 예
-		for (String tag : tagSet) {
-			tagMap.put(tag, tagMap.get(tag) - 1);
-		}
-	}
+            Set<Member> likeSet = article.getLikedMembers();
+            likeSet.remove(actor);
+            article.setLikedMembers(likeSet);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
+    public void truncateUserTagMap(Member member, Set<String> tagSet) {
+        Map<String, Integer> tagMap = member.getTagMap();
+
+        //값이 0 이하일 때 예외처리 ? 필요한가 => 필요없을 듯, 큰 순서대로 사용할 예
+        for (String tag : tagSet) {
+            tagMap.put(tag, tagMap.get(tag) - 1);
+        }
+    }
+
+    // public List<Article> sortArticlesByUserTypeAndDistance(List<Article> articleList, Member searchingUser) {
+    // 	return articleList.stream()
+    // 		.sorted(Comparator.comparing(article -> {
+    // 			int userTypeDifference = Math.abs(article.getAuthor().getUserType() - searchingUser.getUserType());
+    // 			double distance = getDistance(article.getLocation(), searchingUser.getLocation());
+    // 			int distanceScore = distance <= 10 ? 1 : 0;  // 거리가 10km 이내인 경우 1점 부여
+    // 			int userTypeDifferenceScore = userTypeDifference == 1 ? 1 : 0; //±1이면 1점 부여
+    // 			int userTypeScore = userTypeDifference == 0 ? 1 : 0; // userType이 같을 때 1점 부여
+    // 			return userTypeDifferenceScore + distanceScore + userTypeScore;  // 총 합 점수로 비교
+    // 		}))
+    // 		.collect(Collectors.toList());
+    // }
+
+    public List<Article> showMyList() {
+        return articleRepository.findByAuthorId(rq.getMember().getId())
+                .stream()
+                .sorted(Comparator.comparingLong(Article::getId).reversed())
+                .collect(Collectors.toList());
+    }
+
+
+    public void whenAfterSaveLocation(Location location, Long articleId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
+        article.setLocation(location);
+    }
+
+    public void whenAfterSaveWeather(Weather weather, Long articleId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
+        article.setWeather(weather);
+    }
+}
 
 	public List<Article> showMyList() {
 		return articleRepository.findByAuthorId(rq.getMember().getId())
@@ -351,7 +393,7 @@ public class ArticleService {
 	}
 	//태그점수 : 유저가 가장 많이 사용한 태그가 포함될때마다 0.5점 부여
 	private double calculateTagScore(Article article, Member user) {
-		List<String> userTags = user.getMostUsedTags();
+		List<String> userTags = new ArrayList<>(user.getTagMap().keySet());
 		Set<String> articleTags = article.getTagSet();
 
 		double tagScore = 0.0;
@@ -371,3 +413,4 @@ public class ArticleService {
 	}
 
 }
+
