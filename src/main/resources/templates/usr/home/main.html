@@ -4,12 +4,12 @@
     <title th:text="#{c.logoText}"></title>
     <script>
         function showLoadingSpinner() {
-            var spinner = document.getElementById('loadingSpinner');
+            var spinner = document.getElementById('spinner');
             spinner.style.display = 'block';
         }
 
         function hideLoadingSpinner() {
-            var spinner = document.getElementById('loadingSpinner');
+            var spinner = document.getElementById('spinner');
             spinner.style.display = 'none';
         }
 
@@ -53,39 +53,26 @@
                 <div class="mt-2 px-4 mt-4">
                     <form id="locationDTO" th:action="@{/usr/location/update/main}" method="post">
                         <div class="flex">
-                            <div class="flex flex-col">
+                            <div class="flex flex-col" style="height: 70px;">
                                 <h2 class="card-title flex items-center">
-                                    <span class="text-4xl" th:text="${@rq.getAddress}"></span>
+                                    <span class="text-2xl" th:text="${@rq.getAddress}"></span>
                                 </h2>
                                 <h2 class="card-title flex items-center">
-                                    <span class="text-2xl" th:text="${@rq.getCurrentDate}"></span>
-                                    <span class="text-2xl" th:text="${@rq.getWeatherInfo}"></span>
+                                    <span class="text-xl" th:text="${@rq.getCurrentDate}"></span>
+                                    <span class="text-xl" th:text="${@rq.getWeatherInfo}"></span>
                                 </h2>
                             </div>
                             <div class="flex flex-grow justify-end items-center">
-                                <button id="submitButton" type="button" class="btn btn-link h-full"
-                                        onClick="getLocationAndSubmit()">
+                                <div id="spinner" class="loader ml-4">Loading...</div>
+                            </div>
+                            <button id="submitButton" type="button" class="btn btn-link" style="height: 70px;"
+                                    onClick="getLocationAndSubmit()">
                                    <span class="text-xl">
                                        위치 업데이트
                                    </span>
-                                </button>
-                            </div>
+                            </button>
                             <input type="hidden" name="latitude" th:value="${latitude}">
                             <input type="hidden" name="longitude" th:value="${longitude}">
-                        </div>
-                        <div class="flex flex-grow justify-end items-center" style="height: 80px;">
-                            <div id="loadingSpinner">
-                                <div class="lds-roller">
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                    <div></div>
-                                </div>
-                            </div>
                         </div>
                     </form>
                 </div>
@@ -94,26 +81,6 @@
                 <h2 class="card-title flex items-center px-4">
                     <span class="text-4xl">오늘의 코디</span>
                 </h2>
-                <div class="flex flex-col gap-4">
-                    <div class="card-body">
-                        <br>
-                        <div class="max-w-3xl mx-auto py-6 px-4">
-                            <div class="grid grid-cols-3 gap-4">
-                                <div th:each="article : ${articlesNearbyToday}"
-                                     class="rounded overflow-hidden shadow-lg">
-                                    <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
-                                        <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
-                                             class="w-full h-32 object-cover"/>
-                                        <div class="px-6 py-4">
-                                            <div class="font-bold text-xl mb-2 truncate"
-                                                 th:text="${article.title}"></div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <br>
                 <br>
                 <br>

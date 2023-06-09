@@ -22,11 +22,7 @@ public class HomeController {
     private final Rq rq;
 
     @GetMapping("/usr/main")
-    public String mainTestLogin(Model model) {
-
-        List<Article> articles = articleService.showArticlesNearbyToday(rq.getMember());
-        model.addAttribute("articlesNearbyToday", articles);
-
+    public String mainTestLogin() {
         return "/usr/home/main";
     }
 
