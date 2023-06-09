@@ -220,47 +220,36 @@ public class ArticleService {
 		return articleRepository.findById(id)
 			.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
 	}
-
-    //일년전 게시물 조회
-    public List<Article> getArticlesYearAgo() {
-        LocalDate today = LocalDate.now();
-        LocalDate oneYearAgo = today.minusYears(1); // 오늘로부터 1년 전
-        LocalDate oneYearAndMonthAgo = oneYearAgo.minusMonths(1); // 오늘로부터 1년 전 - 한달
-        LocalDate oneYearPlusMonthAgo = oneYearAgo.plusMonths(1);// 오늘로부터 1년 전 + 한달
-        LocalDate startDate = oneYearAndMonthAgo; // 오늘로부터 1년 전 ± 한달
-        LocalDate endDate = oneYearPlusMonthAgo;
-
-        LocalDateTime startDateTime = startDate.atStartOfDay();
-        LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
-
-        return articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
-    }
-
-    //한달전 ~ 현재 게시물 조회
-    public List<Article> getArticlesLastOneMonth() {
-        LocalDate today = LocalDate.now();
-        LocalDate oneMonthAgo = today.minusMonths(1); //한달전
-
-        LocalDateTime startDateTime = oneMonthAgo.atStartOfDay();
-        LocalDateTime endDateTime = LocalDateTime.now();
-
-        return articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
-    }
-
-	// 일년전 오늘 앞뒤 한달 + 한달전 ~ 오늘 게시물 조회 + 성별 필터링 => 1차 필터링
-	// 성별 구분하여 2차 필터링
-	// 거리순 정렬
-	public List<Article> showArticlesFilterdByDateAndGender(Member member) {
-		List<Article> articleLastOneMonth = getArticlesLastOneMonth();
-		List<Article> articleYearAgo = getArticlesYearAgo();
-
-		List<Article> articlesNearbyToday = Stream.concat(articleYearAgo.stream(), articleLastOneMonth.stream())
-			.filter(article -> article.getAuthor().getGender().equals(member.getGender()))
-			.sorted(Comparator.comparingDouble(
-				article -> getDistanceBetweenUser(article)))
+	//이게 1차 필터링.
+	//가질 수 있는 날짜랑 기본 거리로 우선 정렬. 메인페이지에 위치 호출 기능 가져오면 현 위치 기준으로 정렬
+	public List<Article> showArticlesFilteredByDate(Member member) {
+		List<Article> articlesNearbyToday = getFilteredArticlesBetweenDates(member)
+			.sorted(Comparator.comparingDouble(article -> getDistanceBetweenUser(article)))
 			.collect(Collectors.toList());
 
 		return articlesNearbyToday;
+	}
+
+	//1년전 오늘 ±한달 + 한달전~ 오늘 게시물 반환
+	private Stream<Article> getFilteredArticlesBetweenDates(Member member) {
+		LocalDate today = LocalDate.now();
+		LocalDate oneYearAgo = today.minusYears(1); // 오늘로부터 1년 전
+		LocalDate oneYearAndMonthAgo = oneYearAgo.minusMonths(1); // 오늘로부터 1년 전 - 한달
+		LocalDate oneYearPlusMonthAgo = oneYearAgo.plusMonths(1); // 오늘로부터 1년 전 + 한달
+
+		LocalDateTime startDateTime = oneYearAndMonthAgo.atStartOfDay();
+		LocalDateTime endDateTime = oneYearPlusMonthAgo.atTime(23, 59, 59);
+
+		List<Article> articlesYearAgo = articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
+
+		LocalDate oneMonthAgo = today.minusMonths(1); // 한달 전
+
+		startDateTime = oneMonthAgo.atStartOfDay();
+		endDateTime = LocalDateTime.now();
+
+		List<Article> articlesLastOneMonth = articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
+
+		return Stream.concat(articlesYearAgo.stream(), articlesLastOneMonth.stream());
 	}
 
     //유저 태그맵 업데이트 (게시물 작성 시마다 태그리스트 받아서 가지고 있는지 확인하고 증가)
@@ -310,7 +299,7 @@ public class ArticleService {
             return false;
         }
     }
-
+	//수정시 태그맵에서 카운트 -1
 	public void truncateUserTagMap(Member member, Set<String> tagSet) {
 		Map<String, Integer> tagMap = member.getTagMap();
 
@@ -319,7 +308,7 @@ public class ArticleService {
 			tagMap.put(tag, tagMap.get(tag) - 1);
 		}
 	}
-
+	//나의 게시물
 	public List<Article> showMyList() {
 		return articleRepository.findByAuthorId(rq.getMember().getId())
 			.stream()
@@ -328,11 +317,11 @@ public class ArticleService {
 	}
 
 	//2차 정렬
-	public List<Article> sortByUserTypeAndDistance(List<Article> articleList) {
-		Member user = rq.getMember();
+	public List<Article> sortByAllParams(Member user, List<Article> articleList) {
 
 		return articleList.stream()
 			.sorted(Comparator.comparingDouble(article -> calculateTotalScore(article, user)))
+			.filter(article -> article.getAuthor().getGender().equals(user.getGender()))
 			.collect(Collectors.toList());
 	}
 
@@ -345,7 +334,7 @@ public class ArticleService {
 
 		return distanceScore + userTypeScore + likeScore + tagScore;
 	}
-	//체질점수
+	//체질점수 : 유저의 체질점수 ±1 이면 +1점
 	private double calculateUserTypeScore(Article article, Member user) {
 		int userTypeDifference = Math.abs(article.getAuthor().getBodytype() - user.getBodytype());
 		return userTypeDifference <= 1 ? 1 : 0;
@@ -357,10 +346,13 @@ public class ArticleService {
 		return distance <= 10 ? 1 : 0;
 	}
 
+	//좋아요 점수 : 좋아요 하나당 0.01점 부여
 	private double calculateLikeScore(Article article) {
 		return article.getLikesCount() * 0.01;
 	}
 
+	//태그점수 : 유저가 사용한 태그와 게시물 태그셋 일치하는 태그 하나당 0.5점 부여
+	//성향 판단의 근거
 	private double calculateTagScore(Article article, Member user) {
 		List<String> userTags = user.getMostUsedTags();
 		Set<String> articleTags = article.getTagSet();

@@ -60,14 +60,22 @@ public class ArticleController {
 
         return "usr/article/list";
     }
-
+    //날짜 기준으로 정렬된 리스트 반환
     @GetMapping("/todaylist")
-    public String showArticlesNearbyToday(Model model) {
+    public String showArticlesFilteredByDate(Model model) {
 
-        List<Article> articles = articleService.showArticlesFilterdByDateAndGender(rq.getMember());
-        model.addAttribute("articlesNearbyToday", articles);
+        List<Article> articles = articleService.showArticlesFilteredByDate(rq.getMember());
+        model.addAttribute("articlesFilteredOnce", articles);
 
-        return "usr/article/todaylist";
+        return "usr/article/nonmembers";
+    }
+    @GetMapping("/sortedlist")
+    public String showArticlesFilteredByAllParams(Model model) {
+        List<Article> filterdArticles = articleService.showArticlesFilteredByDate(rq.getMember());
+        List<Article> articles = articleService.sortByAllParams(rq.getMember(),filterdArticles);
+        model.addAttribute("articlesFilterdAndSorted", articles);
+
+        return "usr/article/members";
     }
 
     @GetMapping("/detail/{id}")
@@ -130,11 +138,10 @@ public class ArticleController {
 
     @RequestMapping("/mylist")
     public String showMyArticle(Model model) {
-        Member user = rq.getMember();
+
         List<Article> articles = articleService.showMyList();
         model.addAttribute("myarticles", articles);
-		//TODO: 이벤트 리스너 만들어서 멤버의 태그 호출?
-        List<String> mostUsedTags = user.getMostUsedTags();
+        List<String> mostUsedTags = rq.getMember().getMostUsedTags();
         model.addAttribute("mostUsedTags", mostUsedTags);
 
 
