@@ -4,8 +4,6 @@ import com.ll.codicaster.base.baseEntity.BaseEntity;
 import com.ll.codicaster.boundedContext.member.entity.Member;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,8 +24,6 @@ public class Follow extends BaseEntity {
 
 	@ManyToOne
 	private Member follower;
-
-
 	@ManyToOne
 	private Member followee;
 

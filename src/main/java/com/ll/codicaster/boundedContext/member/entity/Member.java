@@ -102,8 +102,6 @@ public class Member extends BaseEntity {
     @ManyToMany(mappedBy = "likedMembers")
     private Set<Article> likedArticles = new HashSet<>();
 
-
-
     public String getBodyTypeDisplayName(){
         return switch (bodyType){
             case 1 -> "추위 많이 탐";
@@ -113,11 +111,6 @@ public class Member extends BaseEntity {
             default -> "더위 많이탐";
         };
     }
-
-
-
-
-
 
 
 }
