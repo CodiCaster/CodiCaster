@@ -1,3 +1,4 @@
+
 package com.ll.codicaster.boundedContext.article.service;
 
 import java.io.File;
@@ -46,32 +47,36 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class ArticleService {
 
-    private final ArticleRepository articleRepository;
-    private final ImageRepository imageRepository;
-    private final ApplicationEventPublisher publisher;
-    private final Rq rq;
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+	private final ArticleRepository articleRepository;
+	private final LocationService locationService;
+	private final WeatherService weatherService;
+	private final ImageRepository imageRepository;
 
-    public static Set<String> extractHashTagList(String content) {
-        Set<String> tagSet = new HashSet<>();
+	private final ApplicationEventPublisher publisher;
 
-        Pattern pattern = Pattern.compile("#([ㄱ-ㅎ가-힣a-zA-Z0-9_]+)");
-        Matcher matcher = pattern.matcher(content);
+	private final Rq rq;
+	@Value("${file.upload-dir}")
+	private String uploadDir;
 
-        while (matcher.find()) {
-            String tag = matcher.group(1);
-            tagSet.add(tag);
-        }
+	public static Set<String> extractHashTagList(String content) {
+		Set<String> tagSet = new HashSet<>();
 
-        return tagSet;
-    }
+		Pattern pattern = Pattern.compile("#([ㄱ-ㅎ가-힣a-zA-Z0-9_]+)");
+		Matcher matcher = pattern.matcher(content);
 
-    @Transactional
-    public RsData<Article> saveArticle(Member actor, ArticleCreateForm form, MultipartFile imageFile) {
+		while (matcher.find()) {
+			String tag = matcher.group(1);
+			tagSet.add(tag);
+		}
 
-        Set<String> tagSet = extractHashTagList(form.getContent());
-        updateUserTagMap(actor, tagSet);
+		return tagSet;
+	}
+
+	@Transactional
+	public RsData<Article> saveArticle(Member actor, ArticleCreateForm form, MultipartFile imageFile) {
+
+		Set<String> tagSet = extractHashTagList(form.getContent());
+		updateUserTagMap(actor, tagSet);
 
 
         Article article = Article.builder()
@@ -93,16 +98,11 @@ public class ArticleService {
             UUID uuid = UUID.randomUUID();
             String fileName = uuid + "_" + imageFile.getOriginalFilename();
 
-<<<<<<< HEAD
             File directory = new File(uploadDir);
             // 디렉토리가 존재하지 않으면 생성
             if (!directory.exists()) {
                 directory.mkdirs(); // 상위 디렉토리까지 모두 생성
             }
-=======
-        Article savedArticle = articleRepository.save(article);
-        publisher.publishEvent(new EventAfterWrite(this, rq, savedArticle));
->>>>>>> 050be45 ([fix]병합 이전 커밋)
 
             File saveFile = new File(uploadDir, fileName);
             try {
@@ -123,7 +123,7 @@ public class ArticleService {
             article.setImage(image); // 이미지 정보를 게시글에 추가
         }
 
-		return RsData.of("S-1", "성공적으로 저장되었습니다", article);
+        return RsData.of("S-1", "성공적으로 저장되었습니다", article);
 
     }
 
@@ -214,38 +214,49 @@ public class ArticleService {
             return false;
         }
 
-	}
-
-    public Article findArticleById(Long id) {
-        return articleRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
     }
 
-	//일년전 게시물 조회
-	private List<Article> getArticlesYearAgo() {
-		LocalDate today = LocalDate.now();
-		LocalDate oneYearAgo = today.minusYears(1); // 오늘로부터 1년 전
-		LocalDate oneYearAndMonthAgo = oneYearAgo.minusMonths(1); // 오늘로부터 1년 전 - 한달
-		LocalDate oneYearPlusMonthAgo = oneYearAgo.plusMonths(1);// 오늘로부터 1년 전 + 한달
-		LocalDate startDate = oneYearAndMonthAgo; // 오늘로부터 1년 전 ± 한달
-		LocalDate endDate = oneYearPlusMonthAgo;
-
-		LocalDateTime startDateTime = startDate.atStartOfDay();
-		LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
-
-		return articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
+	public String getAddress(Long id) {
+		Article article = articleRepository.findById(id)
+			.orElseThrow(() -> new NoSuchElementException("No Article Found with id: " + id));
+		return locationService.getLocation(article.getLocationId()).getAddress();
 	}
 
-	//한달전 ~ 현재 게시물 조회
-	private List<Article> getArticlesLastOneMonth() {
-		LocalDate today = LocalDate.now();
-		LocalDate oneMonthAgo = today.minusMonths(1); //한달전
-
-		LocalDateTime startDateTime = oneMonthAgo.atStartOfDay();
-		LocalDateTime endDateTime = LocalDateTime.now();
-
-		return articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
+	public String getWeatherInfo(Long weatherId) {
+		Weather weather = weatherService.getWeather(weatherId);
+		return weatherService.getWeatherInfo(weather);
 	}
+
+	public Article findArticleById(Long id) {
+		return articleRepository.findById(id)
+			.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
+	}
+
+    //일년전 게시물 조회
+    public List<Article> getArticlesYearAgo() {
+        LocalDate today = LocalDate.now();
+        LocalDate oneYearAgo = today.minusYears(1); // 오늘로부터 1년 전
+        LocalDate oneYearAndMonthAgo = oneYearAgo.minusMonths(1); // 오늘로부터 1년 전 - 한달
+        LocalDate oneYearPlusMonthAgo = oneYearAgo.plusMonths(1);// 오늘로부터 1년 전 + 한달
+        LocalDate startDate = oneYearAndMonthAgo; // 오늘로부터 1년 전 ± 한달
+        LocalDate endDate = oneYearPlusMonthAgo;
+
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+
+        return articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
+    }
+
+    //한달전 ~ 현재 게시물 조회
+    public List<Article> getArticlesLastOneMonth() {
+        LocalDate today = LocalDate.now();
+        LocalDate oneMonthAgo = today.minusMonths(1); //한달전
+
+        LocalDateTime startDateTime = oneMonthAgo.atStartOfDay();
+        LocalDateTime endDateTime = LocalDateTime.now();
+
+        return articleRepository.findByCreateDateBetween(startDateTime, endDateTime);
+    }
 
 	// 일년전 오늘 앞뒤 한달 + 한달전 ~ 오늘 게시물 조회 + 성별 필터링 => 1차 필터링
 	// 성별 구분하여 2차 필터링
@@ -263,15 +274,15 @@ public class ArticleService {
 		return articlesNearbyToday;
 	}
 
-	//유저 태그맵 업데이트 (게시물 작성 시마다 태그리스트 받아서 가지고 있는지 확인하고 증가)
-	@Transactional
-	public void updateUserTagMap(Member member, Set<String> tagSet) {
-		Map<String, Integer> tagMap = member.getTagMap();
+    //유저 태그맵 업데이트 (게시물 작성 시마다 태그리스트 받아서 가지고 있는지 확인하고 증가)
+    @Transactional
+    public void updateUserTagMap(Member member, Set<String> tagSet) {
+        Map<String, Integer> tagMap = member.getTagMap();
 
-		for (String tag : tagSet) {
-			tagMap.put(tag, tagMap.getOrDefault(tag, 0) + 1);
-		}
-	}
+        for (String tag : tagSet) {
+            tagMap.put(tag, tagMap.getOrDefault(tag, 0) + 1);
+        }
+    }
 
 
     @Transactional
@@ -281,16 +292,17 @@ public class ArticleService {
             Article article = articleRepository.findById(articleId)
                     .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
 
+			Set<Member> likeSet = article.getLikedMembers();
+			likeSet.add(actor);
+			article.setLikedMembers(likeSet);
+			//이벤트 발행
+			publisher.publishEvent(new EventAfterLike(this, actor, article));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 
-            Set<Member> likeSet = article.getLikedMembers();
-            likeSet.add(actor);
-            article.setLikedMembers(likeSet);
-
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
+	}
 
     @Transactional
     public boolean unlikeArticle(Member actor, Long articleId) {
@@ -310,49 +322,14 @@ public class ArticleService {
         }
     }
 
+	public void truncateUserTagMap(Member member, Set<String> tagSet) {
+		Map<String, Integer> tagMap = member.getTagMap();
 
-    public void truncateUserTagMap(Member member, Set<String> tagSet) {
-        Map<String, Integer> tagMap = member.getTagMap();
-
-        //값이 0 이하일 때 예외처리 ? 필요한가 => 필요없을 듯, 큰 순서대로 사용할 예
-        for (String tag : tagSet) {
-            tagMap.put(tag, tagMap.get(tag) - 1);
-        }
-    }
-
-    // public List<Article> sortArticlesByUserTypeAndDistance(List<Article> articleList, Member searchingUser) {
-    // 	return articleList.stream()
-    // 		.sorted(Comparator.comparing(article -> {
-    // 			int userTypeDifference = Math.abs(article.getAuthor().getUserType() - searchingUser.getUserType());
-    // 			double distance = getDistance(article.getLocation(), searchingUser.getLocation());
-    // 			int distanceScore = distance <= 10 ? 1 : 0;  // 거리가 10km 이내인 경우 1점 부여
-    // 			int userTypeDifferenceScore = userTypeDifference == 1 ? 1 : 0; //±1이면 1점 부여
-    // 			int userTypeScore = userTypeDifference == 0 ? 1 : 0; // userType이 같을 때 1점 부여
-    // 			return userTypeDifferenceScore + distanceScore + userTypeScore;  // 총 합 점수로 비교
-    // 		}))
-    // 		.collect(Collectors.toList());
-    // }
-
-    public List<Article> showMyList() {
-        return articleRepository.findByAuthorId(rq.getMember().getId())
-                .stream()
-                .sorted(Comparator.comparingLong(Article::getId).reversed())
-                .collect(Collectors.toList());
-    }
-
-
-    public void whenAfterSaveLocation(Location location, Long articleId) {
-        Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
-        article.setLocation(location);
-    }
-
-    public void whenAfterSaveWeather(Weather weather, Long articleId) {
-        Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
-        article.setWeather(weather);
-    }
-}
+		//값이 0 이하일 때 예외처리 ? 필요한가 => 필요없을 듯, 큰 순서대로 사용할 예
+		for (String tag : tagSet) {
+			tagMap.put(tag, tagMap.get(tag) - 1);
+		}
+	}
 
 	public List<Article> showMyList() {
 		return articleRepository.findByAuthorId(rq.getMember().getId())
@@ -386,31 +363,16 @@ public class ArticleService {
 		return distance <= 10 ? 1 : 0;
 	}
 
-	//체질 점수 : 작성자와 유저의 체질 차이가 1이하이면 1점 부여
-	private double calculateUserTypeScore(Article article, Member user) {
-		int userTypeDifference = Math.abs(article.getAuthor().getBodytype() - user.getBodytype());
-		return userTypeDifference <= 1 ? 1 : 0;
-	}
-	//태그점수 : 유저가 가장 많이 사용한 태그가 포함될때마다 0.5점 부여
-	private double calculateTagScore(Article article, Member user) {
-		List<String> userTags = new ArrayList<>(user.getTagMap().keySet());
-		Set<String> articleTags = article.getTagSet();
+    public void whenAfterSaveLocation(Location location, Long articleId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
+        article.setLocation(location);
+    }
 
-		double tagScore = 0.0;
-
-		for (String tag : userTags) {
-			if (articleTags.contains(tag)) {
-				tagScore += 0.5;
-			}
-		}
-
-		return tagScore;
-	}
-
-	//좋아요 점수 : 좋아요 하나당 0.01점 부여
-	private double calculateLikeScore(Article article) {
-		return article.getLikesCount() * 0.01;
-	}
-
+    public void whenAfterSaveWeather(Weather weather, Long articleId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
+        article.setWeather(weather);
+    }
 }
 
