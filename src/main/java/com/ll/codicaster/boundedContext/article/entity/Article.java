@@ -74,5 +74,4 @@ public class Article {
     public int getLikesCount() {
         return likedMembers.size();
     }
-
 }
