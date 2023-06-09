@@ -1,7 +1,7 @@
 <html layout:decorate="~{usr/layout/layout.html}">
 
 <head>
-    <title th:text="#{c.pageNameStart}"></title>
+    <title th:text="#{c.pageLogin}"></title>
 </head>
 
 <body>
@@ -60,7 +60,7 @@
     <div class="max-w-2xl w-full px-4">
         <h1 class="mb-4">
             <i class="fa-solid fa-arrow-right-to-bracket"></i>
-            <span th:text="#{c.pageNameStart}"></span>
+            <span th:text="#{c.pageLogin}"></span>
         </h1>
 
         <form th:action method="POST" class="flex flex-col gap-6" onsubmit="LoginForm__submit(this); return false;">
@@ -89,7 +89,7 @@
 
                 <button id="btn-login-1" class="btn btn-block btn-primary gap-1">
                     <i class="fa-solid fa-arrow-right-to-bracket"></i>
-                    <span class="normal-case" th:text="#{c.pageNameStart}"></span>
+                    <span class="normal-case" th:text="#{c.pageLogin}"></span>
                 </button>
             </th:block>
 
