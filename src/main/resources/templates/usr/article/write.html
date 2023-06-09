@@ -1,31 +1,40 @@
 <html layout:decorate="~{usr/layout/layout.html}">
 <head>
   <title>게시글 작성하기</title>
-  <script>
+    <script>
 
-    function validateForm() {
-      var title = document.getElementById("title").value;
-      var content = document.getElementById("content").value;
-      var imageFile = document.getElementById("imageFile").value;
+        function validateForm() {
+            var title = document.getElementById("title").value;
+            var content = document.getElementById("content").value;
+            var imageFileElement = document.getElementById("imageFile");
+            var imageFile = imageFileElement.files.length > 0 ? imageFileElement.files[0] : null;
+            var validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
 
-      if (title.trim().length === 0) {
-        toastr.warning("제목을 입력해주세요.");
-        return false;
-      }
+            if (title.trim().length === 0) {
+                toastr.warning("제목을 입력해주세요.");
+                return false;
+            }
 
-      if (content.trim().length === 0) {
-        toastr.warning("내용을 입력해주세요.");
-        return false;
-      }
+            if (content.trim().length === 0) {
+                toastr.warning("내용을 입력해주세요.");
+                return false;
+            }
 
-      if (imageFile.trim().length === 0) {
-        toastr.warning("파일을 첨부해주세요.");
-        return false;
-      }
+            if (!imageFile) {
+                toastr.warning("파일을 첨부해주세요.");
+                return false;
+            }
 
-      return true;
-    }
-  </script>
+            var fileType = imageFile["type"];
+            if (!validImageTypes.includes(fileType)) {
+                toastr.warning("첨부된 파일이 이미지 타입이 아닙니다.");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+
 </head>
 <body>
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">

@@ -106,7 +106,8 @@ public class ArticleService {
 
                 article.setImage(image); // 이미지 정보를 게시글에 추가
             } catch (Exception e) {
-                return RsData.of("F-4", "이미지 업로드에 실패하였습니다");
+                e.printStackTrace();
+                throw new RuntimeException("이미지 업로드에 실패하였습니다", e);
             }
         }
 

@@ -5,6 +5,9 @@
         function validateForm() {
             var title = document.getElementById("title").value;
             var content = document.getElementById("content").value;
+            var imageFileElement = document.getElementById("imageFile");
+            var imageFile = imageFileElement.files.length > 0 ? imageFileElement.files[0] : null;
+            var validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
 
             if (title.trim().length === 0) {
                 toastr.warning("제목을 입력해주세요.");
@@ -14,6 +17,14 @@
             if (content.trim().length === 0) {
                 toastr.warning("내용을 입력해주세요.");
                 return false;
+            }
+
+            if (imageFile) {
+                var fileType = imageFile["type"];
+                if (!validImageTypes.includes(fileType)) {
+                    toastr.warning("첨부된 파일이 이미지 타입이 아닙니다.");
+                    return false;
+                }
             }
 
             return true;
@@ -75,4 +86,3 @@
 </main>
 </body>
 </html>
-

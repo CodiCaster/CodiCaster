@@ -15,8 +15,8 @@ public class AmazonS3ServiceTest {
 
 	@Test
 	public void testIsImage() throws IOException {
-		File imageFile = new File("C:\\testImage\\KakaoTalk_20230530_102400599.jpg"); // 이미지 파일 경로를 적절하게 변경하세요
-		File notImageFile = new File("C:\\testImage\\service1.pem"); // 이미지가 아닌 파일 경로를 적절하게 변경하세요
+		File imageFile = new File("C:\\testImage\\KakaoTalk_20230530_102400599.jpg"); // 이미지 파일 경로
+		File notImageFile = new File("C:\\testImage\\service1.pem"); // 이미지가 아닌 파일 경로
 
 		MultipartFile multipartImageFile = new MockMultipartFile("test_image", new FileInputStream(imageFile));
 		MultipartFile multipartNotImageFile = new MockMultipartFile("test_not_image", new FileInputStream(notImageFile));

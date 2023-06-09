@@ -44,13 +44,9 @@ public class ArticleController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/writepro")
     public String articleWriteSave(@ModelAttribute ArticleCreateForm articleCreateForm,
-        @RequestParam("imageFile") MultipartFile imageFile) {
+                                   @RequestParam("imageFile") MultipartFile imageFile) throws Exception {
 
-        try {
-            articleService.saveArticle(rq.getMember(), articleCreateForm, imageFile);
-        } catch (IllegalArgumentException e) {
-            return "redirect:/usr/article/write";
-        }
+        articleService.saveArticle(rq.getMember(), articleCreateForm, imageFile);
 
         return "redirect:/usr/article/list";
     }
