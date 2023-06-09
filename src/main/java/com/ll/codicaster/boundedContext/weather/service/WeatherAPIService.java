@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -84,55 +83,51 @@ public class WeatherAPIService {
             }
             rd.close();
             conn.disconnect();
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonData = objectMapper.readTree(sb.toString());
 
-                JsonNode itemNode = jsonData
-                        .path("response")
-                        .path("body")
-                        .path("items")
-                        .path("item");
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonData = objectMapper.readTree(sb.toString());
 
-                if (itemNode.isArray()) {
-                    for (JsonNode node : itemNode) {
-                        String category = node.path("category").asText();
-                        if (node.path("fcstDate").asText().equals(nowDateStr)
-                                && node.path("fcstTime").asText().equals(nowTimeStr)) {
-                            if (category.equals("TMP") && tmp.equals("")) {
-                                tmp = node.path("fcstValue").asText();
-                            }
-                            if (category.equals("POP") && pop.equals("")) {
-                                pop = node.path("fcstValue").asText();
-                            }
-                            if (category.equals("PTY") && pty.equals("")) {
-                                pty = node.path("fcstValue").asText();
-                            }
-                            if (category.equals("REH") && reh.equals("")) {
-                                reh = node.path("fcstValue").asText();
-                            }
-                            if (category.equals("SKY") && sky.equals("")) {
-                                sky = node.path("fcstValue").asText();
-                            }
+            JsonNode itemNode = jsonData
+                    .path("response")
+                    .path("body")
+                    .path("items")
+                    .path("item");
+
+            if (itemNode.isArray()) {
+                for (JsonNode node : itemNode) {
+                    String category = node.path("category").asText();
+                    if (node.path("fcstDate").asText().equals(nowDateStr)
+                            && node.path("fcstTime").asText().equals(nowTimeStr)) {
+                        if (category.equals("TMP") && tmp.equals("")) {
+                            tmp = node.path("fcstValue").asText();
                         }
-                        if (category.equals("TMN") && tmn.equals("")) {
-                            tmn = node.path("fcstValue").asText();
+                        if (category.equals("POP") && pop.equals("")) {
+                            pop = node.path("fcstValue").asText();
                         }
-                        if (category.equals("TMX") && tmx.equals("")) {
-                            tmx = node.path("fcstValue").asText();
+                        if (category.equals("PTY") && pty.equals("")) {
+                            pty = node.path("fcstValue").asText();
+                        }
+                        if (category.equals("REH") && reh.equals("")) {
+                            reh = node.path("fcstValue").asText();
+                        }
+                        if (category.equals("SKY") && sky.equals("")) {
+                            sky = node.path("fcstValue").asText();
                         }
                     }
-                } else {
-                    System.out.println("No item found in JSON data.");
+                    if (category.equals("TMN") && tmn.equals("")) {
+                        tmn = node.path("fcstValue").asText();
+                    }
+                    if (category.equals("TMX") && tmx.equals("")) {
+                        tmx = node.path("fcstValue").asText();
+                    }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            } else {
+                System.out.println("No item found in JSON data.");
             }
-
-
+            return new Weather(tmp, pop, pty, reh, sky, tmn, tmx);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new Weather(tmp, pop, pty, reh, sky, tmn, tmx);
+        return null;
     }
 }

@@ -9,7 +9,6 @@ import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.location.entity.LocationConstants;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.service.LocationService;
-import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import com.ll.codicaster.boundedContext.weather.service.WeatherService;
 import com.ll.codicaster.standard.util.Ut;
 import jakarta.servlet.http.HttpServletResponse;
@@ -91,22 +90,6 @@ public class Rq {
         return member;
     }
 
-    public String getAddress() {
-        Location location = (Location) session.getAttribute("location");
-        if (location == null) {
-            location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
-                    LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
-            setLocation(location);
-        }
-        return location.getAddress();
-    }
-
-    public String getCurrentDate() {
-        LocalDate currentDate = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd(E)", Locale.KOREAN);
-        return currentDate.format(formatter);
-    }
-
     public String getCText(String code, String... args) {
         return messageSource.getMessage(code, args, getLocale());
     }
@@ -167,26 +150,38 @@ public class Rq {
         return Ut.url.encode(msg) + ";ttl=" + new Date().getTime();
     }
 
+    public String getAddress() {
+        Location location = getCurrentLocation();
+        return location.getAddress();
+    }
+
+    private void setSessionLocationDefault() {
+        Location location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
+                LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
+        session.setAttribute("location", location);
+    }
+
     public void setLocation(Location location) {
         session.setAttribute("location", location);
     }
 
-    public HttpSession getSession() {
-        return this.session;
+    public String getCurrentDate() {
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd(E)", Locale.KOREAN);
+        return currentDate.format(formatter);
     }
 
     public Location getCurrentLocation() {
         Location location = (Location) session.getAttribute("location");
         if (location == null) {
-            location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
-                    LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
-            setLocation(location);
+            setSessionLocationDefault();
+            return (Location) session.getAttribute("location");
         }
         return location;
     }
 
     public String getWeatherInfo() {
-        Location location = (Location) session.getAttribute("location");
+        Location location = getCurrentLocation();
         return weatherService.getWeatherInfo(location);
     }
 }

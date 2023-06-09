@@ -1,10 +1,10 @@
 package com.ll.codicaster.boundedContext.article.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.ll.codicaster.boundedContext.member.service.MemberService;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ll.codicaster.base.rq.Rq;
@@ -21,7 +20,6 @@ import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.article.form.ArticleCreateForm;
 import com.ll.codicaster.boundedContext.article.service.ArticleService;
 import com.ll.codicaster.boundedContext.member.entity.Member;
-import com.ll.codicaster.boundedContext.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,13 +36,16 @@ public class ArticleController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/write")
     public String articleWrite() {
+//        날짜 선택 기능 - 고도화 작업에 해당
+//        LocalDate currentDate = LocalDate.now();
+//        model.addAttribute("currentDate", currentDate);
         return "usr/article/write";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/writepro")
     public String articleWriteSave(@ModelAttribute ArticleCreateForm articleCreateForm,
-                                   @RequestParam("imageFile") MultipartFile imageFile) throws Exception {
+                                   @RequestParam("imageFile") MultipartFile imageFile) {
 
         articleService.saveArticle(rq.getMember(), articleCreateForm, imageFile);
 
@@ -75,14 +76,13 @@ public class ArticleController {
         Article article = articleService.articleDetail(id);
         Member currentMember = rq.getMember();  // 현재 사용자 가져오기
         boolean isLiked = article.getLikedMembers().contains(currentMember);  // 현재 사용자가 이 게시글에 좋아요를 눌렀는지 판단
-        String weatherInfo = articleService.getWeatherInfo(article.getWeatherId());
 
         model.addAttribute("article", article);
         model.addAttribute("image", article.getImage());
         model.addAttribute("likeCount", article.getLikesCount());
         model.addAttribute("isLiked", isLiked);
-        model.addAttribute("address", articleService.getAddress(id));
-        model.addAttribute("weatherInfo", weatherInfo);
+        model.addAttribute("address", article.getAddress());
+        model.addAttribute("weatherInfo", article.getWeatherInfo());
 
         return "usr/article/detail";
     }
@@ -163,11 +163,6 @@ public class ArticleController {
         if (!success) {
             return "redirect:/error";
         }
-
         return "redirect:/usr/article/detail/" + id;
     }
-
-
 }
-
-
