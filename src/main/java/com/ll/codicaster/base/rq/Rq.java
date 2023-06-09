@@ -90,6 +90,14 @@ public class Rq {
         return member;
     }
 
+    public String getNickname() {
+        Member member = getMember();
+        if (member != null) {
+            return member.getNickname();
+        }
+        return null;
+    }
+
     public String getCText(String code, String... args) {
         return messageSource.getMessage(code, args, getLocale());
     }
