@@ -17,14 +17,26 @@ public class HomeController {
 	private final Rq rq;
 
 	@GetMapping("/")
-	public String showMain() {
+	public String showMain(HttpSession session) {
+		// 로그인 상태일 경우 /usr/member/me 페이지로 이동
+		if (rq.isLogin()) {
+			String nickname = rq.getNickname();
+
+			// 이미 가입한 회원인 경우 /usr/member/me 페이지로 이동
+			if (nickname != null) {
+				return "redirect:/usr/member/me";
+			}
+			else {
+				return "redirect:/usr/member/newInfo";
+			}
+		}
+
+		// 로그아웃 상태일 경우 로그인 페이지로 리디렉션
 		if (rq.isLogout()) {
 			return "redirect:/usr/member/login";
 		}
 
-		// if (rq.getMember().getNickname() != null || rq.getMember().getBodytype() != null)
-		// 	return "usr/home/about";
-
+		// 회원가입 폼으로 리디렉션
 		return "redirect:/usr/member/newInfo";
 	}
 
