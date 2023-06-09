@@ -1,9 +1,7 @@
 package com.ll.codicaster.boundedContext.weather.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
+import com.ll.codicaster.boundedContext.article.entity.Article;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,13 +14,16 @@ public class Weather {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+    @OneToOne
+    @JoinColumn(name = "article_id")
+    private Article article;
     private Double tmp;     // 온도 TMP
     private Double pop;     // 강수 확률
     private Integer pty;    //강수 형태 0 ~ 4
     //없음 : 0, 비 : 1, 비/눈 : 2, 눈 : 3, 소나기 : 4
     private Double reh;     //습도
-    private Integer sky;        //하늘 상태 0 ~ 10
-    // 맑음 : 0 ~ 5, 구름 많음 : 6 ~ 8, 흐림 : 9 ~ 10
+    private Integer sky;        //하늘 상태 1, 3, 4
+    // 맑음 : 1, 구름 많음 : 3, 흐림 : 4
     private Double tmn;     //일 최저기온  17.0
     private Double tmx;     //일 최고기온  28.0
 
