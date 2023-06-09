@@ -1,4 +1,4 @@
-package com.ll.codicaster.controller;
+package com.ll.codicaster.member;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
