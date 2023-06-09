@@ -58,6 +58,3 @@ file:
 custom:
   site:
     baseUrl: http://localhost:8080
-naver-cloud-platform:
-  bucket-name: bucket-s
-  object-storage-url: https://kr.object.ncloudstorage.com

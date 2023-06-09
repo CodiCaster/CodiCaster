@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.ll.codicaster.aws.s3.dto.AmazonS3ImageDto;
+import com.ll.codicaster.aws.s3.service.AmazonS3Service;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.service.LocationService;
 import com.ll.codicaster.boundedContext.weather.entity.Weather;
@@ -45,6 +47,8 @@ public class ArticleService {
     private final LocationService locationService;
     private final WeatherService weatherService;
     private final ImageRepository imageRepository;
+
+    private final AmazonS3Service amazonS3Service;
 
     private final Rq rq;
     @Value("${file.upload-dir}")
@@ -90,36 +94,26 @@ public class ArticleService {
 
         // 이미지 파일이 있으면 저장
         if (!imageFile.isEmpty()) {
-            UUID uuid = UUID.randomUUID();
-            String fileName = uuid + "_" + imageFile.getOriginalFilename();
-
-            File directory = new File(uploadDir);
-            // 디렉토리가 존재하지 않으면 생성
-            if (!directory.exists()) {
-                directory.mkdirs(); // 상위 디렉토리까지 모두 생성
-            }
-
-            File saveFile = new File(uploadDir, fileName);
             try {
-                imageFile.transferTo(saveFile);
-            } catch (Exception e) {
-                return RsData.of("F-4", "이미지 업로드에 실패하였습니다");
-            }
+                // 이미지 업로드 및 URL 정보 받아오기
+                AmazonS3ImageDto amazonS3ImageDto = amazonS3Service.imageUpload(imageFile, UUID.randomUUID().toString());
 
-            Image image = Image.builder()
-                    .filename(fileName)
-                    .filepath("/images/" + fileName)
+                // 이미지 정보를 설정하고 저장
+                Image image = Image.builder()
+                    .filename(imageFile.getOriginalFilename())
+                    .filepath(amazonS3ImageDto.getCdnUrl()) // CDN URL로 변경
                     .article(article)
                     .build();
 
+                image = imageRepository.save(image);  // 이미지를 DB에 저장
 
-            image = imageRepository.save(image);  // 이미지를 DB에 저장
-
-            article.setImage(image); // 이미지 정보를 게시글에 추가
+                article.setImage(image); // 이미지 정보를 게시글에 추가
+            } catch (Exception e) {
+                return RsData.of("F-4", "이미지 업로드에 실패하였습니다");
+            }
         }
 
         return RsData.of("S-1", "성공적으로 저장되었습니다", article);
-
     }
 
     //게시물 전체 리스트
@@ -141,7 +135,7 @@ public class ArticleService {
     public boolean updateArticle(Member actor, Long id, ArticleCreateForm form, MultipartFile imageFile) {
         try {
             Article article = articleRepository.findById(id)
-                    .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
+                .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
 
             Set<String> existingTagSet = article.getTagSet();
             truncateUserTagMap(actor, existingTagSet);
@@ -156,47 +150,37 @@ public class ArticleService {
 
             // 이미지 파일이 있으면 저장
             if (!imageFile.isEmpty()) {
-                UUID uuid = UUID.randomUUID();
-                String fileName = uuid + "_" + imageFile.getOriginalFilename();
+                try {
+                    // 이미지 업로드 및 URL 정보 받아오기
+                    AmazonS3ImageDto amazonS3ImageDto = amazonS3Service.imageUpload(imageFile, UUID.randomUUID().toString());
 
-                File directory = new File(uploadDir);
-                if (!directory.exists()) {
-                    directory.mkdirs();
-                }
-
-                File saveFile = new File(uploadDir, fileName);
-                imageFile.transferTo(saveFile);
-
-                // 기존 이미지가 있으면 삭제
-                Image oldImage = article.getImage();
-                if (oldImage != null) {
-                    // 실제 파일 삭제
-                    File oldFile = new File(uploadDir, oldImage.getFilename());
-                    if (oldFile.exists()) {
-                        oldFile.delete();
+                    // 기존 이미지가 있으면 DB에서 삭제
+                    Image oldImage = article.getImage();
+                    if (oldImage != null) {
+                        imageRepository.delete(oldImage);
                     }
 
-                    // DB에서 기존 이미지 삭제
-                    imageRepository.delete(oldImage);
+                    // 새 이미지 정보를 설정하고 저장
+                    Image image = Image.builder()
+                        .filename(imageFile.getOriginalFilename())
+                        .filepath(amazonS3ImageDto.getCdnUrl()) // CDN URL로 변경
+                        .article(article)
+                        .build();
+
+                    image = imageRepository.save(image);
+
+                    article.setImage(image);
+                } catch (Exception e) {
+                    return false;
                 }
-
-                // 새 이미지 정보를 설정하고 저장
-                Image image = new Image();
-                image.setFilename(fileName);
-                image.setFilepath("/images/" + fileName);
-                image.setArticle(article);
-
-                image = imageRepository.save(image);
-
-                article.setImage(image);
             }
 
             return true;
         } catch (Exception e) {
-            // e.printStackTrace();
             return false;
         }
     }
+
 
     @Transactional
     public boolean deleteArticle(Long id) {
