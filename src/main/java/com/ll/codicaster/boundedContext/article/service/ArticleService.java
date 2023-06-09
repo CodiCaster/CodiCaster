@@ -216,17 +216,6 @@ public class ArticleService {
 
     }
 
-	public String getAddress(Long id) {
-		Article article = articleRepository.findById(id)
-			.orElseThrow(() -> new NoSuchElementException("No Article Found with id: " + id));
-		return locationService.getLocation(article.getLocationId()).getAddress();
-	}
-
-	public String getWeatherInfo(Long weatherId) {
-		Weather weather = weatherService.getWeather(weatherId);
-		return weatherService.getWeatherInfo(weather);
-	}
-
 	public Article findArticleById(Long id) {
 		return articleRepository.findById(id)
 			.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + id));
@@ -268,7 +257,7 @@ public class ArticleService {
 		List<Article> articlesNearbyToday = Stream.concat(articleYearAgo.stream(), articleLastOneMonth.stream())
 			.filter(article -> article.getAuthor().getGender().equals(member.getGender()))
 			.sorted(Comparator.comparingDouble(
-				article -> locationService.getDistance(locationService.getLocation(article.getLocationId()))))
+				article -> getDistanceBetweenUser(article)))
 			.collect(Collectors.toList());
 
 		return articlesNearbyToday;
@@ -356,11 +345,35 @@ public class ArticleService {
 
 		return distanceScore + userTypeScore + likeScore + tagScore;
 	}
+	//체질점수
+	private double calculateUserTypeScore(Article article, Member user) {
+		int userTypeDifference = Math.abs(article.getAuthor().getBodytype() - user.getBodytype());
+		return userTypeDifference <= 1 ? 1 : 0;
+	}
 
 	//거리점수 : 거리가 10키로미터 이내이면 1점부여
 	private double calculateDistanceScore(Article article) {
-		double distance = locationService.getDistance(locationService.getLocation(article.getLocationId()));
+		double distance = getDistanceBetweenUser(article);
 		return distance <= 10 ? 1 : 0;
+	}
+
+	private double calculateLikeScore(Article article) {
+		return article.getLikesCount() * 0.01;
+	}
+
+	private double calculateTagScore(Article article, Member user) {
+		List<String> userTags = user.getMostUsedTags();
+		Set<String> articleTags = article.getTagSet();
+
+		double tagScore = 0.0;
+
+		for (String tag : userTags) {
+			if (articleTags.contains(tag)) {
+				tagScore += 0.5;
+			}
+		}
+
+		return tagScore;
 	}
 
     public void whenAfterSaveLocation(Location location, Long articleId) {
@@ -374,5 +387,34 @@ public class ArticleService {
                 .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
         article.setWeather(weather);
     }
+
+
+	//거리 구하는 메서드
+	public double getDistanceBetweenUser(Article article) {
+		double nowLat = rq.getCurrentLocation().getLatitude();
+	    double nowLon = rq.getCurrentLocation().getLongitude();
+
+	    double lat2 = article.getLocation().getLatitude();
+	    double lon2 = article.getLocation().getLongitude();
+	    //킬로미터 단위로 거리
+	    double theta = nowLon - lon2;
+	    double dist = Math.sin(deg2rad(nowLat))* Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(nowLat))*Math.cos(deg2rad(lat2))*Math.cos(deg2rad(theta));
+	    dist = Math.acos(dist);
+	    dist = rad2deg(dist);
+	    dist = dist * 60*1.1515*1609.344;
+
+	    return dist / 1000;
+
+	}
+
+	//10진수를 radian(라디안)으로 변환
+	private static double deg2rad(double deg) {
+		return (deg * Math.PI / 180.0);
+	}
+
+	//radian(라디안)을 10진수로 변환
+	private static double rad2deg(double rad) {
+		return (rad * 180 / Math.PI);
+	}
 }
 
