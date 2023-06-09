@@ -100,4 +100,24 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
+    //유저가 가장 많이 이용한 태그
+    public List<String> getMostUsedTags() {
+        List<String> mostUsedTags = new ArrayList<>();
+        int maxCount = 0;
+
+        Map<String, Integer> tagMap = rq.getMember().getTagMap();
+
+        for (Map.Entry<String, Integer> entry : tagMap.entrySet()) {
+            int count = entry.getValue();
+            if (count > maxCount) {
+                maxCount = count;
+                mostUsedTags.clear();
+                mostUsedTags.add(entry.getKey());
+            } else if (count == maxCount) {
+                mostUsedTags.add(entry.getKey());
+            }
+        }
+
+        return mostUsedTags;
+    }
 }
