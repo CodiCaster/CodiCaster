@@ -46,14 +46,14 @@
 </head>
 
 <body>
-<main layout:fragment="main" class="flex-grow flex items-center justify-center ">
+<main layout:fragment="main" class="flex-grow flex justify-center ">
     <div class="max-w-2xl w-full px-4">
         <div class="flex flex-col gap-4">
             <div class="card bg-base-100 shadow-xl">
-                <div class="mt-2">
+                <div class="mt-2 px-4 mt-4">
                     <form id="locationDTO" th:action="@{/usr/location/update/main}" method="post">
                         <div class="flex">
-                            <div class="flex flex-col ml-2">
+                            <div class="flex flex-col">
                                 <h2 class="card-title flex items-center">
                                     <span class="text-4xl" th:text="${@rq.getAddress}"></span>
                                 </h2>
@@ -73,31 +73,45 @@
                             <input type="hidden" name="latitude" th:value="${latitude}">
                             <input type="hidden" name="longitude" th:value="${longitude}">
                         </div>
-                        <div id="loadingSpinner">
-                            <div class="lds-roller">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
+                        <div class="flex flex-grow justify-end items-center" style="height: 80px;">
+                            <div id="loadingSpinner">
+                                <div class="lds-roller">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
                             </div>
                         </div>
                     </form>
                 </div>
+                <br>
+                <br>
+                <h2 class="card-title flex items-center px-4">
+                    <span class="text-4xl">오늘의 코디</span>
+                </h2>
+
+                <br>
+                <br>
+                <br>
+                <br>
             </div>
         </div>
-        <div>
-            여기는 로그인 안해도 보여져
+        <div class="flex flex-col gap-4 mt-4">
+            <div th:if="${@rq.isLogin}" class="card bg-base-100 shadow-xl max-w-2xl w-full px-4">
+                <h2 class="card-title flex items-center mt-4">
+                    <span class="text-4xl">나의 게시물</span>
+                </h2>
+                <br>
+                <br>
+                <br>
+                <br>
+            </div>
         </div>
-
-
-        <div th:if="${@rq.isLogin}" class="max-w-2xl w-full px-4">
-            <div>여기는 로그인 했을 때 보여줄 페이지야</div>
-        </div>
-
     </div>
 
 </main>
