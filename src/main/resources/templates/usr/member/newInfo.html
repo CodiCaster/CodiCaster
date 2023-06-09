@@ -23,6 +23,12 @@
                 return;
             }
 
+            if (nickname.length > 10) {
+                toastWarning('닉네임을 10자 이하 입력해주세요.');
+                submitBtn.disabled = true;
+                return;
+            }
+
             if (nickname.indexOf(' ') !== -1) {
                 toastWarning('닉네임에는 공백을 사용할 수 없습니다.');
                 submitBtn.disabled = true;
@@ -52,7 +58,7 @@
 
         function enableSubmitButton() {
             var submitBtn = document.getElementById('submitBtn');
-            var bodyTypeChecked = document.querySelector('input[name="bodytype"]:checked');
+            var bodyTypeChecked = document.querySelector('input[name="bodyType"]:checked');
 
             if (isNicknameValid && bodyTypeChecked) {
                 submitBtn.disabled = false;
@@ -71,19 +77,19 @@
             margin-bottom: 1.5rem;
         }
 
-        .bodytype-group {
+        .bodyType-group {
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        .bodytype-item {
+        .bodyType-item {
             display: flex;
             align-items: center;
             margin-right: 10px;
         }
 
-        .bodytype-item label {
+        .bodyType-item label {
             margin-left: 2px;
         }
 
@@ -164,29 +170,29 @@
                         <div class="form-group">
                             <label><i class="fa-solid fa-temperature-low"></i> 나의 체질 </label>
                             <br>
-                            <div class="bodytype-group">
-                                <div class="bodytype-item">
-                                    <input type="radio" id="veryCold" name="bodytype" value="추위 많이 탐"
+                            <div class="bodyType-group">
+                                <div class="bodyType-item">
+                                    <input type="radio" id="veryCold" name="bodyType" value="추위 많이 탐"
                                            class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="veryCold">추위 많이 탐</label>
                                 </div>
-                                <div class="bodytype-item">
-                                    <input type="radio" id="cold" name="bodytype" value="추위 조금 탐"
+                                <div class="bodyType-item">
+                                    <input type="radio" id="cold" name="bodyType" value="추위 조금 탐"
                                            class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="cold">추위 조금 탐</label>
                                 </div>
-                                <div class="bodytype-item">
-                                    <input type="radio" id="normal" name="bodytype" value="보통"
+                                <div class="bodyType-item">
+                                    <input type="radio" id="normal" name="bodyType" value="보통"
                                            class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="normal">보통</label>
                                 </div>
-                                <div class="bodytype-item">
-                                    <input type="radio" id="hot" name="bodytype" value="더위 조금 탐"
+                                <div class="bodyType-item">
+                                    <input type="radio" id="hot" name="bodyType" value="더위 조금 탐"
                                            class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="hot">더위 조금 탐</label>
                                 </div>
-                                <div class="bodytype-item">
-                                    <input type="radio" id="veryHot" name="bodytype" value="더위 많이 탐"
+                                <div class="bodyType-item">
+                                    <input type="radio" id="veryHot" name="bodyType" value="더위 많이 탐"
                                            class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="veryHot">더위 많이 탐</label>
                                 </div>

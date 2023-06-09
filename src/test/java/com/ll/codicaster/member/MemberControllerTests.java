@@ -1,4 +1,4 @@
-package com.ll.codicaster.controller;
+package com.ll.codicaster.member;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
@@ -41,7 +41,7 @@ public class MemberControllerTests {
 
 	@Test
 	@DisplayName("로그인 폼")
-	void t004() throws Exception {
+	void t001() throws Exception {
 		// WHEN
 		ResultActions resultActions = mvc
 			.perform(get("/usr/member/login?admin"))
@@ -66,7 +66,7 @@ public class MemberControllerTests {
 	@Test
 	// @Rollback(value = false) // DB에 흔적이 남는다.
 	@DisplayName("로그인 처리")
-	void t005() throws Exception {
+	void t002() throws Exception {
 		// WHEN
 		ResultActions resultActions = mvc
 			.perform(post("/usr/member/login")
