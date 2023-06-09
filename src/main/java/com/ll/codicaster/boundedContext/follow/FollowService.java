@@ -1,7 +1,6 @@
 package com.ll.codicaster.boundedContext.follow;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
