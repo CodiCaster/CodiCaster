@@ -40,12 +40,8 @@ public class Member extends BaseEntity {
     @Column(unique = true)
     private String nickname;
 
-<<<<<<< HEAD
 	@Column
     private int bodyType;
-=======
-    private String bodytype;
->>>>>>> 050be45 ([fix]병합 이전 커밋)
 
     private String gender;
 
@@ -75,11 +71,9 @@ public class Member extends BaseEntity {
         return "admin".equals(username);
     }
 
-<<<<<<< HEAD
+
     public void updateInfo(String nickname, int bodyType, String gender) {
-=======
-    public void updateInfo(String nickname, String bodytype, String gender) {
->>>>>>> 050be45 ([fix]병합 이전 커밋)
+
         this.nickname = nickname;
         this.bodyType = bodyType;
         this.gender = gender;
@@ -109,7 +103,7 @@ public class Member extends BaseEntity {
     @ManyToMany(mappedBy = "likedMembers")
     private Set<Article> likedArticles = new HashSet<>();
 
-<<<<<<< HEAD
+
     public String getBodyTypeDisplayName(){
         return switch (bodyType){
             case 1 -> "추위 많이 탐";
@@ -121,8 +115,7 @@ public class Member extends BaseEntity {
     }
 
 
-=======
->>>>>>> 050be45 ([fix]병합 이전 커밋)
+
 
 
 

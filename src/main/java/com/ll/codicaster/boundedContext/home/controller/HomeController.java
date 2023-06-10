@@ -17,19 +17,7 @@ public class HomeController {
 	private final Rq rq;
 
 	@GetMapping("/")
-	public String showMain(HttpSession session) {
-		// 로그인 상태일 경우 /usr/member/me 페이지로 이동
-		if (rq.isLogin()) {
-			String nickname = rq.getNickname();
-
-			// 이미 가입한 회원인 경우 /usr/member/me 페이지로 이동
-			if (nickname != null) {
-				return "redirect:/usr/member/me";
-			}
-			else {
-				return "redirect:/usr/member/newInfo";
-			}
-		}
+	public String showMain() {
 
 		// 로그아웃 상태일 경우 로그인 페이지로 리디렉션
 		if (rq.isLogout()) {
@@ -38,6 +26,7 @@ public class HomeController {
 
 		// 회원가입 폼으로 리디렉션
 		return "redirect:/usr/member/newInfo";
+
 	}
 
 	@GetMapping("/usr/home/about")

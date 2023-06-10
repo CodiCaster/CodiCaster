@@ -41,7 +41,7 @@ public class MemberController {
 
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/newInfo")
-	public String updateInfo(@RequestParam String nickname, @RequestParam(required = false) String bodyType,
+	public String updateInfo(@RequestParam String nickname, @RequestParam(required = false) int bodyType,
 		@RequestParam String gender) {
 		memberService.updateMemberInfo(rq.getLoginedMemberId(), nickname, bodyType, gender);
 		return "redirect:/usr/member/me";

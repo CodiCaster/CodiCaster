@@ -336,7 +336,7 @@ public class ArticleService {
 	}
 	//체질점수 : 유저의 체질점수 ±1 이면 +1점
 	private double calculateUserTypeScore(Article article, Member user) {
-		int userTypeDifference = Math.abs(article.getAuthor().getBodytype() - user.getBodytype());
+		int userTypeDifference = Math.abs(article.getAuthor().getBodyType() - user.getBodyType());
 		return userTypeDifference <= 1 ? 1 : 0;
 	}
 

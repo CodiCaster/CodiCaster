@@ -36,6 +36,7 @@ public class NotificationService {
 			.typeCode(typeCode)
 			.actor(actor)
 			.createDate(LocalDateTime.now())
+			.receiver(article.getAuthor())
 			.build();
 		notificationRepository.save(notification);
 		return RsData.of("S-1", "알림 메세지가 생성되었습니다.", notification);
