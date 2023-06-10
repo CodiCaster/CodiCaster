@@ -34,7 +34,7 @@ public class AmazonS3Service {
 
         amazonRepository.upload(amazonS3Properties.getBucketName(), objectName, file, mimeType);
 
-        String cndUrl = amazonS3Properties.getCdnEndPoint() + objectName;
+        String cndUrl = amazonS3Properties.getCdnEndPoint() + objectName + "?type=u&w=1080&h=1350&quality=90";
         String originUrl = amazonS3Properties.getEndPoint() + "/" + amazonS3Properties.getBucketName() + "/" + objectName;
 
         return AmazonS3ImageDto.builder()
