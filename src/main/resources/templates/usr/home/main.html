@@ -1,26 +1,78 @@
-<html layout:decorate="~{usr/layout/layout.html}">
+<html layout:decorate="~{usr/layout/layout.html}" xmlns:layout="http://www.w3.org/1999/xhtml">
 
 <head>
     <title th:text="#{c.logoText}"></title>
-    <script>
-        function showLoadingSpinner() {
-            var spinner = document.getElementById('spinner');
-            spinner.style.display = 'block';
+    <style>
+        #updateButton {
+            position: relative;
+            padding: 8px 16px;
+            outline: none;
+            border-radius: 20px;
+            cursor: pointer;
         }
 
-        function hideLoadingSpinner() {
-            var spinner = document.getElementById('spinner');
-            spinner.style.display = 'none';
+        #updateButton:active {
+            background: hsl(var(--pf));
         }
+
+        .button__text {
+            transition: all 0.2s;
+        }
+
+        .button--loading .button__text {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .button--loading::after {
+            content: "";
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            border: 4px solid transparent;
+            border-top-color: hsl(var(--pf));
+            border-radius: 50%;
+            animation: button-loading-spinner 1s ease infinite;
+        }
+
+        @keyframes button-loading-spinner {
+            from {
+                transform: rotate(0turn);
+            }
+            to {
+                transform: rotate(1turn);
+            }
+        }
+
+    </style>
+    <script>
+
+        function handleButtonClick(button) {
+            if (!button.classList.contains('button--loading')) {
+                button.classList.add('button--loading');
+                button.disabled = true;
+                getLocationAndSubmit();
+                console.log('Button clicked');
+
+            }
+        }
+
+        const theButton = document.querySelector("#updateButton");
+        theButton.addEventListener("click", () => {
+            theButton.classList.add("button--loading");
+        });
 
         function getLocationAndSubmit() {
             if (navigator.geolocation) {
-                showLoadingSpinner();
                 navigator.geolocation.getCurrentPosition(function (position) {
                     sendLocationToServer(position);
                     submitForm();
                 }, function (error) {
-                    hideLoadingSpinner();
                     console.log('위치 정보 가져오기 실패:', error.message);
                 });
             } else {
@@ -52,7 +104,7 @@
             <div class="card bg-base-100 shadow-xl">
                 <div class="mt-2 px-4 mt-4">
                     <form id="locationDTO" th:action="@{/usr/location/update/main}" method="post">
-                        <div class="flex">
+                        <div class="flex justify-between">
                             <div class="flex flex-col" style="height: 70px;">
                                 <h2 class="card-title flex items-center">
                                     <span class="text-2xl" th:text="${@rq.getAddress}"></span>
@@ -62,15 +114,13 @@
                                     <span class="text-xl" th:text="${@rq.getWeatherInfo}"></span>
                                 </h2>
                             </div>
-                            <div class="flex flex-grow justify-end items-center">
-                                <div id="spinner" class="loader ml-4">Loading...</div>
+                            <div class="justify-end">
+                                <button id="updateButton" type="button"
+                                        class="button bg-white border border-primary text-primary hover:bg-primary hover:text-white"
+                                        onclick="handleButtonClick(this);">
+                                    <span class="button__text text-xl">Update</span>
+                                </button>
                             </div>
-                            <button id="submitButton" type="button" class="btn btn-link" style="height: 70px;"
-                                    onClick="getLocationAndSubmit()">
-                                   <span class="text-xl">
-                                       위치 업데이트
-                                   </span>
-                            </button>
                             <input type="hidden" name="latitude" th:value="${latitude}">
                             <input type="hidden" name="longitude" th:value="${longitude}">
                         </div>

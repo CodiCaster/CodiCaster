@@ -2,26 +2,77 @@
 
 <head>
     <title>마이페이지</title>
+    <style>
+        #updateButton {
+            position: relative;
+            padding: 0.25rem 0.5rem;
+            outline: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
 
+        #updateButton:active {
+            background: hsl(var(--pf));
+        }
+
+        .button__text {
+            transition: all 0.2s;
+        }
+
+        .button--loading .button__text {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .button--loading::after {
+            content: "";
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            border: 4px solid transparent;
+            border-top-color: hsl(var(--pf));
+            border-radius: 50%;
+            animation: button-loading-spinner 1s ease infinite;
+        }
+
+        @keyframes button-loading-spinner {
+            from {
+                transform: rotate(0turn);
+            }
+            to {
+                transform: rotate(1turn);
+            }
+        }
+
+    </style>
     <script>
-        function showLoadingSpinner() {
-            var spinner = document.getElementById('spinner');
-            spinner.style.display = 'block';
+
+        function handleButtonClick(button) {
+            if (!button.classList.contains('button--loading')) {
+                button.classList.add('button--loading');
+                button.disabled = true;
+                getLocationAndSubmit();
+                console.log('Button clicked');
+
+            }
         }
 
-        function hideLoadingSpinner() {
-            var spinner = document.getElementById('spinner');
-            spinner.style.display = 'none';
-        }
+        const theButton = document.querySelector("#updateButton");
+        theButton.addEventListener("click", () => {
+            theButton.classList.add("button--loading");
+        });
 
         function getLocationAndSubmit() {
             if (navigator.geolocation) {
-                showLoadingSpinner();
                 navigator.geolocation.getCurrentPosition(function (position) {
                     sendLocationToServer(position);
                     submitForm();
                 }, function (error) {
-                    hideLoadingSpinner();
                     console.log('위치 정보 가져오기 실패:', error.message);
                 });
             } else {
@@ -177,9 +228,9 @@
                     </h2>
 
                     <div class="mt-4">
-                        <div>
+                        <div class="flex items-center">
                             <i class="fa-solid fa-id-badge"></i>
-                            닉네임
+                            <span class="ml-1"> 닉네임</span>
                         </div>
                         <div class="mt-2">
                             <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>
@@ -187,9 +238,9 @@
                     </div>
 
                     <div class="mt-4">
-                        <div>
+                        <div class="flex items-center">
                             <i class="fa-solid fa-venus-mars"></i>
-                            성별
+                            <span class="ml-1"> 성별</span>
                         </div>
                         <div class="mt-2">
                             <span class="badge badge-accent" th:text="${@rq.member.gender}"></span>
@@ -197,9 +248,9 @@
                     </div>
 
                     <div class="mt-4">
-                        <div>
+                        <div class="flex items-center">
                             <i class="fa-solid fa-temperature-low"></i>
-                            나의 체질
+                            <span class="ml-1"> 나의 체질</span>
                         </div>
                         <div class="mt-2">
                             <span class="badge badge-secondary" th:text="${@rq.member.bodyType}"></span>
@@ -207,30 +258,34 @@
                     </div>
 
                     <div class="mt-4">
-                        <div class="mt-4">
-                            <i class="fa-solid fa-location-dot"></i>
-                            현재 위치
-                        </div>
-                        <div class="mt-2 flex flex-grow items-center" style="height: 80px;">
-                            <form id="locationDTO" th:action="@{/usr/location/update/me}" method="post">
-                                <div class="flex items-center">
-                                    <span class="badge badge-ghost" th:text="${@rq.getAddress()}"></span>
-                                    <button id="submitButton" type="button" class="btn btn-link"
-                                            onClick="getLocationAndSubmit()">업데이트
+                        <div class="flex items-center">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span class="ml-1"> 현재 위치</span>
+                            </div>
+                            <div class="flex items-center justify-center ml-2">
+                                <form id="locationDTO" th:action="@{/usr/location/update/me}" method="post"
+                                      style="margin-bottom: 0;">
+                                    <button id="updateButton" type="button"
+                                            class="button bg-white border border-primary text-primary hover:bg-primary hover:text-white"
+                                            onclick="handleButtonClick(this);">
+                                        <span class="button__text ">Update</span>
                                     </button>
-                                    <div id="spinner" class="loader">Loading...</div>
-                                </div>
-                                <input type="hidden" name="latitude" th:value="${latitude}">
-                                <input type="hidden" name="longitude" th:value="${longitude}">
-                            </form>
+                                    <input type="hidden" name="latitude" th:value="${latitude}">
+                                    <input type="hidden" name="longitude" th:value="${longitude}">
+                                </form>
+                            </div>
+                        </div>
+                        <div class="mt-2 flex flex-grow items-center">
+                            <span class="badge badge-ghost" th:text="${@rq.getAddress()}"></span>
+
                         </div>
                     </div>
                     <div class="mt-4">
-                        <div>
+                        <div class="flex items-center">
                             <i class="fa-solid fa-cloud"></i>
-                            현재 날씨
+                            <span class="ml-1"> 현재 날씨</span>
                         </div>
-
                         <div class="mt-2">
                             <span class="badge badge-ghost" th:text="${@rq.getWeatherInfo}"></span>
                         </div>
