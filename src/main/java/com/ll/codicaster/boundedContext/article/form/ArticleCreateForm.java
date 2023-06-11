@@ -11,8 +11,6 @@ import java.time.LocalDate;
 @Data
 public class ArticleCreateForm {
 	private String title;
-	//날짜 선택 기능 구현시 사용
-//	private LocalDate customDate;
 	private String content;
 	private MultipartFile imageFile;
 
