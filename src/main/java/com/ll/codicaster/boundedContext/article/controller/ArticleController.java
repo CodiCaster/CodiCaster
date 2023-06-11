@@ -136,7 +136,7 @@ public class ArticleController {
         return "redirect:/usr/article/list";
     }
 
-    @RequestMapping("/mylist")
+    @RequestMapping("/myList")
     public String showMyArticle(Model model) {
 
         List<Article> articles = articleService.showMyList();
@@ -145,7 +145,7 @@ public class ArticleController {
         model.addAttribute("mostUsedTags", mostUsedTags);
 
 
-        return "usr/article/mylist";
+        return "usr/article/myList";
     }
 
     // 좋아요 추가

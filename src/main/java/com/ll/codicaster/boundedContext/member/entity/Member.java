@@ -31,12 +31,9 @@ import lombok.experimental.SuperBuilder;
 @ToString(callSuper = true)
 public class Member extends BaseEntity {
     private String providerTypeCode; // 일반회원인지, 카카오로 가입한 회원인지, 네이버로 가입한 회원인지
-
     @Column(unique = true)
     private String username;
-
     private String password;
-
     @Column(unique = true)
     private String nickname;
 
@@ -44,13 +41,11 @@ public class Member extends BaseEntity {
     private int bodyType;
 
     private String gender;
-
     @ElementCollection
     @CollectionTable(name = "member_tagMap", joinColumns = @JoinColumn(name = "member_id"))
     @MapKeyColumn(name = "tag_type")
     @Column(name = "tag_count")
     private Map<String, Integer> tagMap;
-
 
     // 이 함수 자체는 만들어야 한다. 스프링 시큐리티 규격
     public List<? extends GrantedAuthority> getGrantedAuthorities() {
