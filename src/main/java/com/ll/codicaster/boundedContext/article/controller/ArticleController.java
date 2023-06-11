@@ -142,7 +142,7 @@ public class ArticleController {
         List<Article> articles = articleService.showMyList();
         model.addAttribute("myArticles", articles);
 
-        List<String> mostUsedTags = memberService.getMostUsedTags();
+        List<String> mostUsedTags = rq.getMember().getMostUsedTags();
         model.addAttribute("mostUsedTags", mostUsedTags);
 
 
