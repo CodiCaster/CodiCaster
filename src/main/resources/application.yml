@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/codicaster_dev?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
     username: root
-    password: Codi2327~~
+    password: 1234
   security:
     oauth2:
       client:
@@ -57,7 +57,7 @@ server:
       max-file-size: 10MB
       max-request-size: 10MB
 file:
-  upload-dir: /Users/heegwonjo/Desktop/Likelion/codicaster
+  upload-dir: /Users/hojun/Desktop/CodiCaster/images
 custom:
   site:
     baseUrl: http://localhost:8080
