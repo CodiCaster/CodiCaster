@@ -138,34 +138,6 @@ public class LocationService {
         return new Point(xLat, yLon);
     }
 
-    //거리 구하는 메서드
 
-    // public double getDistance(Member member) {
-    //     //double nowLat = member.getLocation().getLat();
-    //     //double nowLon = member.getLocation().getLon();
-    //
-    //     //double lat2 = this.getLocation().getLat();
-    //     //double lon2 = this.getLocation().getLon();
-    //     //킬로미터 단위로 거리
-    //     //double theta = nowLon - lon2;
-    //     double dist = Math.sin(deg2rad(nowLat))* Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(nowLat))*Math.cos(deg2rad(lat2))*Math.cos(deg2rad(theta));
-    //     dist = Math.acos(dist);
-    //     dist = rad2deg(dist);
-    //     dist = dist * 60*1.1515*1609.344;
-    //
-    //     return dist / 1000;
-    //
-    // }
-
-
-    //10진수를 radian(라디안)으로 변환
-    private static double deg2rad(double deg) {
-        return (deg * Math.PI / 180.0);
-    }
-
-    //radian(라디안)을 10진수로 변환
-    private static double rad2deg(double rad) {
-        return (rad * 180 / Math.PI);
-    }
 
 }

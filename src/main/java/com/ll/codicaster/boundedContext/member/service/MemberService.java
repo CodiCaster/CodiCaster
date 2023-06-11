@@ -29,6 +29,10 @@ public class MemberService {
         return memberRepository.findByUsername(username);
     }
 
+    public Optional<Member> findById(Long id){
+        return memberRepository.findById(id);
+    }
+
     @Transactional // SELECT 이외의 쿼리에 대한 가능성이 아주 조금이라도 있으면 붙인다.
     // 일반 회원가입(소셜 로그인을 통한 회원가입이 아님)
     public RsData<Member> join(String username, String password) {
@@ -83,7 +87,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateMemberInfo(Long memberId, String nickname, String bodyType, String gender) {
+    public void updateMemberInfo(Long memberId, String nickname, int bodyType, String gender) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다. ID=" + memberId));
         member.updateInfo(nickname, bodyType, gender);
@@ -96,24 +100,4 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
-    //유저가 가장 많이 이용한 태그
-    public List<String> getMostUsedTags() {
-        List<String> mostUsedTags = new ArrayList<>();
-        int maxCount = 0;
-
-        Map<String, Integer> tagMap = rq.getMember().getTagMap();
-
-        for (Map.Entry<String, Integer> entry : tagMap.entrySet()) {
-            int count = entry.getValue();
-            if (count > maxCount) {
-                maxCount = count;
-                mostUsedTags.clear();
-                mostUsedTags.add(entry.getKey());
-            } else if (count == maxCount) {
-                mostUsedTags.add(entry.getKey());
-            }
-        }
-
-        return mostUsedTags;
-    }
 }
