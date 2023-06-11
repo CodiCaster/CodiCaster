@@ -51,21 +51,15 @@
 
     </style>
     <script>
+        const theButton = document.querySelector("#updateButton");
 
         function handleButtonClick(button) {
             if (!button.classList.contains('button--loading')) {
                 button.classList.add('button--loading');
                 button.disabled = true;
                 getLocationAndSubmit();
-                console.log('Button clicked');
-
             }
         }
-
-        const theButton = document.querySelector("#updateButton");
-        theButton.addEventListener("click", () => {
-            theButton.classList.add("button--loading");
-        });
 
         function getLocationAndSubmit() {
             if (navigator.geolocation) {
@@ -83,7 +77,6 @@
         function sendLocationToServer(position) {
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
-
             var form = document.getElementById('locationDTO');
             form.latitude.value = latitude;
             form.longitude.value = longitude;
@@ -117,13 +110,13 @@
                                                 class="button bg-white border border-primary text-primary hover:bg-primary hover:text-white"
                                                 onclick="handleButtonClick(this);">
                                             <span class="button__text text-xl">Update</span>
+                                            <input type="hidden" name="latitude" th:value="${latitude}">
+                                            <input type="hidden" name="longitude" th:value="${longitude}">
                                         </button>
                                     </form>
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" name="latitude" th:value="${latitude}">
-                        <input type="hidden" name="longitude" th:value="${longitude}">
                     </div>
                 </div>
                 <br>
