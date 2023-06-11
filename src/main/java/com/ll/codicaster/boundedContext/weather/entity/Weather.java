@@ -4,12 +4,14 @@ import com.ll.codicaster.boundedContext.article.entity.Article;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Data
 @NoArgsConstructor
+@SuperBuilder
 public class Weather {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -47,4 +49,3 @@ public class Weather {
         this.tmx = Double.parseDouble(tmx);
     }
 }
-

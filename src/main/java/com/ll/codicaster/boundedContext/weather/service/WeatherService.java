@@ -1,7 +1,6 @@
 package com.ll.codicaster.boundedContext.weather.service;
 
 import com.ll.codicaster.base.rq.Rq;
-import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.weather.entity.Weather;
@@ -9,8 +8,6 @@ import com.ll.codicaster.boundedContext.weather.repository.WeatherRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -46,10 +43,10 @@ public class WeatherService {
             return "️️\uD83C\uDF28️" + weatherInfo;
         }
         if (weather.getSky() == 1) {
-            return "\uD83C\uDF24" + weatherInfo;
+            return "\uD83C\uDF1E" + weatherInfo;
         }
         if (weather.getSky() == 3) {
-            return "\uD83C\uDF1E" + weatherInfo;
+            return "\uD83C\uDF24" + weatherInfo;
         }
         return "☁" + weatherInfo;
     }
