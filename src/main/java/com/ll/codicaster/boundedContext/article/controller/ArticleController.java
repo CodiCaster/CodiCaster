@@ -1,6 +1,5 @@
 package com.ll.codicaster.boundedContext.article.controller;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.ll.codicaster.boundedContext.member.service.MemberService;
@@ -61,13 +60,13 @@ public class ArticleController {
         return "usr/article/list";
     }
 
-    @GetMapping("/todaylist")
+    @GetMapping("/todayList")
     public String showArticlesNearbyToday(Model model) {
 
         List<Article> articles = articleService.showArticlesNearbyToday(rq.getMember());
         model.addAttribute("articlesNearbyToday", articles);
 
-        return "usr/article/todaylist";
+        return "usr/article/todayList";
     }
 
     @GetMapping("/detail/{id}")
@@ -128,17 +127,17 @@ public class ArticleController {
         return "redirect:/usr/article/list";
     }
 
-    @RequestMapping("/mylist")
+    @RequestMapping("/myList")
     public String showMyArticle(Model model) {
 
         List<Article> articles = articleService.showMyList();
-        model.addAttribute("myarticles", articles);
+        model.addAttribute("myArticles", articles);
 
         List<String> mostUsedTags = memberService.getMostUsedTags();
         model.addAttribute("mostUsedTags", mostUsedTags);
 
 
-        return "usr/article/mylist";
+        return "usr/article/myList";
     }
 
     // 좋아요 추가
