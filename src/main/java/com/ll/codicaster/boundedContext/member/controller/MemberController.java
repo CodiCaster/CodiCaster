@@ -27,17 +27,17 @@ public class MemberController {
     private final MemberService memberService;
     private final Rq rq;
 
-    @PreAuthorize("isAnonymous()")
-    @GetMapping("/login")
-    public String showLogin() {
-        return "usr/member/login";
-    }
+	@PreAuthorize("isAnonymous()")
+	@GetMapping("/login")
+	public String showLogin() {
+		return "usr/member/login";
+	}
 
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/newInfo")
-    public String showNewInfo() {
-        return "usr/member/newInfo";
-    }
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/newInfo")
+	public String showNewInfo() {
+		return "usr/member/newInfo";
+	}
 
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/newInfo")
