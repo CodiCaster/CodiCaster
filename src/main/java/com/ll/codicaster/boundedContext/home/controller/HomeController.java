@@ -32,24 +32,24 @@ public class HomeController {
         return "redirect:/main";
     }
 
-    @GetMapping("/usr/home/about")
-    public String showAbout() {
-        return "usr/home/about";
-    }
+	@GetMapping("/usr/home/about")
+	public String showAbout() {
+		return "usr/home/about";
+	}
 
-    @GetMapping("/usr/debugSession")
-    @ResponseBody
-    public String showDebugSession(HttpSession session) {
-        StringBuilder sb = new StringBuilder("Session content:\n");
+	@GetMapping("/usr/debugSession")
+	@ResponseBody
+	public String showDebugSession(HttpSession session) {
+		StringBuilder sb = new StringBuilder("Session content:\n");
 
-        Enumeration<String> attributeNames = session.getAttributeNames();
-        while (attributeNames.hasMoreElements()) {
-            String attributeName = attributeNames.nextElement();
-            Object attributeValue = session.getAttribute(attributeName);
-            sb.append(String.format("%s: %s\n", attributeName, attributeValue));
-        }
+		Enumeration<String> attributeNames = session.getAttributeNames();
+		while (attributeNames.hasMoreElements()) {
+			String attributeName = attributeNames.nextElement();
+			Object attributeValue = session.getAttribute(attributeName);
+			sb.append(String.format("%s: %s\n", attributeName, attributeValue));
+		}
 
-        return sb.toString().replaceAll("\n", "<br>");
-    }
+		return sb.toString().replaceAll("\n", "<br>");
+	}
 
 }
