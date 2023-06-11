@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.location.entity.LocationConstants;
@@ -191,5 +192,11 @@ public class Rq {
     public String getWeatherInfo() {
         Location location = getCurrentLocation();
         return weatherService.getWeatherInfo(location);
+    }
+
+    public String getParamsJsonStr() {
+        Map<String, String[]> parameterMap = req.getParameterMap();
+
+        return Ut.json.toStr(parameterMap);
     }
 }
