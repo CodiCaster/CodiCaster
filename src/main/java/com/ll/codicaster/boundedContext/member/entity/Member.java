@@ -40,14 +40,13 @@ public class Member extends BaseEntity {
 	@Column
     private int bodyType;
 
-    private String gender;
 
+    private String gender;
     @ElementCollection
     @CollectionTable(name = "member_tagMap", joinColumns = @JoinColumn(name = "member_id"))
     @MapKeyColumn(name = "tag_type")
     @Column(name = "tag_count")
     private Map<String, Integer> tagMap;
-
 
     // 이 함수 자체는 만들어야 한다. 스프링 시큐리티 규격
     public List<? extends GrantedAuthority> getGrantedAuthorities() {
@@ -97,12 +96,12 @@ public class Member extends BaseEntity {
                 mostUsedTags.add(entry.getKey());
             }
         }
-
         return mostUsedTags;
     }
 
     @ManyToMany(mappedBy = "likedMembers")
     private Set<Article> likedArticles = new HashSet<>();
+
 
 
     public String getBodyTypeDisplayName(){
@@ -114,7 +113,6 @@ public class Member extends BaseEntity {
             default -> "더위 많이탐";
         };
     }
-
 
 
 

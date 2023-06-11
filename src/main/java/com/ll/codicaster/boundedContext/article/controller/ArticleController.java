@@ -1,6 +1,5 @@
 package com.ll.codicaster.boundedContext.article.controller;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.ll.codicaster.boundedContext.member.service.MemberService;
@@ -60,12 +59,14 @@ public class ArticleController {
 
         return "usr/article/list";
     }
+
     //날짜 기준으로 정렬된 리스트 반환
     @GetMapping("/todaylist")
     public String showArticlesFilteredByDate(Model model) {
 
         List<Article> articles = articleService.showArticlesFilteredByDate(rq.getMember());
         model.addAttribute("articlesFilteredOnce", articles);
+
 
         return "usr/article/nonmembers";
     }
@@ -75,7 +76,9 @@ public class ArticleController {
         List<Article> articles = articleService.sortByAllParams(rq.getMember(),filterdArticles);
         model.addAttribute("articlesFilterdAndSorted", articles);
 
+
         return "usr/article/members";
+
     }
 
     @GetMapping("/detail/{id}")
