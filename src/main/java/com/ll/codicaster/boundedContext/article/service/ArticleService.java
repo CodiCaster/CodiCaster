@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.ll.codicaster.base.event.EventAfterWrite;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.service.LocationService;
 import com.ll.codicaster.boundedContext.weather.entity.Weather;
@@ -47,16 +46,12 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class ArticleService {
 
-	private final ArticleRepository articleRepository;
-	private final LocationService locationService;
-	private final WeatherService weatherService;
-	private final ImageRepository imageRepository;
-
-	private final ApplicationEventPublisher publisher;
-
-	private final Rq rq;
-	@Value("${file.upload-dir}")
-	private String uploadDir;
+    private final ArticleRepository articleRepository;
+    private final ImageRepository imageRepository;
+    private final ApplicationEventPublisher publisher;
+    private final Rq rq;
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
 	public static Set<String> extractHashTagList(String content) {
 		Set<String> tagSet = new HashSet<>();
@@ -69,11 +64,11 @@ public class ArticleService {
 			tagSet.add(tag);
 		}
 
-		return tagSet;
-	}
+        return tagSet;
+    }
 
-	@Transactional
-	public RsData<Article> saveArticle(Member actor, ArticleCreateForm form, MultipartFile imageFile) {
+    @Transactional
+    public RsData<Article> saveArticle(Member actor, ArticleCreateForm form, MultipartFile imageFile) {
 
 		Set<String> tagSet = extractHashTagList(form.getContent());
 		updateUserTagMap(actor, tagSet);
@@ -252,23 +247,22 @@ public class ArticleService {
 		return Stream.concat(articlesYearAgo.stream(), articlesLastOneMonth.stream());
 	}
 
-    //유저 태그맵 업데이트 (게시물 작성 시마다 태그리스트 받아서 가지고 있는지 확인하고 증가)
-    @Transactional
-    public void updateUserTagMap(Member member, Set<String> tagSet) {
-        Map<String, Integer> tagMap = member.getTagMap();
+	//유저 태그맵 업데이트 (게시물 작성 시마다 태그리스트 받아서 가지고 있는지 확인하고 증가)
+	@Transactional
+	public void updateUserTagMap(Member member, Set<String> tagSet) {
+		Map<String, Integer> tagMap = member.getTagMap();
 
-        for (String tag : tagSet) {
-            tagMap.put(tag, tagMap.getOrDefault(tag, 0) + 1);
-        }
-    }
+		for (String tag : tagSet) {
+			tagMap.put(tag, tagMap.getOrDefault(tag, 0) + 1);
+		}
+	}
 
+	@Transactional
+	public boolean likeArticle(Member actor, Long articleId) {
+		try {
 
-    @Transactional
-    public boolean likeArticle(Member actor, Long articleId) {
-        try {
-
-            Article article = articleRepository.findById(articleId)
-                    .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
+			Article article = articleRepository.findById(articleId)
+				.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
 
 			Set<Member> likeSet = article.getLikedMembers();
 			likeSet.add(actor);
@@ -282,17 +276,16 @@ public class ArticleService {
 
 	}
 
-    @Transactional
-    public boolean unlikeArticle(Member actor, Long articleId) {
-        try {
+	@Transactional
+	public boolean unlikeArticle(Member actor, Long articleId) {
+		try {
 
-            Article article = articleRepository.findById(articleId)
-                    .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
+			Article article = articleRepository.findById(articleId)
+				.orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
 
-
-            Set<Member> likeSet = article.getLikedMembers();
-            likeSet.remove(actor);
-            article.setLikedMembers(likeSet);
+			Set<Member> likeSet = article.getLikedMembers();
+			likeSet.remove(actor);
+			article.setLikedMembers(likeSet);
 
             return true;
         } catch (Exception e) {

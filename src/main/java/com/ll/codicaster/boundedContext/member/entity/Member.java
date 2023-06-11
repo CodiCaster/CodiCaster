@@ -41,11 +41,13 @@ public class Member extends BaseEntity {
     private int bodyType;
 
     private String gender;
+
     @ElementCollection
     @CollectionTable(name = "member_tagMap", joinColumns = @JoinColumn(name = "member_id"))
     @MapKeyColumn(name = "tag_type")
     @Column(name = "tag_count")
     private Map<String, Integer> tagMap;
+
 
     // 이 함수 자체는 만들어야 한다. 스프링 시큐리티 규격
     public List<? extends GrantedAuthority> getGrantedAuthorities() {
@@ -79,8 +81,12 @@ public class Member extends BaseEntity {
         List<String> mostUsedTags = new ArrayList<>();
         int maxCount = 0;
 
-        Map<String, Integer> tagMap = this.getTagMap();
+		Map<String, Integer> tagMap = this.tagMap;
 
+        return countUsedTags(mostUsedTags, maxCount, tagMap);
+    }
+    //태그 사용 횟수 확인 => 최대값 리스트 반환
+    public static List<String> countUsedTags(List<String> mostUsedTags, int maxCount, Map<String, Integer> tagMap) {
         for (Map.Entry<String, Integer> entry : tagMap.entrySet()) {
             int count = entry.getValue();
             if (count > maxCount) {
