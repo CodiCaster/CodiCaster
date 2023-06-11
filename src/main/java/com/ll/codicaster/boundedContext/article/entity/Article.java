@@ -14,6 +14,7 @@ import com.ll.codicaster.boundedContext.member.entity.Member;
 import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -54,6 +55,7 @@ public class Article {
     private Location location;
     @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
     private Weather weather;
+    @Column
     private String address;
     private String weatherInfo;
 

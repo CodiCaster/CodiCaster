@@ -60,13 +60,25 @@ public class ArticleController {
         return "usr/article/list";
     }
 
-    @GetMapping("/todayList")
-    public String showArticlesNearbyToday(Model model) {
+    //날짜 기준으로 정렬된 리스트 반환
+    @GetMapping("/todaylist")
+    public String showArticlesFilteredByDate(Model model) {
 
-        List<Article> articles = articleService.showArticlesNearbyToday(rq.getMember());
-        model.addAttribute("articlesNearbyToday", articles);
+        List<Article> articles = articleService.showArticlesFilteredByDate(rq.getMember());
+        model.addAttribute("articlesFilteredOnce", articles);
 
-        return "usr/article/todayList";
+
+        return "usr/article/nonmembers";
+    }
+    @GetMapping("/sortedlist")
+    public String showArticlesFilteredByAllParams(Model model) {
+        List<Article> filterdArticles = articleService.showArticlesFilteredByDate(rq.getMember());
+        List<Article> articles = articleService.sortByAllParams(rq.getMember(),filterdArticles);
+        model.addAttribute("articlesFilterdAndSorted", articles);
+
+
+        return "usr/article/members";
+
     }
 
     @GetMapping("/detail/{id}")
@@ -133,7 +145,7 @@ public class ArticleController {
         List<Article> articles = articleService.showMyList();
         model.addAttribute("myArticles", articles);
 
-        List<String> mostUsedTags = memberService.getMostUsedTags();
+        List<String> mostUsedTags = rq.getMember().getMostUsedTags();
         model.addAttribute("mostUsedTags", mostUsedTags);
 
 

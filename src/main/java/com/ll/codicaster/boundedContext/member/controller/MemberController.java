@@ -39,13 +39,15 @@ public class MemberController {
         return "usr/member/newInfo";
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @PostMapping("/newInfo")
-    public String updateInfo(@RequestParam String nickname, @RequestParam(required = false) String bodyType,
-                             @RequestParam String gender) {
-        memberService.updateMemberInfo(rq.getLoginedMemberId(), nickname, bodyType, gender);
-        return "redirect:/main";
-    }
+
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/newInfo")
+	public String updateInfo(@RequestParam String nickname, @RequestParam(required = false) int bodyType,
+		@RequestParam String gender) {
+		memberService.updateMemberInfo(rq.getLoginedMemberId(), nickname, bodyType, gender);
+		return "redirect:/usr/member/me";
+	}
+
 
     @ResponseBody
     @GetMapping("/checkNickname")
