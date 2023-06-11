@@ -29,6 +29,10 @@ public class MemberService {
         return memberRepository.findByUsername(username);
     }
 
+    public Optional<Member> findById(Long id){
+        return memberRepository.findById(id);
+    }
+
     @Transactional // SELECT 이외의 쿼리에 대한 가능성이 아주 조금이라도 있으면 붙인다.
     // 일반 회원가입(소셜 로그인을 통한 회원가입이 아님)
     public RsData<Member> join(String username, String password) {
