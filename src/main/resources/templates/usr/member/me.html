@@ -307,7 +307,7 @@
                         수정하기
                     </h2>
                     <br>
-                    <form th:action="@{/usr/member/newInfo}" th:object="${user}" method="post">
+                    <form th:action="@{/usr/member/me}" th:object="${user}" method="post">
                         <div class="form-group">
                             <label for="nickname"><i class="fa-solid fa-id-badge"></i> 닉네임 </label>
                             <br>
@@ -338,25 +338,30 @@
                         <div class="form-group">
                             <label><i class="fa-solid fa-temperature-low"></i> 나의 체질 </label>
                             <br>
-                            <div class="bodytype-group">
-                                <div class="bodytype-item">
-                                    <input type="radio" id="veryCold" name="bodytype" value="1" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                            <div class="bodyType-group">
+                                <div class="bodyType-item">
+                                    <input type="radio" id="veryCold" name="bodyType" value="1"
+                                           class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="veryCold">추위 많이 탐</label>
                                 </div>
-                                <div class="bodytype-item">
-                                    <input type="radio" id="cold" name="bodytype" value="2" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                <div class="bodyType-item">
+                                    <input type="radio" id="cold" name="bodyType" value="2"
+                                           class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="cold">추위 조금 탐</label>
                                 </div>
-                                <div class="bodytype-item">
-                                    <input type="radio" id="normal" name="bodytype" value="3" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                <div class="bodyType-item">
+                                    <input type="radio" id="normal" name="bodyType" value="3"
+                                           class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="normal">보통</label>
                                 </div>
-                                <div class="bodytype-item">
-                                    <input type="radio" id="hot" name="bodytype" value="4" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                <div class="bodyType-item">
+                                    <input type="radio" id="hot" name="bodyType" value="4"
+                                           class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="hot">더위 조금 탐</label>
                                 </div>
-                                <div class="bodytype-item">
-                                    <input type="radio" id="veryHot" name="bodytype" value="5" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                <div class="bodyType-item">
+                                    <input type="radio" id="veryHot" name="bodyType" value="5"
+                                           class="radio radio-secondary" onchange="enableSubmitButton()"/>
                                     <label for="veryHot">더위 많이 탐</label>
                                 </div>
                             </div>
