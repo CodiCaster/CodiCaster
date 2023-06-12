@@ -163,11 +163,11 @@
             enableSubmitButton();
         }
 
-        function confirmDelete() {
+        function confirmDelete(event) {
+            event.preventDefault(); // 폼 서브밋 방지
+
             if (confirm('정말로 탈퇴하시겠습니까?')) {
                 document.getElementById('deleteAccountForm').submit();
-            } else {
-                window.location.href = '/usr/member/login';
             }
         }
 
@@ -292,7 +292,7 @@
                     </div>
                     <div class="mt-4 text-right">
                         <form id="deleteAccountForm" th:action="@{/usr/member/deleteAccount}" method="post">
-                            <button type="submit" class="btn btn-danger" onclick="confirmDelete()">회원탈퇴</button>
+                            <button type="button" class="btn btn-danger" onclick="confirmDelete(event)">회원탈퇴</button>
                         </form>
                     </div>
                 </div>
