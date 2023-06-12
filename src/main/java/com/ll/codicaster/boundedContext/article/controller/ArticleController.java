@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Objects;
 
 import com.ll.codicaster.base.rsData.RsData;
+
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,7 +61,7 @@ public class ArticleController {
     @GetMapping("/todayList")
     public String showArticlesFilteredByDate(Model model) {
 
-        List<Article> articles = articleService.showArticlesFilteredByDate(rq.getMember());
+        List<Article> articles = articleService.showArticlesFilteredByDate();
         model.addAttribute("articlesFilteredOnce", articles);
 
         return "usr/article/nonmembers";
@@ -67,7 +69,7 @@ public class ArticleController {
 
     @GetMapping("/sortedlist")
     public String showArticlesFilteredByAllParams(Model model) {
-        List<Article> filterdArticles = articleService.showArticlesFilteredByDate(rq.getMember());
+        List<Article> filterdArticles = articleService.showArticlesFilteredByDate();
         List<Article> articles = articleService.sortByAllParams(rq.getMember(), filterdArticles);
         model.addAttribute("articlesFilterdAndSorted", articles);
 
@@ -131,15 +133,15 @@ public class ArticleController {
         return rq.redirectWithMsg("/usr/article/list", rsData);
     }
 
-    @RequestMapping("/myList")
-    public String showMyArticle(Model model) {
+    @GetMapping("/mylist")
+    public String showMyArticle(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        Page<Article> articlePage = articleService.showMyList(page, size);
+        List<Article> articles = articlePage.getContent();
 
-        List<Article> articles = articleService.showMyList();
         model.addAttribute("myArticles", articles);
-
-        List<String> mostUsedTags = rq.getMember().getMostUsedTags();
-        model.addAttribute("mostUsedTags", mostUsedTags);
-
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", articlePage.getTotalPages());
+        model.addAttribute("mostUsedTags", rq.getMember().getMostUsedTags());
 
         return "usr/article/myList";
     }
