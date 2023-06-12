@@ -2,26 +2,75 @@
 
 <head>
     <title>마이페이지</title>
+    <style>
+        #updateButton {
+            position: relative;
+            padding: 0.25rem 0.5rem;
+            outline: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
 
+        #updateButton:active {
+            background: hsl(var(--pf));
+        }
+
+        .button__text {
+            transition: all 0.2s;
+        }
+
+        .button--loading .button__text {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .button--loading::after {
+            content: "";
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            border: 4px solid transparent;
+            border-top-color: hsl(var(--pf));
+            border-radius: 50%;
+            animation: button-loading-spinner 1s ease infinite;
+        }
+
+        @keyframes button-loading-spinner {
+            from {
+                transform: rotate(0turn);
+            }
+            to {
+                transform: rotate(1turn);
+            }
+        }
+
+    </style>
     <script>
-        function showLoadingSpinner() {
-            var spinner = document.getElementById('loadingSpinner');
-            spinner.style.display = 'block';
+
+        function handleButtonClick(button) {
+            if (!button.classList.contains('button--loading')) {
+                button.classList.add('button--loading');
+                button.disabled = true;
+                getLocationAndSubmit();
+            }
         }
 
-        function hideLoadingSpinner() {
-            var spinner = document.getElementById('loadingSpinner');
-            spinner.style.display = 'none';
-        }
+        const theButton = document.querySelector("#updateButton");
+        theButton.addEventListener("click", () => {
+            theButton.classList.add("button--loading");
+        });
 
         function getLocationAndSubmit() {
             if (navigator.geolocation) {
-                showLoadingSpinner();
                 navigator.geolocation.getCurrentPosition(function (position) {
                     sendLocationToServer(position);
                     submitForm();
                 }, function (error) {
-                    hideLoadingSpinner();
                     console.log('위치 정보 가져오기 실패:', error.message);
                 });
             } else {
@@ -63,6 +112,12 @@
                 return;
             }
 
+            if (nickname.length > 10) {
+                toastWarning('닉네임을 10자 이하 입력해주세요.');
+                submitBtn.disabled = true;
+                return;
+            }
+
             if (nickname.indexOf(' ') !== -1) {
                 toastWarning('닉네임에는 공백을 사용할 수 없습니다.');
                 submitBtn.disabled = true;
@@ -92,7 +147,7 @@
 
         function enableSubmitButton() {
             var submitBtn = document.getElementById('submitBtn');
-            var bodyTypeChecked = document.querySelector('input[name="bodytype"]:checked');
+            var bodyTypeChecked = document.querySelector('input[name="bodyType"]:checked');
 
             if (isNicknameValid && bodyTypeChecked) {
                 submitBtn.disabled = false;
@@ -120,19 +175,19 @@
             margin-bottom: 1.5rem;
         }
 
-        .bodytype-group {
+        .bodyType-group {
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        .bodytype-item {
+        .bodyType-item {
             display: flex;
             align-items: center;
             margin-right: 10px;
         }
 
-        .bodytype-item label{
+        .bodyType-item label {
             margin-left: 2px;
         }
 
@@ -156,10 +211,10 @@
 <body>
 <main layout:fragment="main" class="flex-grow flex items-center justify-center ">
 
-    <div th:if="${@rq.isLogin}" class="max-w-2xl w-full px-4">
+    <div class="max-w-2xl w-full px-4">
         <h1 class="mb-4">
             <i class="fa-solid fa-user"></i>
-            마이페이지
+            <span class="ml-2">마이페이지</span>
         </h1>
 
         <div class="flex flex-col gap-4">
@@ -171,9 +226,9 @@
                     </h2>
 
                     <div class="mt-4">
-                        <div>
+                        <div class="flex items-center">
                             <i class="fa-solid fa-id-badge"></i>
-                            닉네임
+                            <span class="ml-1"> 닉네임</span>
                         </div>
                         <div class="mt-2">
                             <span class="badge badge-primary" th:text="${@rq.member.nickname}"></span>
@@ -181,9 +236,9 @@
                     </div>
 
                     <div class="mt-4">
-                        <div>
+                        <div class="flex items-center">
                             <i class="fa-solid fa-venus-mars"></i>
-                            성별
+                            <span class="ml-1"> 성별</span>
                         </div>
                         <div class="mt-2">
                             <span class="badge badge-accent" th:text="${@rq.member.gender}"></span>
@@ -191,49 +246,44 @@
                     </div>
 
                     <div class="mt-4">
-                        <div>
+                        <div class="flex items-center">
                             <i class="fa-solid fa-temperature-low"></i>
-                            나의 체질
+                            <span class="ml-1"> 나의 체질</span>
                         </div>
                         <div class="mt-2">
-                            <span class="badge badge-secondary" th:text="${@rq.member.bodytype}"></span>
+                            <span class="badge badge-secondary" th:text="${@rq.member.getBodyTypeDisplayName()}"></span>
                         </div>
                     </div>
 
                     <div class="mt-4">
-                        <div>
-                            <i class="fa-solid fa-location-dot"></i>
-                            현재 위치
+                        <div class="flex items-center">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span class="ml-1"> 현재 위치</span>
+                            </div>
+                            <div class="flex items-center justify-center ml-2">
+                                <form id="locationDTO" th:action="@{/usr/location/update/me}" method="post"
+                                      style="margin-bottom: 0;">
+                                    <button id="updateButton" type="button"
+                                            class="button bg-white border border-primary text-primary hover:bg-primary hover:text-white"
+                                            onclick="handleButtonClick(this);">
+                                        <span class="button__text ">Update</span>
+                                    </button>
+                                    <input type="hidden" name="latitude" th:value="${latitude}">
+                                    <input type="hidden" name="longitude" th:value="${longitude}">
+                                </form>
+                            </div>
                         </div>
-                        <div class="mt-2">
-                            <form id="locationDTO" th:action="@{/usr/location/update}" method="post">
-                                <span class="badge badge-ghost" th:text="${@rq.getAddress()}"></span>
-                                <input type="hidden" name="latitude" th:value="${latitude}">
-                                <input type="hidden" name="longitude" th:value="${longitude}">
-                                <button id="submitButton" type="button" class="btn btn-link"
-                                        onClick="getLocationAndSubmit()">업데이트
-                                </button>
-                                <div id="loadingSpinner">
-                                    <div class="lds-roller">
-                                        <div></div>
-                                        <div></div>
-                                        <div></div>
-                                        <div></div>
-                                        <div></div>
-                                        <div></div>
-                                        <div></div>
-                                        <div></div>
-                                    </div>
-                                </div>
-                            </form>
+                        <div class="mt-2 flex flex-grow items-center">
+                            <span class="badge badge-ghost" th:text="${@rq.getAddress()}"></span>
+
                         </div>
                     </div>
                     <div class="mt-4">
-                        <div>
+                        <div class="flex items-center">
                             <i class="fa-solid fa-cloud"></i>
-                            현재 날씨
+                            <span class="ml-1"> 현재 날씨</span>
                         </div>
-
                         <div class="mt-2">
                             <span class="badge badge-ghost" th:text="${@rq.getWeatherInfo}"></span>
                         </div>
@@ -261,20 +311,26 @@
                         <div class="form-group">
                             <label for="nickname"><i class="fa-solid fa-id-badge"></i> 닉네임 </label>
                             <br>
-                            <input type="text" name="nickname" id="nickname" class="input input-bordered input-primary w-full max-w-xs" placeholder="수정할 닉네임을 입력해주세요" required
+                            <input type="text" name="nickname" id="nickname"
+                                   class="input input-bordered input-primary w-full max-w-xs"
+                                   placeholder="수정할 닉네임을 입력해주세요" required
                                    minlength="3" onkeyup="updateNickname()"/>
-                            <button type="button" class="btn btn-ghost" onclick="checkNickname()" id="checkNicknameBtn">확인</button>
+                            <button type="button" class="btn btn-ghost" onclick="checkNickname()" id="checkNicknameBtn">
+                                확인
+                            </button>
                         </div>
                         <div class="form-group">
                             <label><i class="fa-solid fa-venus-mars"></i> 성별</label>
                             <br>
                             <div class="radio-button-group">
                                 <div class="radio-button-item">
-                                    <input type="radio" id="male" name="gender" value="남자" class="radio radio-accent" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="male" name="gender" value="남자" class="radio radio-accent"
+                                           onchange="enableSubmitButton()"/>
                                     <label for="male">남성</label>
                                 </div>
                                 <div class="radio-button-item">
-                                    <input type="radio" id="female" name="gender" value="여자" class="radio radio-accent" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="female" name="gender" value="여자" class="radio radio-accent"
+                                           onchange="enableSubmitButton()"/>
                                     <label for="female">여성</label>
                                 </div>
                             </div>
@@ -284,23 +340,23 @@
                             <br>
                             <div class="bodytype-group">
                                 <div class="bodytype-item">
-                                    <input type="radio" id="veryCold" name="bodytype" value="추위 많이 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="veryCold" name="bodytype" value="1" class="radio radio-secondary" onchange="enableSubmitButton()" />
                                     <label for="veryCold">추위 많이 탐</label>
                                 </div>
                                 <div class="bodytype-item">
-                                    <input type="radio" id="cold" name="bodytype" value="추위 조금 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="cold" name="bodytype" value="2" class="radio radio-secondary" onchange="enableSubmitButton()" />
                                     <label for="cold">추위 조금 탐</label>
                                 </div>
                                 <div class="bodytype-item">
-                                    <input type="radio" id="normal" name="bodytype" value="보통" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="normal" name="bodytype" value="3" class="radio radio-secondary" onchange="enableSubmitButton()" />
                                     <label for="normal">보통</label>
                                 </div>
                                 <div class="bodytype-item">
-                                    <input type="radio" id="hot" name="bodytype" value="더위 조금 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="hot" name="bodytype" value="4" class="radio radio-secondary" onchange="enableSubmitButton()" />
                                     <label for="hot">더위 조금 탐</label>
                                 </div>
                                 <div class="bodytype-item">
-                                    <input type="radio" id="veryHot" name="bodytype" value="더위 많이 탐" class="radio radio-secondary" onchange="enableSubmitButton()" />
+                                    <input type="radio" id="veryHot" name="bodytype" value="5" class="radio radio-secondary" onchange="enableSubmitButton()" />
                                     <label for="veryHot">더위 많이 탐</label>
                                 </div>
                             </div>
@@ -312,21 +368,7 @@
                 </div>
             </div>
         </div>
-
-        <a href="/usr/article/mylist" class="mt-10 mb-4 block">
-            <i class="fa-solid fa-list"></i>
-            내 게시글
-
-            <span class="float-right text-sm">
-                <i class="fa-solid fa-angles-right"></i>
-                자세히 보기
-            </span>
-        </a>
-
-
     </div>
-
 </main>
 </body>
-
 </html>

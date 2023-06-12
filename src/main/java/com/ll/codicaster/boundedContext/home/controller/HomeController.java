@@ -14,38 +14,42 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
-	private final Rq rq;
+    private final Rq rq;
 
-	@GetMapping("/")
-	public String showMain() {
-		if (rq.isLogout()) {
-			return "redirect:/usr/member/login";
-		}
+    @GetMapping("/main")
+    public String showMain() {
+        return "usr/home/main";
+    }
 
-		// if (rq.getMember().getNickname() != null || rq.getMember().getBodytype() != null)
-		// 	return "usr/home/about";
+    @GetMapping("/")
+    public String redirectToMain() {
+        if (rq.isLogout()) {
+            return "redirect:/main";
+        }
+        if (rq.getNickname() == null) {
+            return "redirect:/usr/member/newInfo";
+        }
+        return "redirect:/main";
+    }
 
-		return "redirect:/usr/member/newInfo";
-	}
+    @GetMapping("/usr/home/about")
+    public String showAbout() {
+        return "usr/home/about";
+    }
 
-	@GetMapping("/usr/home/about")
-	public String showAbout() {
-		return "usr/home/about";
-	}
+    @GetMapping("/usr/debugSession")
+    @ResponseBody
+    public String showDebugSession(HttpSession session) {
+        StringBuilder sb = new StringBuilder("Session content:\n");
 
-	@GetMapping("/usr/debugSession")
-	@ResponseBody
-	public String showDebugSession(HttpSession session) {
-		StringBuilder sb = new StringBuilder("Session content:\n");
+        Enumeration<String> attributeNames = session.getAttributeNames();
+        while (attributeNames.hasMoreElements()) {
+            String attributeName = attributeNames.nextElement();
+            Object attributeValue = session.getAttribute(attributeName);
+            sb.append(String.format("%s: %s\n", attributeName, attributeValue));
+        }
 
-		Enumeration<String> attributeNames = session.getAttributeNames();
-		while (attributeNames.hasMoreElements()) {
-			String attributeName = attributeNames.nextElement();
-			Object attributeValue = session.getAttribute(attributeName);
-			sb.append(String.format("%s: %s\n", attributeName, attributeValue));
-		}
-
-		return sb.toString().replaceAll("\n", "<br>");
-	}
+        return sb.toString().replaceAll("\n", "<br>");
+    }
 
 }

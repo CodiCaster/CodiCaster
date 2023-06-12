@@ -12,9 +12,20 @@
                 <ul tabindex="0"
                     class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-64">
                     <li th:if="${@rq.logout}">
+                        <a href="/main">
+                            <th:block th:utext="#{c.iconHome}"></th:block>
+                            <span th:text="#{c.pageNameHome}"></span>
+                        </a>
+                    </li><li th:if="${@rq.logout}">
                         <a href="/usr/member/login">
                             <th:block th:utext="#{c.iconStart}"></th:block>
-                            <span th:text="#{c.pageNameStart}"></span>
+                            <span th:text="#{c.pageNameLogin}"></span>
+                        </a>
+                    </li>
+                    <li th:if="${@rq.login}">
+                        <a href="/main">
+                            <th:block th:utext="#{c.iconHome}"></th:block>
+                            <span th:text="#{c.pageNameHome}"></span>
                         </a>
                     </li>
                     <li th:if="${@rq.login}">
@@ -39,7 +50,7 @@
                         </a>
                     </li>
                     <li th:if="${@rq.login}">
-                        <a href="/usr/article/todaylist">
+                        <a href="/usr/article/todayList">
                             <th:block th:utext="#{c.iconTodayList}"></th:block>
                             <span th:text="#{c.pageNameTodayList}"></span>
                         </a>
@@ -64,7 +75,7 @@
             </div>
         </div>
         <div class="navbar-center">
-            <a href="/usr/main" class="btn btn-ghost normal-case text-xl">
+            <a href="/main" class="btn btn-ghost normal-case text-xl">
                 <span class="hidden min-[339px]:inline" th:utext="#{c.logoTextWithEmojiEn}"></span>
                 <span class="min-[339px]:hidden" th:utext="#{c.logoEmoji}"></span>
             </a>
