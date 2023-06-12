@@ -159,14 +159,17 @@ public class ArticleService {
 
                     article.setImage(image);
                 } catch (Exception e) {
-                    return false;
+                    return RsData.of("F-4", "이미지 저장 중 오류가 발생했습니다.");
                 }
             }
 
-            return true;
+        try {
+            article = articleRepository.save(article);
         } catch (Exception e) {
-            return false;
+            return RsData.of("F-5", "게시글 수정 중 오류가 발생했습니다.");
         }
+
+        return RsData.of("S-1", "성공적으로 수정되었습니다.", article);
     }
 
 
