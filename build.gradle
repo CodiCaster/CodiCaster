@@ -46,6 +46,7 @@ dependencies {
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	implementation 'org.json:json:20210307'
+
 }
 
 tasks.named('test') {

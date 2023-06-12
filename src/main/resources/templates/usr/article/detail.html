@@ -51,7 +51,7 @@
                                         <span th:text="${article.address}"></span>
                                     </div>
                                     <div class="text-right">
-                                        <span class="badge badge-ghost" th:text="${article.weatherInfo}"></span>
+                                        <span class="badge badge-ghost" th:text="${@rq.getWeatherInfo}"></span>
                                     </div>
                                 </div>
                             </div>

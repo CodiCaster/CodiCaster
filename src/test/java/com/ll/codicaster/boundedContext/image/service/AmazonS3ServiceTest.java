@@ -1,5 +1,6 @@
 package com.ll.codicaster.boundedContext.image.service;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -76,6 +77,8 @@ public class AmazonS3ServiceTest {
 		Assert.isTrue(MimeTypeUtils.isImage(imageMimeType), "Failed: The file was an image but the method returned false.");
 		Assert.isTrue(!MimeTypeUtils.isImage(notImageMimeType), "Failed: The file was not an image but the method returned true.");
 	}
+
+
 
 
 }
