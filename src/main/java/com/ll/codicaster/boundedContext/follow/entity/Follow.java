@@ -1,4 +1,4 @@
-package com.ll.codicaster.boundedContext.follow;
+package com.ll.codicaster.boundedContext.follow.entity;
 
 import com.ll.codicaster.base.baseEntity.BaseEntity;
 import com.ll.codicaster.boundedContext.member.entity.Member;

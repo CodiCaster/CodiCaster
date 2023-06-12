@@ -9,9 +9,12 @@ import lombok.Getter;
 @Getter
 public class EventAfterFollow extends ApplicationEvent {
 	private final Member follower;
+	private final Member followee;
 
-	public EventAfterFollow(Object source, Member follower) {
+	public EventAfterFollow(Object source, Member follower, Member followee) {
 		super(source);
-		this.follower=follower;
+		this.follower = follower;
+		this.followee = followee;
+
 	}
 }

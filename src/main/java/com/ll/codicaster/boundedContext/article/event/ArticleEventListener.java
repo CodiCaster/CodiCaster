@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ll.codicaster.base.event.EventBeforeFollow;
+import com.ll.codicaster.base.event.EventBeforeUnfollow;
 import com.ll.codicaster.boundedContext.article.service.ArticleService;
 import com.ll.codicaster.boundedContext.member.service.MemberService;
 
@@ -18,13 +19,16 @@ import lombok.RequiredArgsConstructor;
 public class ArticleEventListener {
     private final ArticleService articleService;
 
-    @EventListener
-    @Order(1)
-    public void listen(EventBeforeFollow event) {
-        Article article = articleService.findById(event.getArticleId()).orElse(null);
-        if (article != null) {
-            event.setFollowee(article.getAuthor());
-        }
-    }
+	@EventListener
+	@Order(1)
+	public void listen(EventBeforeFollow event) {
+		event.setFollowee(articleService.findArticleById(event.getArticleId()).getAuthor());
+	}
+
+	@EventListener
+	@Order(1)
+	public void listen(EventBeforeUnfollow event) {
+		event.setFollowee(articleService.findArticleById(event.getArticleId()).getAuthor());
+	}
 }
 

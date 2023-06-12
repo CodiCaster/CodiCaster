@@ -34,15 +34,17 @@
               <i class="fa-regular fa-message"></i>
               내용
             </div>
-<!--            좋아요 알림-->
-            <a th:href="@{/usr/article/detail/{id}(id=${notification.article.id})}">
+          <!--            좋아요 알림-->
             <div th:if="${notification.typeCode == 'LIKE'}">
-              <span class="badge badge-primary" th:text="${notification.actor.getNickname()}"></span>이
-              당신의 <span
-                    class="badge badge-primary"
-                    th:text="${notification.article.getTitle()}"> </span>게시물을 좋아합니다.
+              <a th:href="@{/usr/article/detail/{id}(id=${notification.article.id})}">
+                <span class="badge badge-primary" th:text="${notification.actor.getNickname()}"></span>님이
+                당신의 <span class="badge badge-primary" th:text="${notification.article.getTitle()}"></span>게시물을 좋아합니다.
+              </a>
             </div>
-            </a>
+            <div th:if="${notification.typeCode == 'FOLLOW'}">
+              <span class="badge badge-primary" th:text="${notification.actor.getNickname()}"></span>
+              님이 당신을 팔로우 합니다.
+            </div>
 
           </div>
         </div>

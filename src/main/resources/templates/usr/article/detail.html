@@ -36,9 +36,19 @@
                                     <!-- 사용자 이름 및 생성 시간 -->
                                     <div class="flex flex-col ml-2">
                                         <div class="username text-lg font-bold">
-                                            <span th:text="${article.author.nickname}"></span>
-                                            <span th:if="${@rq.getMember()}">팔로잉</span>
-<!--                                            <span th:unless="${}">팔로우</span>-->
+                                            <div class="username text-lg font-bold">
+                                                <div style="display: inline-block;">
+                                                    <span th:text="${article.author.nickname}"></span>
+                                                </div>
+                                                <div style="display: inline-block;">
+                                                    <form th:if="${@rq.isFollowed(article.author)}" th:action="@{'/usr/unfollow/' + ${article.id}}" method="post" style="display: inline;">
+                                                        <button type="submit" class="btn btn-active">팔로잉</button>
+                                                    </form>
+                                                    <form th:unless="${@rq.isFollowed(article.author)}" th:action="@{'/usr/follow/' + ${article.id}}" method="post" style="display: inline;">
+                                                        <button type="submit" class="btn btn-info">팔로우</button>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="create-datetime text-sm text-gray-600">
                                             <span th:text="${#temporals.format(article.createDate, 'yyyy-MM-dd HH:mm:ss')}"></span>

@@ -283,7 +283,7 @@ public class ArticleService {
     public void truncateUserTagMap(Member member, Set<String> tagSet) {
         Map<String, Integer> tagMap = member.getTagMap();
 
-		//값이 0 이하일 때 예외처리 ? 필요한가 => 필요없을 듯, 큰 순서대로 사용할 예
+		//값이 0 이하일 때 예외처리 ? 필요한가 => 필요없을 듯, 큰 순서대로 사용할 예정
 		for (String tag : tagSet) {
 			tagMap.put(tag, tagMap.get(tag) - 1);
 		}
@@ -378,5 +378,3 @@ public class ArticleService {
         return (rad * 180 / Math.PI);
     }
 }
-
-:q
