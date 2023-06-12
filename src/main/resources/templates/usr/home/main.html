@@ -119,6 +119,7 @@
                     </div>
                 </div>
                 <br>
+                <span th:if="${@rq.hasHighTemperatureDifference()}" th:text="일교차가 큰 날이니 겉옷을 챙기시는게 좋아요!"></span>
                 <br>
                 <h2 class="card-title flex items-center px-4">
                     <a href="/usr/article/todayList">

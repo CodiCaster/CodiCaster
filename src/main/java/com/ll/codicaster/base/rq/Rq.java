@@ -220,4 +220,11 @@ public class Rq {
         Map<String, String[]> parameterMap = req.getParameterMap();
         return Ut.json.toStr(parameterMap);
     }
+	//일교차 높은지 확인
+	public boolean hasHighTemperatureDifference() {
+		double tmn = weatherService.getWeather(getCurrentLocation()).getTmn(); // 일 최저기온
+		double tmx = weatherService.getWeather(getCurrentLocation()).getTmx(); // 일 최고기온
+		double temperatureDifference = tmx - tmn; // 일교차
+		return temperatureDifference >= 15.0;
+	}
 }
