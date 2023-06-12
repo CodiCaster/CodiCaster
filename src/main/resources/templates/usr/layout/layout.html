@@ -84,6 +84,13 @@
             <a href="/usr/home/about" class="btn btn-ghost btn-circle" th:if="${@rq.logout}">
                 <th:block th:utext="#{c.iconWhatIsThisService}"></th:block>
             </a>
+            <a href="/usr/notification/list" class="btn btn-ghost btn-circle" th:if="${@rq.login}">
+                <div class="indicator">
+                    <i class="fa-regular fa-bell"></i>
+                    <span data-test="hasUnreadNotifications" th:if="${@rq.hasUnreadNotifications}"
+                          class="badge badge-xs badge-primary indicator-item"></span>
+                </div>
+            </a>
         </div>
     </div>
 </header>

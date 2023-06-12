@@ -11,6 +11,8 @@ import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.follow.service.FollowService;
 import com.ll.codicaster.boundedContext.location.entity.DefaultLocation;
 import com.ll.codicaster.boundedContext.location.entity.Location;
+import com.ll.codicaster.boundedContext.location.service.LocationService;
+import com.ll.codicaster.boundedContext.notification.service.NotificationService;
 import com.ll.codicaster.boundedContext.weather.service.WeatherService;
 import com.ll.codicaster.standard.util.Ut;
 
@@ -38,6 +40,7 @@ public class Rq {
 	private final WeatherService weatherService;
 	private final FollowService followService;
 
+	private final NotificationService notificationService;
 	private final MessageSource messageSource;
 	private final LocaleResolver localeResolver;
 	private final HttpServletRequest req;
@@ -48,12 +51,14 @@ public class Rq {
 	private Member member = null; // 레이지 로딩, 처음부터 넣지 않고, 요청이 들어올 때 넣는다.
 
 	public Rq(MemberService memberService, LocationService locationService, WeatherService weatherService,
-		FollowService followservice, MessageSource messageSource, LocaleResolver localeResolver,
+		FollowService followservice, NotificationService notificationService, MessageSource messageSource,
+		LocaleResolver localeResolver,
 		HttpServletRequest req, HttpServletResponse resp, HttpSession session) {
 		this.memberService = memberService;
 		this.locationService = locationService;
 		this.weatherService = weatherService;
 		this.followService = followservice;
+		this.notificationService = notificationService;
 		this.messageSource = messageSource;
 		this.localeResolver = localeResolver;
 		this.req = req;
@@ -199,6 +204,15 @@ public class Rq {
 		Member user = getMember();
 		List<Member> followingMembers = followService.getFollowingMembers(user);
 		return followingMembers.contains(followee);
+	}
+
+	public boolean hasUnreadNotifications() {
+		if (isLogout())
+			return false;
+
+		Member user = getMember();
+
+		return notificationService.countUnreadNotificationsByReceiver(user);
 	}
 
 

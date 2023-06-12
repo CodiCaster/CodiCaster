@@ -68,7 +68,7 @@ public class NotificationService {
 		return RsData.of("S-1", "읽음 처리 되었습니다.");
 	}
 
-	public boolean countUnreadNotificationsByAuthor(Member receiver) {
+	public boolean countUnreadNotificationsByReceiver(Member receiver) {
 		return notificationRepository.countByReceiverAndReadDateIsNull(receiver) > 0;
 	}
 
