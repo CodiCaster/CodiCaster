@@ -24,52 +24,57 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/usr/member")
 @RequiredArgsConstructor
 public class MemberController {
-	private final MemberService memberService;
-	private final Rq rq;
+    private final MemberService memberService;
+    private final Rq rq;
 
-	@PreAuthorize("isAnonymous()")
-	@GetMapping("/login")
-	public String showLogin() {
-		return "usr/member/login";
-	}
+    @PreAuthorize("isAnonymous()")
+    @GetMapping("/login")
+    public String showLogin() {
+        return "usr/member/login";
+    }
 
-	@PreAuthorize("isAuthenticated()")
-	@GetMapping("/newInfo")
-	public String showNewInfo() {
-		return "usr/member/newInfo";
-	}
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/newInfo")
+    public String showNewInfo() {
+        return "usr/member/newInfo";
+    }
+
 
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/newInfo")
-	public String updateInfo(@RequestParam String nickname, @RequestParam(required = false) String bodyType,
+	public String updateInfo(@RequestParam String nickname, @RequestParam(required = false) int bodyType,
 		@RequestParam String gender) {
 		memberService.updateMemberInfo(rq.getLoginedMemberId(), nickname, bodyType, gender);
 		return "redirect:/usr/member/me";
 	}
 
-	@ResponseBody
-	@GetMapping("/checkNickname")
-	public RsData<String> checkNickname(@RequestParam String nickname) {
-		return memberService.checkNickname(nickname);
-	}
 
-	@PreAuthorize("isAuthenticated()") // 로그인 해야만 접속가능
-	@GetMapping("/me") // 로그인 한 나의 정보 보여주는 페이지
-	public String showMe() {
-		return "/usr/member/me";
-	}
+    @ResponseBody
+    @GetMapping("/checkNickname")
+    public RsData<String> checkNickname(@RequestParam String nickname) {
+        return memberService.checkNickname(nickname);
+    }
 
-	@PreAuthorize("isAuthenticated()")
-	@PostMapping("/deleteAccount")
-	public String deleteAccount(HttpServletRequest request, HttpServletResponse response) {
-		memberService.deleteMember(rq.getLoginedMemberId());
-		SecurityContextHolder.clearContext();
-		try {
-			request.getSession().invalidate();
-			response.sendRedirect("/usr/member/login");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    @PreAuthorize("isAuthenticated()") // 로그인 해야만 접속가능
+    @GetMapping("/me") // 로그인 한 나의 정보 보여주는 페이지
+    public String showMe() {
+        if (rq.getNickname() == null) {
+            return "/usr/member/login";
+        }
+        return "/usr/member/me";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/deleteAccount")
+    public String deleteAccount(HttpServletRequest request, HttpServletResponse response) {
+        memberService.deleteMember(rq.getLoginedMemberId());
+        SecurityContextHolder.clearContext();
+        try {
+            request.getSession().invalidate();
+            response.sendRedirect("/usr/member/login");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

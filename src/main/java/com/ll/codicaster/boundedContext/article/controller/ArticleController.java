@@ -1,6 +1,5 @@
 package com.ll.codicaster.boundedContext.article.controller;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.ll.codicaster.boundedContext.member.service.MemberService;
@@ -61,13 +60,25 @@ public class ArticleController {
         return "usr/article/list";
     }
 
+    //날짜 기준으로 정렬된 리스트 반환
     @GetMapping("/todaylist")
-    public String showArticlesNearbyToday(Model model) {
+    public String showArticlesFilteredByDate(Model model) {
 
-        List<Article> articles = articleService.showArticlesNearbyToday(rq.getMember());
-        model.addAttribute("articlesNearbyToday", articles);
+        List<Article> articles = articleService.showArticlesFilteredByDate(rq.getMember());
+        model.addAttribute("articlesFilteredOnce", articles);
 
-        return "usr/article/todaylist";
+
+        return "usr/article/nonmembers";
+    }
+    @GetMapping("/sortedlist")
+    public String showArticlesFilteredByAllParams(Model model) {
+        List<Article> filterdArticles = articleService.showArticlesFilteredByDate(rq.getMember());
+        List<Article> articles = articleService.sortByAllParams(rq.getMember(),filterdArticles);
+        model.addAttribute("articlesFilterdAndSorted", articles);
+
+
+        return "usr/article/members";
+
     }
 
     @GetMapping("/detail/{id}")
@@ -128,17 +139,17 @@ public class ArticleController {
         return "redirect:/usr/article/list";
     }
 
-    @RequestMapping("/mylist")
+    @RequestMapping("/myList")
     public String showMyArticle(Model model) {
 
         List<Article> articles = articleService.showMyList();
-        model.addAttribute("myarticles", articles);
+        model.addAttribute("myArticles", articles);
 
-        List<String> mostUsedTags = memberService.getMostUsedTags();
+        List<String> mostUsedTags = rq.getMember().getMostUsedTags();
         model.addAttribute("mostUsedTags", mostUsedTags);
 
 
-        return "usr/article/mylist";
+        return "usr/article/myList";
     }
 
     // 좋아요 추가

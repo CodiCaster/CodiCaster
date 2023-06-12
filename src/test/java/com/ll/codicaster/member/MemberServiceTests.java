@@ -49,7 +49,7 @@ public class MemberServiceTests {
 		// THEN
 		resultActions
 			.andExpect(status().is3xxRedirection())
-			.andExpect(redirectedUrl("/usr/member/me"));
+			.andExpect(redirectedUrl("/main"));
 
 		Member updatedMember = memberService.findByUsername("user1").orElseThrow();
 		assertThat(updatedMember.getNickname()).isEqualTo(newNickname);
