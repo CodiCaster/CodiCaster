@@ -17,13 +17,6 @@ public class WeatherService {
     private final WeatherRepository weatherRepository;
     private final WeatherAPIService weatherAPIService;
 
-    @Transactional
-    public Long save(Location location) {
-        Weather weather = getWeather(location);
-        Weather savedWeather = weatherRepository.save(weather);
-        return savedWeather.getId();
-    }
-
     public Weather getWeather(Location location) {
         return weatherAPIService.getApiWeather(location.getPointX(), location.getPointY());
     }
@@ -34,6 +27,9 @@ public class WeatherService {
     }
 
     public String getWeatherInfo(Weather weather) {
+        if (weather == null) {
+            return "위치 업데이트 필요";
+        }
         String weatherInfo = " " + weather.getTmp() + "°C";
 
         if (weather.getPty() == 1 || weather.getPty() == 4) {

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,11 +41,11 @@ public class LocationService {
 
         double latitude = Double.parseDouble(locationDTO.getLatitude());
         double longitude = Double.parseDouble(locationDTO.getLongitude());
-
         Point point = transferToPoint(0, latitude, longitude);
-
-        String address = kakaoAPIService.loadLocationFromKakao(longitude, latitude);
-
+        String address = kakaoAPIService.getAddressFromKakao(longitude, latitude);
+        if (address == null) {
+            return RsData.of("F-2","위치 정보를 불러오지 못했습니다.");
+        }
         Location location = new Location(latitude, longitude, point, address);
 
         return RsData.of("S-1", "현재 위치 정보가 갱신되었습니다.", location);
@@ -137,7 +136,6 @@ public class LocationService {
         }
         return new Point(xLat, yLon);
     }
-
 
 
 }

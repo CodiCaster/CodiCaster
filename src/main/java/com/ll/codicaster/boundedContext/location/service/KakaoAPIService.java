@@ -16,8 +16,8 @@ public class KakaoAPIService {
     @Value("${api.kakao.key}")
     private String REST_KEY;
 
-    public String loadLocationFromKakao(double longitude, double latitude) {
-        String regionDetail = "";
+    public String getAddressFromKakao(double longitude, double latitude) {
+        String address = "";
         String urlString = "https://dapi.kakao.com/v2/local/geo/coord2regioncode?x=" + longitude + "&y=" + latitude;
 
         try {
@@ -25,9 +25,6 @@ public class KakaoAPIService {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Authorization", "KakaoAK " + REST_KEY);
-//            응답 코드 확인
-//            int responseCode = conn.getResponseCode();
-//            System.out.println("responseCode : " + responseCode);
 
             // 응답 내용 읽기
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -45,18 +42,18 @@ public class KakaoAPIService {
                 JSONObject document = documents.getJSONObject(i);
 
                 if (document.getString("region_type").equals("B")) {
-                    String region1 = document.getString("region_1depth_name");
-                    String region2 = document.getString("region_2depth_name");
-                    String region3 = document.getString("region_3depth_name");
+                    String address1 = document.getString("region_1depth_name");
+                    String address2 = document.getString("region_2depth_name");
+                    String address3 = document.getString("region_3depth_name");
 
-                    regionDetail = region1 + " " + region2 + " " + region3;
+                    address = address1 + " " + address2 + " " + address3;
                 }
             }
             // 연결 종료
             conn.disconnect();
         } catch (Exception e) {
-            e.printStackTrace();
+            return null;
         }
-        return regionDetail;
+        return address;
     }
 }

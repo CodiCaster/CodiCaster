@@ -352,19 +352,6 @@ public class ArticleService {
         return tagScore;
     }
 
-    public void whenAfterSaveLocation(Location location, Long articleId) {
-        Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
-        article.setLocation(location);
-    }
-
-    public void whenAfterSaveWeather(Weather weather, Long articleId) {
-        Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new NoSuchElementException("No Article found with id: " + articleId));
-        article.setWeather(weather);
-    }
-
-
     //거리 구하는 메서드
     public double getDistanceBetweenUser(Article article) {
         double nowLat = rq.getCurrentLocation().getLatitude();

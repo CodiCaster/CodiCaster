@@ -48,26 +48,6 @@ class WeatherServiceTest {
     }
 
     @Test
-    @DisplayName("weatherRepository에 저장")
-    void save() {
-        Weather weather = weatherService.getWeather(initialLocation);
-
-        Long weatherId = weatherService.save(initialLocation);
-        Weather savedWeather = weatherRepository.findById(1L).get();
-
-        assertThat(savedWeather).isNotNull();
-        assertThat(weatherId.equals(1L));
-        assertThat(savedWeather.getId().equals(1L));
-        assertThat(savedWeather.getTmp()).isEqualTo(weather.getTmp());
-        assertThat(savedWeather.getPop()).isEqualTo(weather.getPop());
-        assertThat(savedWeather.getPty()).isEqualTo(weather.getPty());
-        assertThat(savedWeather.getReh()).isEqualTo(weather.getReh());
-        assertThat(savedWeather.getSky()).isEqualTo(weather.getSky());
-        assertThat(savedWeather.getTmn()).isEqualTo(weather.getTmn());
-        assertThat(savedWeather.getTmx()).isEqualTo(weather.getTmx());
-    }
-
-    @Test
     @DisplayName("기상청 API 반환값 확인")
     void getWeather() {
         Object weather = weatherService.getWeather(initialLocation);

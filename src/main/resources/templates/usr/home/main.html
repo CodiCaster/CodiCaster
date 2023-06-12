@@ -51,8 +51,6 @@
 
     </style>
     <script>
-        const theButton = document.querySelector("#updateButton");
-
         function handleButtonClick(button) {
             if (!button.classList.contains('button--loading')) {
                 button.classList.add('button--loading');
@@ -75,15 +73,15 @@
         }
 
         function sendLocationToServer(position) {
-            var latitude = position.coords.latitude;
-            var longitude = position.coords.longitude;
-            var form = document.getElementById('locationDTO');
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const form = document.getElementById('locationDTO');
             form.latitude.value = latitude;
             form.longitude.value = longitude;
         }
 
         function submitForm() {
-            var form = document.getElementById('locationDTO');
+            const form = document.getElementById('locationDTO');
             form.submit();
         }
 

@@ -160,14 +160,14 @@ public class Rq {
     }
 
     public String getAddress() {
-        Location location = getCurrentLocation();
-        return location.getAddress();
+        return getCurrentLocation().getAddress();
     }
 
-    private void setSessionLocationDefault() {
+    private Location setSessionLocationDefault() {
         Location location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
                 LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
         session.setAttribute("location", location);
+        return location;
     }
 
     public void setLocation(Location location) {
@@ -183,8 +183,7 @@ public class Rq {
     public Location getCurrentLocation() {
         Location location = (Location) session.getAttribute("location");
         if (location == null) {
-            setSessionLocationDefault();
-            return (Location) session.getAttribute("location");
+            return setSessionLocationDefault();
         }
         return location;
     }
@@ -196,7 +195,6 @@ public class Rq {
 
     public String getParamsJsonStr() {
         Map<String, String[]> parameterMap = req.getParameterMap();
-
         return Ut.json.toStr(parameterMap);
     }
 }
