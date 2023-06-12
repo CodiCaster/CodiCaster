@@ -78,6 +78,22 @@ public class AmazonS3ServiceTest {
 		Assert.isTrue(!MimeTypeUtils.isImage(notImageMimeType), "Failed: The file was not an image but the method returned true.");
 	}
 
+	@Test
+	@DisplayName("잘못된 파일 경로를 가진 파일 업로드 시도")
+	public void testImageUploadWithInvalidFilePath() {
+		// Given
+		MultipartFile nonExistentMultipartFile = new MockMultipartFile("non_existent_file", "non_existent_file", null, (byte[]) null);
+
+		// When & Then
+		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+			AmazonS3ImageDto result = amazonS3Service.imageUpload(nonExistentMultipartFile, "test_image");
+		});
+
+		// Then
+		System.out.println(exception.getMessage()); // print the actual exception message
+		assertTrue(exception.getMessage().contains("잘못된 경로입니다."), "Exception message does not match expected.");
+	}
+
 
 
 

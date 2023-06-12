@@ -25,7 +25,7 @@ public class AmazonS3Service {
         String mimeType = MimeTypeUtils.getMimeType(file);
 
         if (!MimeTypeUtils.isImage(mimeType)) {
-            throw new IllegalArgumentException("이미지 타입이 아닙니다.");
+            throw new IllegalArgumentException("잘못된 경로입니다.");
         }
 
         String fileExtension = MimeTypeUtils.extractFileExtension(mimeType);
