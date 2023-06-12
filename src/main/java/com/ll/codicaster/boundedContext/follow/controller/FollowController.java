@@ -46,6 +46,4 @@ public class FollowController {
 		// 게시물 상세페이지로 리다이렉트
 		return "redirect:/usr/article/detail/" + articleId;
 	}
-
-
 }
