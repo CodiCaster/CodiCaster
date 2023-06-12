@@ -2,6 +2,7 @@ package com.ll.codicaster.boundedContext.weather.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ll.codicaster.boundedContext.weather.entity.DefaultWeather;
 import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -118,11 +119,35 @@ public class WeatherAPIService {
                     }
                 }
             } else {
-                return null;
+                return Weather.builder()
+                        .tmp(DefaultWeather.TMP)
+                        .pop(DefaultWeather.POP)
+                        .pty(DefaultWeather.PTY)
+                        .reh(DefaultWeather.REH)
+                        .sky(DefaultWeather.SKY)
+                        .tmn(DefaultWeather.TMN)
+                        .tmx(DefaultWeather.TMX)
+                        .build();
             }
-            return new Weather(tmp, pop, pty, reh, sky, tmn, tmx);
+            return Weather.builder()
+                    .tmp(Double.parseDouble(tmp))
+                    .pop(Double.parseDouble(pop))
+                    .pty(Integer.parseInt(pty))
+                    .reh(Double.parseDouble(reh))
+                    .sky(Integer.parseInt(sky))
+                    .tmn(Double.parseDouble(tmn))
+                    .tmx(Double.parseDouble(tmx))
+                    .build();
         } catch (Exception e) {
-            return null;
+            return Weather.builder()
+                    .tmp(DefaultWeather.TMP)
+                    .pop(DefaultWeather.POP)
+                    .pty(DefaultWeather.PTY)
+                    .reh(DefaultWeather.REH)
+                    .sky(DefaultWeather.SKY)
+                    .tmn(DefaultWeather.TMN)
+                    .tmx(DefaultWeather.TMX)
+                    .build();
         }
     }
 }

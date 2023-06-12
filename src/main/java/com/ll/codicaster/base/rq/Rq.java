@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.ll.codicaster.base.rsData.RsData;
-import com.ll.codicaster.boundedContext.location.entity.LocationConstants;
+import com.ll.codicaster.boundedContext.location.entity.DefaultLocation;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.service.LocationService;
 import com.ll.codicaster.boundedContext.weather.service.WeatherService;
@@ -164,8 +164,8 @@ public class Rq {
     }
 
     private Location setSessionLocationDefault() {
-        Location location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
-                LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
+        Location location = new Location(DefaultLocation.LATITUDE, DefaultLocation.LONGITUDE,
+                DefaultLocation.POINT_X, DefaultLocation.POINT_Y, DefaultLocation.ADDRESS);
         session.setAttribute("location", location);
         return location;
     }

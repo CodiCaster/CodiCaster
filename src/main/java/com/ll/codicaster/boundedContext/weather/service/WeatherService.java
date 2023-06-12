@@ -27,9 +27,6 @@ public class WeatherService {
     }
 
     public String getWeatherInfo(Weather weather) {
-        if (weather == null) {
-            return "위치 업데이트 필요";
-        }
         String weatherInfo = " " + weather.getTmp() + "°C";
 
         if (weather.getPty() == 1 || weather.getPty() == 4) {

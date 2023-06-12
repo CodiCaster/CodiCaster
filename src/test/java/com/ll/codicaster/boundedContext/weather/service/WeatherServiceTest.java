@@ -1,7 +1,7 @@
 package com.ll.codicaster.boundedContext.weather.service;
 
 import com.ll.codicaster.boundedContext.location.entity.Location;
-import com.ll.codicaster.boundedContext.location.entity.LocationConstants;
+import com.ll.codicaster.boundedContext.location.entity.DefaultLocation;
 import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import com.ll.codicaster.boundedContext.weather.repository.WeatherRepository;
 import org.junit.jupiter.api.*;
@@ -30,11 +30,11 @@ class WeatherServiceTest {
     void init() {
         initialLocation = Location.builder()
                 .id(1L)
-                .latitude(LocationConstants.LATITUDE)
-                .longitude(LocationConstants.LONGITUDE)
-                .pointX(LocationConstants.POINT_X)
-                .pointY(LocationConstants.POINT_Y)
-                .address(LocationConstants.ADDRESS)
+                .latitude(DefaultLocation.LATITUDE)
+                .longitude(DefaultLocation.LONGITUDE)
+                .pointX(DefaultLocation.POINT_X)
+                .pointY(DefaultLocation.POINT_Y)
+                .address(DefaultLocation.ADDRESS)
                 .build();
         initialWeather = Weather.builder()
                 .tmp(1D)
