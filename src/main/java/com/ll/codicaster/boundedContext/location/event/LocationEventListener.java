@@ -15,6 +15,6 @@ public class LocationEventListener {
 
     @EventListener
     public void listen(EventAfterWrite event) {
-        locationService.whenAfterWrite(event.getRq(), event.getArticle());
+        locationService.whenAfterWrite(event.getLocation(), event.getArticle());
     }
 }

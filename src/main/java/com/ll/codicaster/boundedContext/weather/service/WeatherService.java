@@ -1,6 +1,5 @@
 package com.ll.codicaster.boundedContext.weather.service;
 
-import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.weather.entity.Weather;
@@ -44,8 +43,7 @@ public class WeatherService {
         return "☁" + weatherInfo;
     }
 
-    public void whenAfterWrite(Rq rq, Article article) {
-        Location location = rq.getCurrentLocation();
+    public void whenAfterWrite(Location location, Article article) {
         Weather weather = getWeather(location);
         weather.setArticle(article);
         weatherRepository.save(weather);

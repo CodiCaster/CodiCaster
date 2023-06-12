@@ -13,8 +13,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.ll.codicaster.base.event.EventAfterWrite;
-import com.ll.codicaster.boundedContext.location.entity.Location;
-import com.ll.codicaster.boundedContext.weather.entity.Weather;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -76,7 +74,7 @@ public class ArticleService {
                 .build();
 
         Article savedArticle = articleRepository.save(article);
-        publisher.publishEvent(new EventAfterWrite(this, rq, savedArticle));
+        publisher.publishEvent(new EventAfterWrite(this, rq.getCurrentLocation(), savedArticle));
 
         // 이미지 파일이 있으면 저장
         if (!imageFile.isEmpty()) {

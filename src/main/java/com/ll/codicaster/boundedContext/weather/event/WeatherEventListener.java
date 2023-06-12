@@ -15,6 +15,6 @@ public class WeatherEventListener {
 
     @EventListener
     public void listen(EventAfterWrite event) {
-        weatherService.whenAfterWrite(event.getRq(), event.getArticle());
+        weatherService.whenAfterWrite(event.getLocation(), event.getArticle());
     }
 }

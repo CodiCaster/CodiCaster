@@ -1,6 +1,5 @@
 package com.ll.codicaster.boundedContext.location.service;
 
-import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.location.dto.LocationDTO;
@@ -21,8 +20,7 @@ public class LocationService {
     private final LocationRepository locationRepository;
     private final KakaoAPIService kakaoAPIService;
 
-    public void whenAfterWrite(Rq rq, Article article) {
-        Location location = rq.getCurrentLocation();
+    public void whenAfterWrite(Location location, Article article) {
         Location newLocation = Location.builder()
                 .article(article)
                 .latitude(location.getLatitude())
@@ -44,7 +42,7 @@ public class LocationService {
         Point point = transferToPoint(0, latitude, longitude);
         String address = kakaoAPIService.getAddressFromKakao(longitude, latitude);
         if (address == null) {
-            return RsData.of("F-2","위치 정보를 불러오지 못했습니다.");
+            return RsData.of("F-2", "위치 정보를 불러오지 못했습니다.");
         }
         Location location = new Location(latitude, longitude, point, address);
 

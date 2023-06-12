@@ -1,7 +1,9 @@
 package com.ll.codicaster.boundedContext.weather.service;
 
+import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.entity.DefaultLocation;
+import com.ll.codicaster.boundedContext.weather.entity.DefaultWeather;
 import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import com.ll.codicaster.boundedContext.weather.repository.WeatherRepository;
 import org.junit.jupiter.api.*;
@@ -22,7 +24,6 @@ class WeatherServiceTest {
     private WeatherService weatherService;
     @Autowired
     private WeatherRepository weatherRepository;
-
     private Location initialLocation;
     private Weather initialWeather;
 
@@ -37,13 +38,13 @@ class WeatherServiceTest {
                 .address(DefaultLocation.ADDRESS)
                 .build();
         initialWeather = Weather.builder()
-                .tmp(1D)
-                .pop(2D)
-                .pty(1)
-                .reh(4D)
-                .sky(1)
-                .tmn(6D)
-                .tmx(7D)
+                .tmp(DefaultWeather.TMP)
+                .pop(DefaultWeather.POP)
+                .pty(DefaultWeather.PTY)
+                .reh(DefaultWeather.REH)
+                .sky(DefaultWeather.SKY)
+                .tmn(DefaultWeather.TMN)
+                .tmx(DefaultWeather.TMX)
                 .build();
     }
 
@@ -110,5 +111,15 @@ class WeatherServiceTest {
         initialWeather.setPty(0);
         initialWeather.setSky(4);
         assertThat(weatherService.getWeatherInfo(initialWeather)).contains("☁");
+    }
+
+    @Test
+    @DisplayName("날씨 DB 저장")
+    void whenAfterWrite() {
+        Article article = new Article();
+        weatherService.whenAfterWrite(initialLocation, article);
+        Weather savedWeather = weatherRepository.findById(1L).orElse(null);
+        assertThat(savedWeather).isNotNull();
+        assertThat(savedWeather.getArticle()).isEqualTo(article);
     }
 }
