@@ -18,12 +18,20 @@
                 toastWarning("제목은 20자를 초과할 수 없습니다.");
                 return false;
             }
-            if (content.length > 80) {
-                toastWarning("내용은 80자를 초과할 수 없습니다.");
-                return false;
-            }
             return true;
         }
+
+        $(document).ready(function () {
+            $('#content').on('keyup', function () {
+                $('#contentCount').html("(" + $(this).val().length + " / 200)");
+
+                if ($(this).val().length > 200) {
+                    toastWarning("내용은 최대 200자까지 작성 가능합니다.");
+                    $(this).val($(this).val().substring(0, 200));
+                    $('#contentCount').html("(200 / 200)");
+                }
+            });
+        });
     </script>
 </head>
 <body>
@@ -50,9 +58,12 @@
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="content">
                                 내용
                             </label>
-                            <textarea
-                                    class="textarea textarea-bordered w-full h-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                    id="content" th:field="*{content}" placeholder="Content"></textarea>
+                            <div class="relative">
+                                <textarea
+                                        class="textarea textarea-bordered w-full h-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                        id="content" th:field="*{content}" placeholder="Content"></textarea>
+                                <div id="contentCount" class="absolute right-5 bottom-5">(0 / 200)</div>
+                            </div>
                         </div>
                         <div class="mb-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="imageFile">

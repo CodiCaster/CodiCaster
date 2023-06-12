@@ -30,8 +30,9 @@ import lombok.Setter;
 @Setter
 @Builder
 public class Article extends BaseEntity {
-
+    @Column(length = 60)
     private String title;
+    @Column(length = 600)
     private String content;
     @OneToOne
     private Member author;
@@ -39,7 +40,7 @@ public class Article extends BaseEntity {
     private Location location;
     @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
     private Weather weather;
-    @Column
+
     private String address;
     private String weatherInfo;
 
