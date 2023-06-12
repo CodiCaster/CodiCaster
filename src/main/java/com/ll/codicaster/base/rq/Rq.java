@@ -7,9 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.ll.codicaster.base.rsData.RsData;
-import com.ll.codicaster.boundedContext.location.entity.DefaultLocation;
 import com.ll.codicaster.boundedContext.location.entity.Location;
-import com.ll.codicaster.boundedContext.location.service.LocationService;
 import com.ll.codicaster.boundedContext.weather.service.WeatherService;
 import com.ll.codicaster.standard.util.Ut;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,9 +30,7 @@ import jakarta.servlet.http.HttpSession;
 @RequestScope
 public class Rq {
     private final MemberService memberService;
-    private final LocationService locationService;
     private final WeatherService weatherService;
-
     private final MessageSource messageSource;
     private final LocaleResolver localeResolver;
     private Locale locale;
@@ -46,10 +42,9 @@ public class Rq {
     private Member member = null; // 레이지 로딩, 처음부터 넣지 않고, 요청이 들어올 때 넣는다.
 
 
-    public Rq(MemberService memberService, LocationService locationService, WeatherService weatherService, MessageSource messageSource, LocaleResolver localeResolver,
+    public Rq(MemberService memberService, WeatherService weatherService, MessageSource messageSource, LocaleResolver localeResolver,
               HttpServletRequest req, HttpServletResponse resp, HttpSession session) {
         this.memberService = memberService;
-        this.locationService = locationService;
         this.weatherService = weatherService;
         this.messageSource = messageSource;
         this.localeResolver = localeResolver;
@@ -164,9 +159,8 @@ public class Rq {
     }
 
     private Location setSessionLocationDefault() {
-        Location location = new Location(DefaultLocation.LATITUDE, DefaultLocation.LONGITUDE,
-                DefaultLocation.POINT_X, DefaultLocation.POINT_Y, DefaultLocation.ADDRESS);
-        session.setAttribute("location", location);
+        Location location = Location.getDefaultLocation();
+        session.setAttribute("location", Location.getDefaultLocation());
         return location;
     }
 
