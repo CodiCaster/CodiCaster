@@ -9,12 +9,12 @@ import lombok.Getter;
 
 @Getter
 public class EventAfterLike extends ApplicationEvent {
-	private final Member liker;
-	private final Article article;
+    private final Member liker;
+    private final Article article;
 
-	public EventAfterLike(Object source, Member liker, Article article) {
-		super(source);
-		this.liker=liker;
-		this.article = article;
-	}
+    public EventAfterLike(Object source, Member liker, Article article) {
+        super(source);
+        this.liker = liker;
+        this.article = article;
+    }
 }

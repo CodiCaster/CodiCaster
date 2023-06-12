@@ -18,7 +18,7 @@ public class HomeController {
 
     @GetMapping("/main")
     public String showMain() {
-        return "/usr/home/main";
+        return "usr/home/main";
     }
 
     @GetMapping("/")

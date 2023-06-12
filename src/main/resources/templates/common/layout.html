@@ -24,7 +24,10 @@
 
     <title layout:title-pattern="$CONTENT_TITLE | $LAYOUT_TITLE" th:utext="#{c.logoTextWithEmojiEn}"></title>
 
-
+    <script>
+        // 타임리프 문법(파라미터, ? 뒤에 입력된 매개변수들)
+        const params = JSON.parse('[( ${@rq.paramsJsonStr} )]');
+    </script>
 </head>
 
 <body>
@@ -70,11 +73,6 @@
             }
         }
     });
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/jdenticon@3.2.0/dist/jdenticon.min.js" async
-        integrity="sha384-yBhgDqxM50qJV5JPdayci8wCfooqvhFYbIKhv0hTtLvfeeyJMJCscRfFNKIxt43M"
-        crossorigin="anonymous">
 </script>
 
 </body>

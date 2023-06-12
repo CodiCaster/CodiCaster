@@ -5,28 +5,27 @@
 
         function validateForm() {
             var title = document.getElementById("title").value;
-            //날짜 선택하는 기능
-            // var customDate = document.getElementById("customDate").value;
             var content = document.getElementById("content").value;
             var imageFile = document.getElementById("imageFile").value;
+            var submitBtn = document.getElementById('submitBtn');
+
 
             if (title.trim().length === 0) {
-                toastr.warning("제목을 입력해주세요.");
+                toastWarning("제목을 입력해주세요.");
                 return false;
             }
-            //날짜 선택하는 기능
-            // if (customDate.trim().length === 0) {
-            //     toastr.warning("널짜를 선택해주세요.");
-            //     return false;
-            // }
 
             if (content.trim().length === 0) {
-                toastr.warning("내용을 입력해주세요.");
+                toastWarning("내용을 입력해주세요.");
                 return false;
             }
 
             if (imageFile.trim().length === 0) {
-                toastr.warning("파일을 첨부해주세요.");
+                toastWarning("파일을 첨부해주세요.");
+                return false;
+            }
+            if (title.length > 20) {
+                toastWarning("제목은 20자를 초과할 수 없습니다.");
                 return false;
             }
 
@@ -54,15 +53,7 @@
                             <input class="input input-bordered w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                    id="title" type="text" placeholder="Title" name="title">
                         </div>
-                        <!--날짜 선택하는 기능-->
-<!--                        <div class="mb-4">-->
-<!--                            <label class="block text-gray-700 text-sm font-bold mb-2" htmlFor="customDate">-->
-<!--                                날짜-->
-<!--                            </label>-->
-<!--                            <input type="date" id="customDate" name="customDate" max="${currentDate}">-->
-<!--                        </div>-->
                         <div>
-
                         </div>
                         <div class="mb-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
@@ -80,7 +71,7 @@
                                    class="file-input file-input-bordered file-input-accent w-full max-w-xs">
                         </div>
                         <div class="mb-4 flex justify-end">
-                            <button class="btn btn-primary hover:bg-gray-300" type="submit">
+                            <button class="btn btn-primary hover:bg-gray-300" type="submit" id="submitBtn">
                                 작성
                             </button>
                         </div>

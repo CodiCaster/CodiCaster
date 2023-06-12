@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,13 +39,13 @@ public class MemberController {
     }
 
 
-	@PreAuthorize("isAuthenticated()")
-	@PostMapping("/newInfo")
-	public String updateInfo(@RequestParam String nickname, @RequestParam(required = false) int bodyType,
-		@RequestParam String gender) {
-		memberService.updateMemberInfo(rq.getLoginedMemberId(), nickname, bodyType, gender);
-		return "redirect:/usr/member/me";
-	}
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/newInfo")
+    public String updateInfo(@RequestParam String nickname, @RequestParam(required = false) int bodyType,
+                             @RequestParam String gender) {
+        memberService.updateMemberInfo(rq.getLoginedMemberId(), nickname, bodyType, gender);
+        return "redirect:/main";
+    }
 
 
     @ResponseBody
@@ -58,10 +57,13 @@ public class MemberController {
     @PreAuthorize("isAuthenticated()") // 로그인 해야만 접속가능
     @GetMapping("/me") // 로그인 한 나의 정보 보여주는 페이지
     public String showMe() {
-        if (rq.getNickname() == null) {
-            return "/usr/member/login";
+        if(rq.isLogout()){
+            return "usr/member/login";
         }
-        return "/usr/member/me";
+        if (rq.getNickname() == null) {
+            return "usr/member/login";
+        }
+        return "usr/member/me";
     }
 
     @PreAuthorize("isAuthenticated()")

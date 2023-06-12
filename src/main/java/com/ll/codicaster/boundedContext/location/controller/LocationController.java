@@ -25,7 +25,7 @@ public class LocationController {
         }
         Location location = rsData.getData();
         rq.setLocation(location);
-        return "redirect:/main";
+        return rq.redirectWithMsg("/main", rsData);
     }
 
     @PostMapping("/update/me")
@@ -36,6 +36,6 @@ public class LocationController {
         }
         Location location = rsData.getData();
         rq.setLocation(location);
-        return "redirect:/usr/member/me";
+        return rq.redirectWithMsg("/usr/member/me", rsData);
     }
 }

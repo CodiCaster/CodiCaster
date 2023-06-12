@@ -4,9 +4,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 import com.ll.codicaster.base.rsData.RsData;
-import com.ll.codicaster.boundedContext.location.entity.LocationConstants;
+import com.ll.codicaster.boundedContext.location.entity.DefaultLocation;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.location.service.LocationService;
 import com.ll.codicaster.boundedContext.weather.service.WeatherService;
@@ -84,7 +85,7 @@ public class Rq {
 
         // 데이터가 없는지 체크
         if (member == null) {
-            member = memberService.findByUsername(user.getUsername()).orElseThrow();
+            member = memberService.findByUsername(user.getUsername()).orElse(null);
         }
 
         return member;
@@ -159,14 +160,14 @@ public class Rq {
     }
 
     public String getAddress() {
-        Location location = getCurrentLocation();
-        return location.getAddress();
+        return getCurrentLocation().getAddress();
     }
 
-    private void setSessionLocationDefault() {
-        Location location = new Location(LocationConstants.LATITUDE, LocationConstants.LONGITUDE,
-                LocationConstants.POINT_X, LocationConstants.POINT_Y, LocationConstants.ADDRESS);
+    private Location setSessionLocationDefault() {
+        Location location = new Location(DefaultLocation.LATITUDE, DefaultLocation.LONGITUDE,
+                DefaultLocation.POINT_X, DefaultLocation.POINT_Y, DefaultLocation.ADDRESS);
         session.setAttribute("location", location);
+        return location;
     }
 
     public void setLocation(Location location) {
@@ -182,8 +183,7 @@ public class Rq {
     public Location getCurrentLocation() {
         Location location = (Location) session.getAttribute("location");
         if (location == null) {
-            setSessionLocationDefault();
-            return (Location) session.getAttribute("location");
+            return setSessionLocationDefault();
         }
         return location;
     }
@@ -191,5 +191,10 @@ public class Rq {
     public String getWeatherInfo() {
         Location location = getCurrentLocation();
         return weatherService.getWeatherInfo(location);
+    }
+
+    public String getParamsJsonStr() {
+        Map<String, String[]> parameterMap = req.getParameterMap();
+        return Ut.json.toStr(parameterMap);
     }
 }

@@ -1,29 +1,21 @@
 package com.ll.codicaster.boundedContext.article.entity;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import com.ll.codicaster.base.baseEntity.BaseEntity;
 import com.ll.codicaster.boundedContext.image.entity.Image;
 import com.ll.codicaster.boundedContext.location.entity.Location;
 import com.ll.codicaster.boundedContext.member.entity.Member;
 
 import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,20 +29,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class Article {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Article extends BaseEntity {
 
     private String title;
     private String content;
-
     @OneToOne
     private Member author;
-    private LocalDateTime createDate;
-    private LocalDateTime modifyDate;
-
     @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
     private Location location;
     @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
@@ -75,5 +59,13 @@ public class Article {
 
     public int getLikesCount() {
         return likedMembers.size();
+    }
+
+    public boolean isLiked(Member member) {
+        return this.likedMembers.contains(member);
+    }
+
+    public void addLikeMember(Member member) {
+        this.likedMembers.add(member);
     }
 }

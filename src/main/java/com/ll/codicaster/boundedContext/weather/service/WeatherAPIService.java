@@ -2,6 +2,7 @@ package com.ll.codicaster.boundedContext.weather.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ll.codicaster.boundedContext.weather.entity.DefaultWeather;
 import com.ll.codicaster.boundedContext.weather.entity.Weather;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,9 +22,6 @@ public class WeatherAPIService {
     @Value("${api.weather.key}")
     private String REST_KEY;
 
-    /**
-     * @return weather
-     */
     public Weather getApiWeather(Integer pointX, Integer pointY) {
         String tmp = "";
         String pop = "";
@@ -56,7 +54,6 @@ public class WeatherAPIService {
         String baseDate = nowDate.toString().replaceAll("-", "");
 
         try {
-            /*URL*/
             String urlString = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" + "?" + URLEncoder.encode("serviceKey", StandardCharsets.UTF_8) + "=" + REST_KEY + /*Service Key*/
                     "&" + URLEncoder.encode("pageNo", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("1", StandardCharsets.UTF_8) + /*페이지번호*/
                     "&" + URLEncoder.encode("numOfRows", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("300", StandardCharsets.UTF_8) + /*한 페이지 결과 수*/
@@ -69,7 +66,7 @@ public class WeatherAPIService {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Content-type", "application/json");
-//        System.out.println("Response code: " + conn.getResponseCode());
+
             BufferedReader rd;
             if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
                 rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -122,12 +119,35 @@ public class WeatherAPIService {
                     }
                 }
             } else {
-                System.out.println("No item found in JSON data.");
+                return Weather.builder()
+                        .tmp(DefaultWeather.TMP)
+                        .pop(DefaultWeather.POP)
+                        .pty(DefaultWeather.PTY)
+                        .reh(DefaultWeather.REH)
+                        .sky(DefaultWeather.SKY)
+                        .tmn(DefaultWeather.TMN)
+                        .tmx(DefaultWeather.TMX)
+                        .build();
             }
-            return new Weather(tmp, pop, pty, reh, sky, tmn, tmx);
+            return Weather.builder()
+                    .tmp(Double.parseDouble(tmp))
+                    .pop(Double.parseDouble(pop))
+                    .pty(Integer.parseInt(pty))
+                    .reh(Double.parseDouble(reh))
+                    .sky(Integer.parseInt(sky))
+                    .tmn(Double.parseDouble(tmn))
+                    .tmx(Double.parseDouble(tmx))
+                    .build();
         } catch (Exception e) {
-            e.printStackTrace();
+            return Weather.builder()
+                    .tmp(DefaultWeather.TMP)
+                    .pop(DefaultWeather.POP)
+                    .pty(DefaultWeather.PTY)
+                    .reh(DefaultWeather.REH)
+                    .sky(DefaultWeather.SKY)
+                    .tmn(DefaultWeather.TMN)
+                    .tmx(DefaultWeather.TMX)
+                    .build();
         }
-        return null;
     }
 }
