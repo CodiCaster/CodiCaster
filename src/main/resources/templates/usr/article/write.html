@@ -25,6 +25,12 @@
                 return false;
             }
 
+            if (imageFile.size > 10 * 1024 * 1024) {
+                toastr.warning("첨부된 파일의 크기가 10MB를 초과합니다.");
+                return false;
+            }
+
+
             var fileType = imageFile["type"];
             if (!validImageTypes.includes(fileType)) {
                 toastr.warning("첨부된 파일이 이미지 타입이 아닙니다.");
