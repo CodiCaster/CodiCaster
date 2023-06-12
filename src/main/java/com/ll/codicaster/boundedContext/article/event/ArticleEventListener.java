@@ -22,13 +22,13 @@ public class ArticleEventListener {
 	@EventListener
 	@Order(1)
 	public void listen(EventBeforeFollow event) {
-		event.setFollowee(articleService.findArticleById(event.getArticleId()).getAuthor());
+		event.setFollowee(articleService.findById(event.getArticleId()).orElseThrow().getAuthor());
 	}
 
 	@EventListener
 	@Order(1)
 	public void listen(EventBeforeUnfollow event) {
-		event.setFollowee(articleService.findArticleById(event.getArticleId()).getAuthor());
+		event.setFollowee(articleService.findById(event.getArticleId()).orElseThrow().getAuthor());
 	}
 }
 

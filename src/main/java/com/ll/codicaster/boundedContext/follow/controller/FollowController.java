@@ -29,7 +29,7 @@ public class FollowController {
 		RsData followResult = followService.whenBeforeFollow(follower, articleId);
 
 		if (followResult.isFail())
-			return rq.historyBack(followResult);
+			return rq.historyBack(followResult.getMsg());
 
 		// 게시물 상세페이지로 리다이렉트
 		return "redirect:/usr/article/detail/" + articleId;
@@ -41,7 +41,7 @@ public class FollowController {
 		RsData followResult = followService.whenBeforeUnfollow(follower, articleId);
 
 		if (followResult.isFail())
-			return rq.historyBack(followResult);
+			return rq.historyBack(followResult.getMsg());
 
 		// 게시물 상세페이지로 리다이렉트
 		return "redirect:/usr/article/detail/" + articleId;

@@ -38,6 +38,9 @@ public class FollowService {
 		if (followee == null || follower == null) {
 			return RsData.of("F-1", "팔로워 또는 팔로우 대상이 없습니다.");
 		}
+		if(follower.equals(followee)){
+			return RsData.of("F-2", "본인을 팔로우 할 수 없습니다.");
+		}
 
 		Follow follow = Follow
 			.builder()
