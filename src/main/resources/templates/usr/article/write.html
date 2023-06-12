@@ -28,7 +28,10 @@
                 toastWarning("제목은 20자를 초과할 수 없습니다.");
                 return false;
             }
-
+            if (content.length > 80) {
+                toastWarning("내용은 80자를 초과할 수 없습니다.");
+                return false;
+            }
             return true;
         }
     </script>

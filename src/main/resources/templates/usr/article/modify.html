@@ -10,12 +10,18 @@
                 toastr.warning("제목을 입력해주세요.");
                 return false;
             }
-
             if (content.trim().length === 0) {
                 toastr.warning("내용을 입력해주세요.");
                 return false;
             }
-
+            if (title.length > 20) {
+                toastWarning("제목은 20자를 초과할 수 없습니다.");
+                return false;
+            }
+            if (content.length > 80) {
+                toastWarning("내용은 80자를 초과할 수 없습니다.");
+                return false;
+            }
             return true;
         }
     </script>
