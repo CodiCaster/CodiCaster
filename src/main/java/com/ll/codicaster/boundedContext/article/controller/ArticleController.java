@@ -36,7 +36,7 @@ public class ArticleController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/writepro")
+    @PostMapping("/write")
     public String articleWriteSave(ArticleCreateForm articleCreateForm, @RequestParam("imageFile") MultipartFile imageFile) {
         RsData<Article> rsData = articleService.saveArticle(rq.getMember(), articleCreateForm, imageFile);
         if (rsData.isFail()) {
