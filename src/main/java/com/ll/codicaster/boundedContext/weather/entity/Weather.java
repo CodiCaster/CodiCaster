@@ -28,4 +28,16 @@ public class Weather {
     // 맑음 : 1, 구름 많음 : 3, 흐림 : 4
     private Double tmn;     //일 최저기온
     private Double tmx;     //일 최고기온
+
+    public static Weather getDefaultWeather() {
+        return Weather.builder()
+                .tmp(DefaultWeather.TMP)
+                .pop(DefaultWeather.POP)
+                .pty(DefaultWeather.PTY)
+                .reh(DefaultWeather.REH)
+                .sky(DefaultWeather.SKY)
+                .tmn(DefaultWeather.TMN)
+                .tmx(DefaultWeather.TMX)
+                .build();
+    }
 }
