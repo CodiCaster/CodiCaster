@@ -68,7 +68,15 @@ public class MemberController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/deleteAccount")
-    public String deleteAccount(HttpServletRequest request, HttpServletResponse response) {
+    public void deleteAccount(HttpServletRequest request, HttpServletResponse response) {
+        // Confirm delete dialog에서 취소를 선택한 경우
+        String confirmParam = request.getParameter("confirm");
+        if (confirmParam != null && confirmParam.equals("false")) {
+            // 아무 작업 없이 메서드 종료
+            return;
+        }
+
+        // Confirm delete dialog에서 확인을 선택한 경우에만 회원 탈퇴 작업 수행
         memberService.deleteMember(rq.getLoginedMemberId());
         SecurityContextHolder.clearContext();
         try {
@@ -77,6 +85,7 @@ public class MemberController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
     }
+
+
 }

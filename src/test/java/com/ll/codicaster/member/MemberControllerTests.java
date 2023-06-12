@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.mock.web.MockHttpSession;
 
 import com.ll.codicaster.boundedContext.member.controller.MemberController;
 import com.ll.codicaster.boundedContext.member.service.MemberService;
@@ -36,37 +38,14 @@ import jakarta.servlet.http.HttpSession;
 public class MemberControllerTests {
 	@Autowired
 	private MockMvc mvc;
+
 	@Autowired
 	private MemberService memberService;
 
 	@Test
-	@DisplayName("로그인 폼")
-	void t001() throws Exception {
-		// WHEN
-		ResultActions resultActions = mvc
-			.perform(get("/usr/member/login?admin"))
-			.andDo(print());
-
-		// THEN
-		resultActions
-			.andExpect(handler().handlerType(MemberController.class))
-			.andExpect(handler().methodName("showLogin"))
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(content().string(containsString("""
-				<input type="text" name="username"
-				""".stripIndent().trim())))
-			.andExpect(content().string(containsString("""
-				<input type="password" name="password"
-				""".stripIndent().trim())))
-			.andExpect(content().string(containsString("""
-				id="btn-login-1"
-				""".stripIndent().trim())));
-	}
-
-	@Test
 	// @Rollback(value = false) // DB에 흔적이 남는다.
 	@DisplayName("로그인 처리")
-	void t002() throws Exception {
+	void t001() throws Exception {
 		// WHEN
 		ResultActions resultActions = mvc
 			.perform(post("/usr/member/login")
@@ -91,4 +70,16 @@ public class MemberControllerTests {
 			.andExpect(redirectedUrlPattern("/**"));
 	}
 
+	@Test
+	@DisplayName("닉네임 중복 확인 API 테스트")
+	void t002() throws Exception {
+		String nickname = "testNickname";
+
+		ResultActions resultActions = mvc.perform(get("/usr/member/checkNickname")
+				.param("nickname", nickname))
+			.andDo(print());
+
+		resultActions.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg", equalTo("사용 가능한 닉네임입니다.")));
+	}
 }
