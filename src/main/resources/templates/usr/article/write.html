@@ -4,10 +4,15 @@
     <script>
 
         function validateForm() {
+            var submitBtn = document.getElementById("submitBtn");
+            if (submitBtn.disabled) {
+                toastWarning("잠시만 기다려주세요.");
+                return false;
+            }
+
             var title = document.getElementById("title").value;
             var content = document.getElementById("content").value;
             var imageFile = document.getElementById("imageFile").value;
-            var submitBtn = document.getElementById('submitBtn');
 
 
             if (title.trim().length === 0) {
@@ -32,6 +37,12 @@
                 toastWarning("내용은 80자를 초과할 수 없습니다.");
                 return false;
             }
+            submitBtn.disabled = true; // 버튼을 비활성화
+
+            setTimeout(function () {
+                submitBtn.disabled = false; // 일정 시간 후에 버튼을 다시 활성화
+            }, 10000); // 10초 (10000 밀리초) 동안 버튼을 비활성화
+
             return true;
         }
     </script>
