@@ -77,7 +77,7 @@ public class MemberControllerTests {
 
 		ResultActions resultActions = mvc.perform(get("/usr/member/checkNickname")
 				.param("nickname", nickname))
-		가	.andDo(print());
+			.andDo(print());
 
 		resultActions.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg", equalTo("사용 가능한 닉네임입니다.")));
