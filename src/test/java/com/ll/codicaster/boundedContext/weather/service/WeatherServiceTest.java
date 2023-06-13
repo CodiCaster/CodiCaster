@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
@@ -33,7 +33,7 @@ class WeatherServiceTest {
 
     @Test
     @DisplayName("기상청 API 반환값 확인")
-    void getWeather() {
+    void getWeatherTest() {
         Object weather = weatherService.getWeather(initialLocation);
         assertThat(weather).isInstanceOf(Weather.class);
         assertThat(weather).isNotNull();
@@ -41,7 +41,7 @@ class WeatherServiceTest {
 
     @Test
     @DisplayName("비오는 날씨 반환")
-    void getWeatherInfo1() {
+    void getWeatherInfoTest1() {
         initialWeather.setPty(1);
         initialWeather.setSky(1);
         assertThat(weatherService.getWeatherInfo(initialWeather)).contains("\uD83C\uDF27️");
@@ -49,7 +49,7 @@ class WeatherServiceTest {
 
     @Test
     @DisplayName("비오는 날씨 반환")
-    void getWeatherInfo2() {
+    void getWeatherInfoTest2() {
         initialWeather.setPty(4);
         initialWeather.setSky(3);
         assertThat(weatherService.getWeatherInfo(initialWeather)).contains("\uD83C\uDF27");
@@ -57,7 +57,7 @@ class WeatherServiceTest {
 
     @Test
     @DisplayName("눈오는 날씨 반환")
-    void getWeatherInfo3() {
+    void getWeatherInfoTest3() {
         initialWeather.setPty(2);
         initialWeather.setSky(3);
         assertThat(weatherService.getWeatherInfo(initialWeather)).contains("\uD83C\uDF28");
@@ -65,7 +65,7 @@ class WeatherServiceTest {
 
     @Test
     @DisplayName("눈오는 날씨 반환")
-    void getWeatherInfo4() {
+    void getWeatherInfoTest4() {
         initialWeather.setPty(3);
         initialWeather.setSky(1);
         assertThat(weatherService.getWeatherInfo(initialWeather)).contains("\uD83C\uDF28");
@@ -74,7 +74,7 @@ class WeatherServiceTest {
 
     @Test
     @DisplayName("맑은 날씨 반환")
-    void getWeatherInfo5() {
+    void getWeatherInfoTest5() {
         initialWeather.setPty(0);
         initialWeather.setSky(1);
         assertThat(weatherService.getWeatherInfo(initialWeather)).contains("\uD83C\uDF1E");
@@ -82,7 +82,7 @@ class WeatherServiceTest {
 
     @Test
     @DisplayName("구름 많은 날씨 반환")
-    void getWeatherInfo6() {
+    void getWeatherInfoTest6() {
         initialWeather.setPty(0);
         initialWeather.setSky(3);
         assertThat(weatherService.getWeatherInfo(initialWeather)).contains("\uD83C\uDF24");
@@ -90,7 +90,7 @@ class WeatherServiceTest {
 
     @Test
     @DisplayName("흐린 날씨 반환")
-    void getWeatherInfo7() {
+    void getWeatherInfoTest7() {
         initialWeather.setPty(0);
         initialWeather.setSky(4);
         assertThat(weatherService.getWeatherInfo(initialWeather)).contains("☁");
@@ -98,7 +98,7 @@ class WeatherServiceTest {
 
     @Test
     @DisplayName("날씨 DB 저장")
-    void whenAfterWrite() {
+    void whenAfterWriteTest() {
         Article article = new Article();
         weatherService.whenAfterWrite(initialLocation, article);
         Weather savedWeather = weatherRepository.findById(1L).orElse(null);

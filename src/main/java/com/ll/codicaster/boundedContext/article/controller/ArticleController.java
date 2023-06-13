@@ -1,6 +1,7 @@
 package com.ll.codicaster.boundedContext.article.controller;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.ll.codicaster.base.rsData.RsData;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,7 +37,7 @@ public class ArticleController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/writepro")
+    @PostMapping("/write")
     public String articleWriteSave(ArticleCreateForm articleCreateForm, @RequestParam("imageFile") MultipartFile imageFile) {
         RsData<Article> rsData = articleService.saveArticle(rq.getMember(), articleCreateForm, imageFile);
         if (rsData.isFail()) {
@@ -102,7 +103,7 @@ public class ArticleController {
         if (article == null) {
             return rq.historyBack("존재하지 않는 게시물입니다.");
         }
-        if (article.getAuthor().getId() != rq.getMember().getId()) {
+        if (!Objects.equals(article.getAuthor().getId(), rq.getMember().getId())) {
             return rq.historyBack("작성자만 수정 가능합니다.");
         }
         model.addAttribute("article", article);

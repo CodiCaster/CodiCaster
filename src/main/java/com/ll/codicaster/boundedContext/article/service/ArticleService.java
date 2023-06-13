@@ -129,7 +129,7 @@ public class ArticleService {
         if (article == null) {
             return RsData.of("F-2", "게시물이 존재하지 않습니다.");
         }
-        if (article.getAuthor().getId() != member.getId()) {
+        if (!Objects.equals(article.getAuthor().getId(), member.getId())) {
             return RsData.of("F-3", "수정 권한이 없습니다.");
         }
 
@@ -197,7 +197,7 @@ public class ArticleService {
         if (article == null) {
             return RsData.of("F-2", "존재하지 않는 게시물입니다.");
         }
-        if (article.getAuthor().getId() != member.getId()) {
+        if (!Objects.equals(article.getAuthor().getId(), member.getId())) {
             return RsData.of("F-3", "삭제 권한이 없습니다.");
         }
         articleRepository.deleteById(id);
