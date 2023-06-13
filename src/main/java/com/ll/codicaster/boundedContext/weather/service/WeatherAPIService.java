@@ -56,8 +56,7 @@ public class WeatherAPIService {
         try {
             URL url = getURL(dateAndTime, pointX, pointY);
             StringBuilder sb = getResponseString(url);
-            weather = getWeatherFromJSON(sb, weather, dateAndTime);
-            return weather;
+            return getWeatherFromJSON(sb, weather, dateAndTime);
         } catch (Exception e) {
             return weather;
         }
