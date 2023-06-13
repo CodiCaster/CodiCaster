@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import com.ll.codicaster.base.rsData.RsData;
 
-import org.springframework.boot.Banner;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -19,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.boundedContext.article.entity.Article;
-import com.ll.codicaster.boundedContext.article.form.ArticleCreateForm;
+import com.ll.codicaster.boundedContext.article.dto.ArticleDTO;
 import com.ll.codicaster.boundedContext.article.service.ArticleService;
 
 import lombok.RequiredArgsConstructor;
@@ -41,8 +40,8 @@ public class ArticleController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/write")
-    public String articleWriteSave(ArticleCreateForm articleCreateForm, @RequestParam("imageFile") MultipartFile imageFile) {
-        RsData<Article> rsData = articleService.saveArticle(rq.getMember(), articleCreateForm, imageFile);
+    public String articleWriteSave(ArticleDTO articleDTO, @RequestParam("imageFile") MultipartFile imageFile) {
+        RsData<Article> rsData = articleService.saveArticle(rq.getMember(), articleDTO, imageFile);
         if (rsData.isFail()) {
             return rq.historyBack(rsData);
         }
@@ -57,9 +56,6 @@ public class ArticleController {
 
         return "usr/article/list";
     }
-
-
-
 
     @GetMapping("/detail/{id}")
     public String articleDetail(@PathVariable Long id, Model model) {
@@ -97,8 +93,8 @@ public class ArticleController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
-    public String updateArticle(@PathVariable("id") Long id, ArticleCreateForm updatedArticle, MultipartFile imageFile) {
-        RsData<Article> rsData = articleService.updateArticle(rq.getMember(), id, updatedArticle, imageFile);
+    public String updateArticle(@PathVariable("id") Long id, ArticleDTO articleDTO, MultipartFile imageFile) {
+        RsData<Article> rsData = articleService.updateArticle(rq.getMember(), id, articleDTO, imageFile);
 
         if (rsData.isFail()) {
             return rq.historyBack(rsData);
