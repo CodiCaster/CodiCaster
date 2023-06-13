@@ -56,4 +56,5 @@ server:
 custom:
   site:
     baseUrl: http://localhost:8080
-
+file:
+  upload-dir: C:\Users\82102\IdeaProjects\CodiCaster__-main\images
