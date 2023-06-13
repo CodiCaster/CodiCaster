@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.ll.codicaster.base.rsData.RsData;
 
+import org.springframework.boot.Banner;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -57,26 +58,8 @@ public class ArticleController {
         return "usr/article/list";
     }
 
-    //날짜 기준으로 정렬된 리스트 반환
-    @GetMapping("/todayList")
-    public String showArticlesFilteredByDate(Model model) {
-
-        List<Article> articles = articleService.showArticlesFilteredByDate();
-        model.addAttribute("articlesFilteredOnce", articles);
-
-        return "usr/article/nonmembers";
-    }
-
-    @GetMapping("/sortedlist")
-    public String showArticlesFilteredByAllParams(Model model) {
-        List<Article> filterdArticles = articleService.showArticlesFilteredByDate();
-        List<Article> articles = articleService.sortByAllParams(rq.getMember(), filterdArticles);
-        model.addAttribute("articlesFilterdAndSorted", articles);
 
 
-        return "usr/article/members";
-
-    }
 
     @GetMapping("/detail/{id}")
     public String articleDetail(@PathVariable Long id, Model model) {
@@ -167,4 +150,12 @@ public class ArticleController {
         }
         return rq.redirectWithMsg("/usr/article/detail/" + id, rsData);
     }
+
+	@GetMapping("/followlist")
+	public String showfollowingArticle(Model model){
+		List<Article> articles = articleService.showFollweesArticles();
+
+		model.addAttribute("articles",articles);
+		return "usr/article/followlist";
+	}
 }

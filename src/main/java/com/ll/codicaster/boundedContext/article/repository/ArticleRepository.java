@@ -17,4 +17,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 	List<Article> findByAuthorId(Long authorId);
 
 	Page<Article> findByAuthorId(Long authorId, Pageable pageable);
+
+	List<Article> findByAuthorIdIn(List<Long> authorIds);
 }
