@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.base.rsData.RsData;
+import com.ll.codicaster.boundedContext.member.entity.Member;
 import com.ll.codicaster.boundedContext.member.service.MemberService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,12 +39,14 @@ public class MemberController {
         return "usr/member/newInfo";
     }
 
-
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/newInfo")
     public String updateInfo(@RequestParam String nickname, @RequestParam(required = false) int bodyType,
-                             @RequestParam String gender) {
-        memberService.updateMemberInfo(rq.getLoginedMemberId(), nickname, bodyType, gender);
+        @RequestParam String gender) {
+        RsData<Void> rsData = memberService.updateMemberInfo(nickname, bodyType, gender);
+        if (rsData.isFail()) {
+            return rq.historyBack(rsData.getMsg());
+        }
         return "redirect:/main";
     }
 
@@ -51,7 +54,10 @@ public class MemberController {
     @PostMapping("/me")
     public String updateMe(@RequestParam String nickname, @RequestParam(required = false) int bodyType,
         @RequestParam String gender) {
-        memberService.updateMemberInfo(rq.getLoginedMemberId(), nickname, bodyType, gender);
+        RsData<Void> rsData = memberService.updateMemberInfo(nickname, bodyType, gender);
+        if (rsData.isFail()) {
+            return rq.historyBack(rsData.getMsg());
+        }
         return "redirect:/usr/member/me";
     }
 
@@ -61,38 +67,43 @@ public class MemberController {
         return memberService.checkNickname(nickname);
     }
 
-    @PreAuthorize("isAuthenticated()") // 로그인 해야만 접속가능
-    @GetMapping("/me") // 로그인 한 나의 정보 보여주는 페이지
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/me")
     public String showMe() {
-        if(rq.isLogout()){
-            return "usr/member/login";
-        }
-        if (rq.getNickname() == null) {
-            return "usr/member/login";
+        RsData<Member> rsData = memberService.getMemberInfo();
+        if (rsData.isFail()) {
+            return rq.historyBack(rsData.getMsg());
         }
         return "usr/member/me";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/deleteAccount")
-    public void deleteAccount(HttpServletRequest request, HttpServletResponse response) {
-        // Confirm delete dialog에서 취소를 선택한 경우
+    public void deleteAccount(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String confirmParam = request.getParameter("confirm");
         if (confirmParam != null && confirmParam.equals("false")) {
-            // 아무 작업 없이 메서드 종료
             return;
         }
 
-        // Confirm delete dialog에서 확인을 선택한 경우에만 회원 탈퇴 작업 수행
-        memberService.deleteMember(rq.getLoginedMemberId());
-        SecurityContextHolder.clearContext();
-        try {
-            request.getSession().invalidate();
-            response.sendRedirect("/usr/member/login");
-        } catch (IOException e) {
-            e.printStackTrace();
+        RsData<Void> rsData = memberService.deleteMember();
+        if (rsData.isFail()) {
+            rq.historyBack(rsData.getMsg());
+            return;
         }
+
+        SecurityContextHolder.clearContext();
+        request.getSession().invalidate();
+        response.sendRedirect("/usr/member/login");
     }
+
+	@GetMapping("/follow")
+	public String showFollowee(){
+		return "usr/member/follow";
+	}
+	@GetMapping("/follower")
+	public String showFollower(){
+		return "usr/member/follower";
+	}
 
 
 }

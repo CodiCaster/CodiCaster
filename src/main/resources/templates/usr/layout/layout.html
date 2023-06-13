@@ -50,9 +50,9 @@
                         </a>
                     </li>
                     <li th:if="${@rq.login}">
-                        <a href="/usr/article/todayList">
-                            <th:block th:utext="#{c.iconTodayList}"></th:block>
-                            <span th:text="#{c.pageNameTodayList}"></span>
+                        <a href="/usr/article/followlist">
+                            <th:block th:utext="#{c.iconFollow}"></th:block>
+                            <span th:text="#{c.pageNameFollowList}"></span>
                         </a>
                     </li>
 
@@ -83,6 +83,13 @@
         <div class="navbar-end">
             <a href="/usr/home/about" class="btn btn-ghost btn-circle" th:if="${@rq.logout}">
                 <th:block th:utext="#{c.iconWhatIsThisService}"></th:block>
+            </a>
+            <a href="/usr/notification/list" class="btn btn-ghost btn-circle" th:if="${@rq.login}">
+                <div class="indicator">
+                    <i class="fa-regular fa-bell"></i>
+                    <span data-test="hasUnreadNotifications" th:if="${@rq.hasUnreadNotifications}"
+                          class="badge badge-xs badge-primary indicator-item"></span>
+                </div>
             </a>
         </div>
     </div>

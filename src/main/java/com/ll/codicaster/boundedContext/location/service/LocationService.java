@@ -66,9 +66,11 @@ public class LocationService {
         double olon = OLON * DEGRAD;
         double olat = OLAT * DEGRAD;
 
-        double sn = Math.tan(Math.PI * 0.25 + slat2 * 0.5) / Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+        double tan = Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+
+        double sn = Math.tan(Math.PI * 0.25 + slat2 * 0.5) / tan;
         sn = Math.log(Math.cos(slat1) / Math.cos(slat2)) / Math.log(sn);
-        double sf = Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+        double sf = tan;
         sf = Math.pow(sf, sn) * Math.cos(slat1) / sn;
         double ro = Math.tan(Math.PI * 0.25 + olat * 0.5);
         ro = re * sf / Math.pow(ro, sn);

@@ -16,7 +16,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.ll.codicaster.boundedContext.member.entity.Member;
 
-public class MemberTest {
+public class MemberTests {
 	private Member member;
 
 	@BeforeEach

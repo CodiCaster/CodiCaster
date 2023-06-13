@@ -1,5 +1,7 @@
 package com.ll.codicaster.boundedContext.member.entity;
 
+import static jakarta.persistence.GenerationType.*;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -9,13 +11,14 @@ import java.util.Set;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import com.ll.codicaster.base.baseEntity.BaseEntity;
 import com.ll.codicaster.boundedContext.article.entity.Article;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.MapKeyColumn;
@@ -29,8 +32,11 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 @ToString(callSuper = true)
-public class Member extends BaseEntity {
-    private String providerTypeCode; // 일반회원인지, 카카오로 가입한 회원인지, 네이버로 가입한 회원인지
+public class Member {
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
+	private Long id;
+    private String providerTypeCode; // 카카오로 가입한 회원인지, 네이버로 가입한 회원인지
     @Column(unique = true)
     private String username;
     private String password;
@@ -40,13 +46,13 @@ public class Member extends BaseEntity {
 	@Column
     private int bodyType;
 
-
     private String gender;
     @ElementCollection
     @CollectionTable(name = "member_tagMap", joinColumns = @JoinColumn(name = "member_id"))
     @MapKeyColumn(name = "tag_type")
     @Column(name = "tag_count")
     private Map<String, Integer> tagMap;
+
 
     // 이 함수 자체는 만들어야 한다. 스프링 시큐리티 규격
     public List<? extends GrantedAuthority> getGrantedAuthorities() {
@@ -103,7 +109,6 @@ public class Member extends BaseEntity {
     private Set<Article> likedArticles = new HashSet<>();
 
 
-
     public String getBodyTypeDisplayName(){
         return switch (bodyType){
             case 1 -> "추위 많이 탐";
@@ -113,6 +118,7 @@ public class Member extends BaseEntity {
             default -> "더위 많이탐";
         };
     }
+
 
 
 

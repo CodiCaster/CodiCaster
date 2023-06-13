@@ -1,8 +1,12 @@
 package com.ll.codicaster.boundedContext.article.controller;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.ll.codicaster.base.rsData.RsData;
+
+import org.springframework.boot.Banner;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,26 +58,8 @@ public class ArticleController {
         return "usr/article/list";
     }
 
-    //날짜 기준으로 정렬된 리스트 반환
-    @GetMapping("/todayList")
-    public String showArticlesFilteredByDate(Model model) {
-
-        List<Article> articles = articleService.showArticlesFilteredByDate(rq.getMember());
-        model.addAttribute("articlesFilteredOnce", articles);
-
-        return "usr/article/nonmembers";
-    }
-
-    @GetMapping("/sortedlist")
-    public String showArticlesFilteredByAllParams(Model model) {
-        List<Article> filterdArticles = articleService.showArticlesFilteredByDate(rq.getMember());
-        List<Article> articles = articleService.sortByAllParams(rq.getMember(), filterdArticles);
-        model.addAttribute("articlesFilterdAndSorted", articles);
 
 
-        return "usr/article/members";
-
-    }
 
     @GetMapping("/detail/{id}")
     public String articleDetail(@PathVariable Long id, Model model) {
@@ -102,7 +88,7 @@ public class ArticleController {
         if (article == null) {
             return rq.historyBack("존재하지 않는 게시물입니다.");
         }
-        if (article.getAuthor().getId() != rq.getMember().getId()) {
+        if (!Objects.equals(article.getAuthor().getId(), rq.getMember().getId())) {
             return rq.historyBack("작성자만 수정 가능합니다.");
         }
         model.addAttribute("article", article);
@@ -130,15 +116,15 @@ public class ArticleController {
         return rq.redirectWithMsg("/usr/article/list", rsData);
     }
 
-    @RequestMapping("/myList")
-    public String showMyArticle(Model model) {
+    @GetMapping("/mylist")
+    public String showMyArticle(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        Page<Article> articlePage = articleService.showMyList(page, size);
+        List<Article> articles = articlePage.getContent();
 
-        List<Article> articles = articleService.showMyList();
         model.addAttribute("myArticles", articles);
-
-        List<String> mostUsedTags = rq.getMember().getMostUsedTags();
-        model.addAttribute("mostUsedTags", mostUsedTags);
-
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", articlePage.getTotalPages());
+        model.addAttribute("mostUsedTags", rq.getMember().getMostUsedTags());
 
         return "usr/article/myList";
     }
@@ -164,4 +150,12 @@ public class ArticleController {
         }
         return rq.redirectWithMsg("/usr/article/detail/" + id, rsData);
     }
+
+	@GetMapping("/followlist")
+	public String showfollowingArticle(Model model){
+		List<Article> articles = articleService.showFollweesArticles();
+
+		model.addAttribute("articles",articles);
+		return "usr/article/followlist";
+	}
 }
