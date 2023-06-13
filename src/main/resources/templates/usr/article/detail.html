@@ -61,7 +61,7 @@
                                         <span th:text="${article.address}"></span>
                                     </div>
                                     <div class="text-right">
-                                        <span class="badge badge-ghost" th:text="${article.weatherInfo}"></span>
+                                        <span class="badge badge-ghost" th:text="${@rq.getWeatherInfo}"></span>
                                     </div>
                                 </div>
                             </div>
@@ -79,6 +79,7 @@
                             <div class="content text-base" style="padding-top: 5%; word-wrap: break-word; word-break: break-all;">
                                 <span th:text="${article.content}"></span>
                             </div>
+
                         </div>
 
                         <!-- 상호작용 영역 (좋아요) -->

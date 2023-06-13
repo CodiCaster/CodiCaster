@@ -1,3 +1,4 @@
+
 package com.ll.codicaster.boundedContext.article.service;
 
 import java.io.File;
@@ -11,6 +12,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+// import com.ll.codicaster.boundedContext.aws.s3.dto.AmazonS3ImageDto;
+// import com.ll.codicaster.boundedContext.aws.s3.service.AmazonS3Service;
 import com.ll.codicaster.base.event.EventAfterWrite;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -44,12 +47,13 @@ public class ArticleService {
 	private final ArticleRepository articleRepository;
 	private final ImageRepository imageRepository;
 	private final ApplicationEventPublisher publisher;
+    // private final AmazonS3Service amazonS3Service;
 	private final Rq rq;
 	@Value("${file.upload-dir}")
 	private String uploadDir;
 
-	public static Set<String> extractHashTagList(String content) {
-		Set<String> tagSet = new HashSet<>();
+    public static Set<String> extractHashTagList(String content) {
+        Set<String> tagSet = new HashSet<>();
 
 		Pattern pattern = Pattern.compile("#([ㄱ-ㅎ가-힣a-zA-Z0-9_]+)");
 		Matcher matcher = pattern.matcher(content);
@@ -90,10 +94,33 @@ public class ArticleService {
 		Article savedArticle = articleRepository.save(article);
 		publisher.publishEvent(new EventAfterWrite(this, rq.getCurrentLocation(), savedArticle));
 
-		// 이미지 파일이 있으면 저장
-		if (!imageFile.isEmpty()) {
-			UUID uuid = UUID.randomUUID();
-			String fileName = uuid + "_" + imageFile.getOriginalFilename();
+        // 클라우드스토리지 사용
+    //     if (!imageFile.isEmpty()) {
+    //         try {
+    //             // 이미지 업로드 및 URL 정보 받아오기
+    //             AmazonS3ImageDto amazonS3ImageDto = amazonS3Service.imageUpload(imageFile, UUID.randomUUID().toString());
+    //
+    //             // 이미지 정보를 설정하고 저장
+    //             Image image = Image.builder()
+    //                 .filename(imageFile.getOriginalFilename())
+    //                 .filepath(amazonS3ImageDto.getCdnUrl()) // CDN URL로 변경
+    //                 .article(article)
+    //                 .build();
+    //
+    //             image = imageRepository.save(image);  // 이미지를 DB에 저장
+    //
+    //             article.setImage(image); // 이미지 정보를 게시글에 추가
+    //         } catch (Exception e) {
+    //             e.printStackTrace();
+    //             throw new RuntimeException("이미지 업로드에 실패하였습니다", e);
+    //         }
+    //     }
+    //     return RsData.of("S-1", "성공적으로 저장되었습니다", article);
+    //}
+// 이미지 파일이 있으면 저장
+        if (!imageFile.isEmpty()) {
+            UUID uuid = UUID.randomUUID();
+            String fileName = uuid + "_" + imageFile.getOriginalFilename();
 
 			File directory = new File(uploadDir);
 			// 디렉토리가 존재하지 않으면 생성
@@ -120,13 +147,15 @@ public class ArticleService {
 		return RsData.of("S-1", "성공적으로 저장되었습니다", article);
 	}
 
-	//게시물 전체 리스트
-	public List<Article> articleList() {
-		return articleRepository.findAll()
-			.stream()
-			.sorted(Comparator.comparingLong(Article::getId).reversed())
-			.collect(Collectors.toList());
-	}
+
+
+    //게시물 전체 리스트
+    public List<Article> articleList() {
+        return articleRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparingLong(Article::getId).reversed())
+                .collect(Collectors.toList());
+    }
 
 	//게시물 상세
 	public Optional<Article> findById(Long id) {
@@ -157,10 +186,47 @@ public class ArticleService {
 		article.setContent(form.getContent());
 		article.setTagSet(newTagSet);
 
-		// 이미지 파일이 있으면 저장
-		if (!imageFile.isEmpty()) {
-			UUID uuid = UUID.randomUUID();
-			String fileName = uuid + "_" + imageFile.getOriginalFilename();
+
+            // 클라우드 스토리지 이용
+    //         if (!imageFile.isEmpty()) {
+    //             try {
+    //                 // 이미지 업로드 및 URL 정보 받아오기
+    //                 AmazonS3ImageDto amazonS3ImageDto = amazonS3Service.imageUpload(imageFile, UUID.randomUUID().toString());
+    //
+    //                 // 기존 이미지가 있으면 DB에서 삭제
+    //                 Image oldImage = article.getImage();
+    //                 if (oldImage != null) {
+    //                     imageRepository.delete(oldImage);
+    //                 }
+    //
+    //                 // 새 이미지 정보를 설정하고 저장
+    //                 Image image = Image.builder()
+    //                     .filename(imageFile.getOriginalFilename())
+    //                     .filepath(amazonS3ImageDto.getCdnUrl()) // CDN URL로 변경
+    //                     .article(article)
+    //                     .build();
+    //
+    //                 image = imageRepository.save(image);
+    //
+    //                 article.setImage(image);
+    //             } catch (Exception e) {
+    //                 return RsData.of("F-4", "이미지 저장 중 오류가 발생했습니다.");
+    //             }
+    //         }
+    //
+    //     try {
+    //         article = articleRepository.save(article);
+    //     } catch (Exception e) {
+    //         return RsData.of("F-5", "게시글 수정 중 오류가 발생했습니다.");
+    //     }
+    //
+    //     return RsData.of("S-1", "성공적으로 수정되었습니다.", article);
+    // }
+
+        // 이미지 파일이 있으면 저장
+        if (!imageFile.isEmpty()) {
+            UUID uuid = UUID.randomUUID();
+            String fileName = uuid + "_" + imageFile.getOriginalFilename();
 
 			File directory = new File(uploadDir);
 			if (!directory.exists()) {

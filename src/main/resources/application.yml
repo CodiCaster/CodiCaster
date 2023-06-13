@@ -3,10 +3,10 @@ spring:
     active: dev
     include: secret
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/codicaster_dev?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://127.0.0.1:3306/codicaster_dev?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
     username: root
-    password: Codi2327~~
+    password:
   security:
     oauth2:
       client:
@@ -53,12 +53,8 @@ server:
       charset: UTF-8
       enabled: true
       force: true
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
-file:
-  upload-dir: /Users/heegwonjo/Desktop/Likelion/codicaster
 custom:
   site:
     baseUrl: http://localhost:8080
-
+file:
+  upload-dir: C:\Users\82102\IdeaProjects\CodiCaster__-main\images

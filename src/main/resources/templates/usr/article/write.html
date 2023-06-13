@@ -1,7 +1,8 @@
 <html layout:decorate="~{usr/layout/layout.html}">
 <head>
-    <title>게시글 작성하기</title>
+  <title>게시글 작성하기</title>
     <script>
+
         function validateForm() {
             var submitBtn = document.getElementById("submitBtn");
             if (submitBtn.disabled) {
@@ -10,8 +11,11 @@
             }
 
             var title = document.getElementById("title").value;
-            var imageFile = document.getElementById("imageFile").value;
             var content = document.getElementById("content").value;
+            var imageFileElement = document.getElementById("imageFile");
+            var imageFile = imageFileElement.files.length > 0 ? imageFileElement.files[0] : null;
+            var validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
+            var submitBtn = document.getElementById('submitBtn');
 
 
             if (title.trim().length === 0) {
@@ -24,8 +28,14 @@
                 return false;
             }
 
-            if (imageFile.trim().length === 0) {
-                toastWarning("파일을 첨부해주세요.");
+            if (imageFile.size > 10 * 1024 * 1024) {
+                toastr.warning("첨부된 파일의 크기가 10MB를 초과합니다.");
+                return false;
+            }
+
+            var fileType = imageFile["type"];
+            if (!validImageTypes.includes(fileType)) {
+                toastr.warning("첨부된 파일이 이미지 타입이 아닙니다.");
                 return false;
             }
             if (title.length > 20) {
@@ -53,6 +63,7 @@
             });
         });
     </script>
+
 </head>
 <body>
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">
@@ -77,7 +88,7 @@
                         <div>
                         </div>
                         <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" htmlFor="content">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="content">
                                 내용
                             </label>
                             <div class="relative">
@@ -88,7 +99,7 @@
                             </div>
                         </div>
                         <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" htmlFor="imageFile">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="imageFile">
                                 이미지 업로드
                             </label>
                             <input type="file" id="imageFile" name="imageFile"
