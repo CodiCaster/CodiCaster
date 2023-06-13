@@ -227,4 +227,10 @@ public class Rq {
 		double temperatureDifference = tmx - tmn; // 일교차
 		return temperatureDifference >= 15.0;
 	}
+
+	public List<Member> getFollwingMembers() {
+		return followService.getFollowingMembers(getMember());
+	}
+
+	public List<Member> getFollowers (){return followService.getFollowers(getMember());}
 }
