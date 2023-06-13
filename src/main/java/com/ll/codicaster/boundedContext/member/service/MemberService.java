@@ -18,97 +18,97 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberService {
-    private final PasswordEncoder passwordEncoder;
-    private final MemberRepository memberRepository;
-    private final Rq rq;
+	private final PasswordEncoder passwordEncoder;
+	private final MemberRepository memberRepository;
+	private final Rq rq;
 
-    public Optional<Member> findByUsername(String username) {
-        return memberRepository.findByUsername(username);
-    }
+	public Optional<Member> findByUsername(String username) {
+		return memberRepository.findByUsername(username);
+	}
 
-    public Optional<Member> findById(Long id) {
-        return memberRepository.findById(id);
-    }
+	public Optional<Member> findById(Long id) {
+		return memberRepository.findById(id);
+	}
 
-    @Transactional
-    public RsData<Member> join(String username, String password) {
-        return join("CODYCASTER", username, password);
-    }
+	@Transactional
+	public RsData<Member> join(String username, String password) {
+		return join("CODYCASTER", username, password);
+	}
 
-    private RsData<Member> join(String providerTypeCode, String username, String password) {
-        if (findByUsername(username).isPresent()) {
-            return RsData.of("F-1", "해당 아이디(%s)는 이미 사용중입니다.".formatted(username));
-        }
+	private RsData<Member> join(String providerTypeCode, String username, String password) {
+		if (findByUsername(username).isPresent()) {
+			return RsData.of("F-1", "해당 아이디(%s)는 이미 사용중입니다.".formatted(username));
+		}
 
-        if (StringUtils.hasText(password)) {
-            password = passwordEncoder.encode(password);
-        }
+		if (StringUtils.hasText(password)) {
+			password = passwordEncoder.encode(password);
+		}
 
-        Member member = Member.builder()
-            .providerTypeCode(providerTypeCode)
-            .username(username)
-            .password(password)
-            .build();
+		Member member = Member.builder()
+			.providerTypeCode(providerTypeCode)
+			.username(username)
+			.password(password)
+			.build();
 
-        memberRepository.save(member);
+		memberRepository.save(member);
 
-        return RsData.of("S-1", "회원가입이 완료되었습니다.", member);
-    }
-    @Transactional
-    public RsData<Member> whenSocialLogin(String providerTypeCode, String username) {
-        Optional<Member> opMember = findByUsername(username);
+		return RsData.of("S-1", "회원가입이 완료되었습니다.", member);
+	}
 
-        if (opMember.isPresent()) {
-            return RsData.of("S-2", "로그인 되었습니다.", opMember.get());
-        }
+	@Transactional
+	public RsData<Member> whenSocialLogin(String providerTypeCode, String username) {
+		Optional<Member> opMember = findByUsername(username);
 
-        return join(providerTypeCode, username, "");
-    }
+		if (opMember.isPresent()) {
+			return RsData.of("S-2", "로그인 되었습니다.", opMember.get());
+		}
 
-    @Transactional(readOnly = true)
-    public RsData<String> checkNickname(String nickname) {
-        Optional<Member> optionalMember = memberRepository.findByNickname(nickname);
+		return join(providerTypeCode, username, "");
+	}
 
-        if (optionalMember.isPresent()) {
-            return RsData.of("F-1", "해당 닉네임(%s)은 이미 사용중입니다.".formatted(nickname));
-        }
+	@Transactional(readOnly = true)
+	public RsData<String> checkNickname(String nickname) {
+		Optional<Member> optionalMember = memberRepository.findByNickname(nickname);
 
-        return RsData.of("S-1", "사용 가능한 닉네임입니다.");
-    }
+		if (optionalMember.isPresent()) {
+			return RsData.of("F-1", "해당 닉네임(%s)은 이미 사용중입니다.".formatted(nickname));
+		}
 
-    @Transactional
-    public RsData<Void> updateMemberInfo(String nickname, int bodyType, String gender) {
-        Member member = rq.getMember();
+		return RsData.of("S-1", "사용 가능한 닉네임입니다.");
+	}
 
-        if (member == null) {
-            return RsData.of("F-2", "로그인이 필요합니다.");
-        }
+	@Transactional
+	public RsData<Void> updateMemberInfo(String nickname, int bodyType, String gender) {
+		Member member = rq.getMember();
 
-        member.updateInfo(nickname, bodyType, gender);
-        return RsData.of("S-2", "회원 정보가 업데이트되었습니다.", null);
-    }
+		if (member == null) {
+			return RsData.of("F-2", "로그인이 필요합니다.");
+		}
 
+		member.updateInfo(nickname, bodyType, gender);
+		return RsData.of("S-2", "회원 정보가 업데이트되었습니다.", null);
+	}
 
-    @Transactional
-    public RsData<Void> deleteMember() {
-        Member member = rq.getMember();
+	@Transactional
+	public RsData<Void> deleteMember() {
+		Member member = rq.getMember();
 
-        if (member == null) {
-            return RsData.of("F-3", "로그인이 필요합니다.");
-        }
+		if (member == null) {
+			return RsData.of("F-3", "로그인이 필요합니다.");
+		}
 
-        memberRepository.delete(member);
-        return RsData.of("S-3", "회원 탈퇴가 완료되었습니다.", null);
-    }
+		memberRepository.delete(member);
+		return RsData.of("S-3", "회원 탈퇴가 완료되었습니다.", null);
+	}
 
-    @Transactional(readOnly = true)
-    public RsData<Member> getMemberInfo() {
-        Member member = rq.getMember();
+	@Transactional(readOnly = true)
+	public RsData<Member> getMemberInfo() {
+		Member member = rq.getMember();
 
-        if (member == null) {
-            return RsData.of("F-4", "로그인이 필요합니다.");
-        }
+		if (member == null) {
+			return RsData.of("F-4", "로그인이 필요합니다.");
+		}
 
-        return RsData.successOf(member);
-    }
+		return RsData.successOf(member);
+	}
 }
