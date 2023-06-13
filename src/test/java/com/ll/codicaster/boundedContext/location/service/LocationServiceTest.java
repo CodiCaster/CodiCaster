@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -52,7 +51,6 @@ class LocationServiceTest {
     }
 
     @Test
-
     @DisplayName("Location 객체 생성 및 저장 확인")
     void getCurrentLocationTest() {
         Double latitude = DefaultLocation.LATITUDE;
