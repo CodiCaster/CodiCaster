@@ -59,6 +59,8 @@ public class ArticleController {
     }
 
 
+
+
     @GetMapping("/detail/{id}")
     public String articleDetail(@PathVariable Long id, Model model) {
 

@@ -275,23 +275,23 @@ public class ArticleService {
 		}
 	}
 
-    @Transactional
-    public RsData likeArticle(Member member, Long articleId) {
-        if (member == null) {
-            return RsData.of("F-1", "로그인 후 사용가능한 기능입니다.");
-        }
-        Article article = articleRepository.findById(articleId).orElse(null);
-        if (article == null) {
-            return RsData.of("F-2", "존재하지 않는 게시물입니다.");
-        }
-        article.addLikeMember(member);
-        Set<Member> likeSet = article.getLikedMembers();
-        likeSet.add(member);
-        article.setLikedMembers(likeSet);
-        //이벤트 발행
-        publisher.publishEvent(new EventAfterLike(this, member, article));
-        return RsData.of("S-1", "좋아요가 추가되었습니다.");
-    }
+	@Transactional
+	public RsData likeArticle(Member member, Long articleId) {
+		if (member == null) {
+			return RsData.of("F-1", "로그인 후 사용가능한 기능입니다.");
+		}
+		Article article = articleRepository.findById(articleId).orElse(null);
+		if (article == null) {
+			return RsData.of("F-2", "존재하지 않는 게시물입니다.");
+		}
+		article.addLikeMember(member);
+		Set<Member> likeSet = article.getLikedMembers();
+		likeSet.add(member);
+		article.setLikedMembers(likeSet);
+		//이벤트 발행
+		publisher.publishEvent(new EventAfterLike(this, member, article));
+		return RsData.of("S-1", "좋아요가 추가되었습니다.");
+	}
 
 	@Transactional
 	public RsData unlikeArticle(Member member, Long articleId) {
