@@ -1,4 +1,4 @@
-package com.ll.codicaster.boundedContext.notification;
+package com.ll.codicaster.boundedContext.notification.controller;
 
 import java.util.List;
 
@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ll.codicaster.base.rq.Rq;
+import com.ll.codicaster.boundedContext.notification.service.NotificationService;
+import com.ll.codicaster.boundedContext.notification.entity.Notification;
 
 import lombok.RequiredArgsConstructor;
 

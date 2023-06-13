@@ -103,7 +103,8 @@
                             <div class="card-title flex items-center">
                                 <span class="text-xl" th:text="${@rq.getAddress}"></span>
                                 <div>
-                                    <form id="locationDTO" th:action="@{/usr/location/update/main}" class="mb-0" method="post">
+                                    <form id="locationDTO" th:action="@{/usr/location/update/main}" class="mb-0"
+                                          method="post">
                                         <button id="updateButton" type="button"
                                                 class="button bg-white border border-primary text-primary hover:bg-primary hover:text-white"
                                                 onclick="handleButtonClick(this);">
@@ -118,6 +119,9 @@
                     </div>
                 </div>
                 <br>
+                <th:block th:if="${@rq.hasHighTemperatureDifference()}">
+                    <span>일교차가 큰 날이니 겉옷을 챙기시는게 좋아요!</span>
+                </th:block>
                 <br>
                 <h2 class="card-title flex items-center px-4">
                     <a href="/usr/article/todayList">
@@ -127,23 +131,73 @@
                 </h2>
                 <br>
                 <br>
-                <br>
-                <br>
+                <div class="max-w-3xl py-6 px-4">
+                    <div th:if="${@rq.isLogout()}">
+                        <div class="flex flex-wrap gap-4">
+                            <div th:each="article : ${articlesFilteredOnce}"
+                                 class="flex mx-1 rounded overflow-hidden shadow-lg">
+                                <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
+                                    <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
+                                         class="w-full h-32 object-cover"/>
+                                    <div class="flex justify-around">
+                                        <div class="like-display">
+                                            <span class="heart-icon text-red-500 mr-1">💕</span>
+                                            <span th:text="${article.getLikedMembers().size()}"></span>
+                                        </div>
+                                        <span th:text="${#numbers.formatDecimal(@articleService.getDistanceBetweenUser(article), 1, 1)} + 'km'"></span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${@rq.isLogin()}">
+                        <div class="flex flex gap-4">
+                            <div th:each="article : ${articlesFilterdAndSorted}"
+                                 class="rounded overflow-hidden shadow-lg">
+                                <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
+                                    <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
+                                         class="w-full h-32 object-cover"/>
+                                    <div class="flex justify-around">
+                                        <div class="like-display">
+                                            <span class="heart-icon text-red-500 mr-1">💕</span>
+                                            <span th:text="${article.getLikedMembers().size()}"></span>
+                                        </div>
+                                        <span th:text="${#numbers.formatDecimal(@articleService.getDistanceBetweenUser(article), 1, 1)} + 'km'"></span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col gap-4 mt-4">
+                <div th:if="${@rq.isLogin}" class="card bg-base-100 shadow-xl max-w-2xl w-full px-4">
+                    <h2 class="card-title flex items-center mt-4">
+                        <a href="/usr/article/mylist">
+                            <i class="fa-solid fa-list"></i>
+                            <span class="text-2xl">나의 게시물</span>
+                        </a>
+                    </h2>
+                    <br>
+                    <br>
+                    <div class="flex flex-wrap gap-4">
+                        <div th:each="article : ${myArticles}" class="rounded overflow-hidden shadow-lg">
+                            <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
+                                <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
+                                     class="w-full h-32 object-cover"/>
+                                <div class="px-6 py-4">
+                                    <div class="font-bold text-xl mb-2 truncate"
+                                         th:text="${article.getWeatherInfo()}"></div>
+                                    <span th:text="${#temporals.format(article.createDate, 'yyyy-MM-dd')}"></span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                </div>
             </div>
         </div>
-        <div class="flex flex-col gap-4 mt-4">
-            <div th:if="${@rq.isLogin}" class="card bg-base-100 shadow-xl max-w-2xl w-full px-4">
-                <h2 class="card-title flex items-center mt-4">
-                    <i class="fa-solid fa-list"></i>
-                    <span class="text-2xl">나의 게시물</span>
-                </h2>
-                <br>
-                <br>
-                <br>
-                <br>
-            </div>
-        </div>
-    </div>
 
 </main>
 </body>

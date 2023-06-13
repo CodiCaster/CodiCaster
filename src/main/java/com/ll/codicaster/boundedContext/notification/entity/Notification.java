@@ -1,4 +1,4 @@
-package com.ll.codicaster.boundedContext.notification;
+package com.ll.codicaster.boundedContext.notification.entity;
 
 import java.time.LocalDateTime;
 

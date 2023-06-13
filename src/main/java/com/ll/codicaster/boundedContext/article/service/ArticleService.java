@@ -16,6 +16,11 @@ import com.ll.codicaster.base.event.EventAfterWrite;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -206,8 +211,8 @@ public class ArticleService {
 
     //이게 1차 필터링.
     //가질 수 있는 날짜랑 기본 거리로 우선 정렬. 메인페이지에 위치 호출 기능 가져오면 현 위치 기준으로 정렬
-    public List<Article> showArticlesFilteredByDate(Member member) {
-        List<Article> articlesNearbyToday = getFilteredArticlesBetweenDates(member)
+    public List<Article> showArticlesFilteredByDate() {
+        List<Article> articlesNearbyToday = getFilteredArticlesBetweenDates()
                 .sorted(Comparator.comparingDouble(article -> getDistanceBetweenUser(article)))
                 .collect(Collectors.toList());
 
@@ -215,7 +220,7 @@ public class ArticleService {
     }
 
     //1년전 오늘 ±한달 + 한달전~ 오늘 게시물 반환
-    private Stream<Article> getFilteredArticlesBetweenDates(Member member) {
+    private Stream<Article> getFilteredArticlesBetweenDates() {
         LocalDate today = LocalDate.now();
         LocalDate oneYearAgo = today.minusYears(1); // 오늘로부터 1년 전
         LocalDate oneYearAndMonthAgo = oneYearAgo.minusMonths(1); // 오늘로부터 1년 전 - 한달
@@ -283,27 +288,34 @@ public class ArticleService {
     public void truncateUserTagMap(Member member, Set<String> tagSet) {
         Map<String, Integer> tagMap = member.getTagMap();
 
-        //값이 0 이하일 때 예외처리 ? 필요한가 => 필요없을 듯, 큰 순서대로 사용할 예
-        for (String tag : tagSet) {
-            tagMap.put(tag, tagMap.get(tag) - 1);
-        }
+		//값이 0 이하일 때 예외처리 ? 필요한가 => 필요없을 듯, 큰 순서대로 사용할 예정
+		for (String tag : tagSet) {
+			tagMap.put(tag, tagMap.get(tag) - 1);
+		}
+	}
+
+    //나의 게시물 (페이징 처리중, 오버로딩)
+    public Page<Article> showMyList(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        return articleRepository.findByAuthorId(rq.getMember().getId(), pageable);
     }
 
-    //나의 게시물
+    //나의 게시물 (리스트)
     public List<Article> showMyList() {
         return articleRepository.findByAuthorId(rq.getMember().getId())
-                .stream()
-                .sorted(Comparator.comparingLong(Article::getId).reversed())
-                .collect(Collectors.toList());
+            .stream()
+            .sorted(Comparator.comparingLong(Article::getId).reversed())
+            .collect(Collectors.toList());
     }
+
 
     //2차 정렬
     public List<Article> sortByAllParams(Member user, List<Article> articleList) {
 
         return articleList.stream()
-                .sorted(Comparator.comparingDouble(article -> calculateTotalScore(article, user)))
-                .filter(article -> article.getAuthor().getGender().equals(user.getGender()))
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparingDouble(article -> calculateTotalScore((Article)article, user)).reversed())
+            .filter(article -> article.getAuthor().getGender().equals(user.getGender()))
+            .collect(Collectors.toList());
     }
 
     //총 합계점수
@@ -377,5 +389,33 @@ public class ArticleService {
     private static double rad2deg(double rad) {
         return (rad * 180 / Math.PI);
     }
-}
 
+    public Page<Article> getPageableArticlesFilteredByDate(int page, int size) {
+        List<Article> nonmemberArticles = showArticlesFilteredByDate();
+        Pageable pageable = PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), nonmemberArticles.size());
+        return new PageImpl<>(nonmemberArticles.subList(start, end), pageable, nonmemberArticles.size());
+    }
+
+    public Page<Article> getPageableSortedArticles(Member member, int page, int size) {
+        List<Article> nonmemberArticles = showArticlesFilteredByDate();
+        List<Article> memberArticles = sortByAllParams(member, nonmemberArticles);
+        Pageable pageable = PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), memberArticles.size());
+        return new PageImpl<>(memberArticles.subList(start, end), pageable, memberArticles.size());
+    }
+
+    public Page<Article> getPageableMyArticles(int page, int size) {
+        List<Article> myArticles = showMyList();
+        Pageable pageable = PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), myArticles.size());
+        return new PageImpl<>(myArticles.subList(start, end), pageable, myArticles.size());
+    }
+
+
+
+
+}
