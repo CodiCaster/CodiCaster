@@ -95,4 +95,15 @@ public class MemberController {
         request.getSession().invalidate();
         response.sendRedirect("/usr/member/login");
     }
+
+	@GetMapping("/follow")
+	public String showFollowee(){
+		return "usr/member/follow";
+	}
+	@GetMapping("/follower")
+	public String showFollower(){
+		return "usr/member/follower";
+	}
+
+
 }

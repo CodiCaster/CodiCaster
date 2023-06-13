@@ -287,6 +287,25 @@
                         <div class="mt-2">
                             <span class="badge badge-ghost" th:text="${@rq.getWeatherInfo}"></span>
                         </div>
+
+                        <div class="mt-4">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-people-arrows"></i>
+                                <span class="ml-1"> 소셜 </span>
+                            </div>
+                            <div class="mt-2 flex gap-4">
+                                <a href="/usr/member/follow">
+                                    <div class="badge badge-ghost"> 팔로잉
+                                        <span class="mx-1" th:text="${@rq.getFollwingMembers().size}"></span>
+                                    </div>
+                                </a>
+                                <a href="/usr/member/follower">
+                                    <div class="badge badge-ghost"> 팔로워
+                                        <span class="mx-1" th:text="${@rq.getFollowers().size()}"></span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     <div class="mt-4 text-right">
                         <form id="deleteAccountForm" th:action="@{/usr/member/deleteAccount}" method="post">
@@ -299,6 +318,7 @@
 
         <div class="my-4"></div>
 
+        <!--        수정하기-->
         <div class="flex flex-col gap-4">
             <div class="card bg-base-100 shadow-xl">
                 <div class="card-body">

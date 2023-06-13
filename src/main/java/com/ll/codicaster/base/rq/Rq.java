@@ -231,4 +231,6 @@ public class Rq {
 	public List<Member> getFollwingMembers() {
 		return followService.getFollowingMembers(getMember());
 	}
+
+	public List<Member> getFollowers (){return followService.getFollowers(getMember());}
 }
