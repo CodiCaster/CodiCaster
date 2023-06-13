@@ -48,6 +48,9 @@ dependencies {
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	implementation 'org.json:json:20210307'
 
+	runtimeOnly 'com.h2database:h2'
+
+
 }
 
 tasks.named('test') {

@@ -1,0 +1,8 @@
+server:
+  port: 443
+spring:
+  thymeleaf:
+    cache: false
+custom:
+  site:
+    baseUrl: http://localhost

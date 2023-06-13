@@ -55,6 +55,6 @@ server:
       force: true
 custom:
   site:
-    baseUrl: http://localhost:8080
+    baseUrl: http://localhost
 file:
   upload-dir: /Users/hojun/Desktop/CodiCaster/images
