@@ -17,6 +17,7 @@ import com.ll.codicaster.base.event.EventAfterWrite;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -388,6 +389,33 @@ public class ArticleService {
     private static double rad2deg(double rad) {
         return (rad * 180 / Math.PI);
     }
+
+    public Page<Article> getPageableArticlesFilteredByDate(int page, int size) {
+        List<Article> nonmemberArticles = showArticlesFilteredByDate();
+        Pageable pageable = PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), nonmemberArticles.size());
+        return new PageImpl<>(nonmemberArticles.subList(start, end), pageable, nonmemberArticles.size());
+    }
+
+    public Page<Article> getPageableSortedArticles(Member member, int page, int size) {
+        List<Article> nonmemberArticles = showArticlesFilteredByDate();
+        List<Article> memberArticles = sortByAllParams(member, nonmemberArticles);
+        Pageable pageable = PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), memberArticles.size());
+        return new PageImpl<>(memberArticles.subList(start, end), pageable, memberArticles.size());
+    }
+
+    public Page<Article> getPageableMyArticles(int page, int size) {
+        List<Article> myArticles = showMyList();
+        Pageable pageable = PageRequest.of(page, size);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), myArticles.size());
+        return new PageImpl<>(myArticles.subList(start, end), pageable, myArticles.size());
+    }
+
+
 
 
 }
