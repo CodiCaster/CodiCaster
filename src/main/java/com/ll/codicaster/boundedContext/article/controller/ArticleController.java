@@ -57,6 +57,8 @@ public class ArticleController {
 		return "usr/article/list";
 	}
 
+
+
     @GetMapping("/detail/{id}")
 	public String articleDetail(@PathVariable Long id, Model model) {
 
