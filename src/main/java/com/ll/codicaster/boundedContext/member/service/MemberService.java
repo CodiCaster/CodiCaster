@@ -26,10 +26,6 @@ public class MemberService {
 		return memberRepository.findByUsername(username);
 	}
 
-	public Optional<Member> findById(Long id) {
-		return memberRepository.findById(id);
-	}
-
 	@Transactional
 	public RsData<Member> join(String username, String password) {
 		return join("CODYCASTER", username, password);
@@ -59,11 +55,9 @@ public class MemberService {
 	public RsData<Member> whenSocialLogin(String providerTypeCode, String username) {
 		Optional<Member> opMember = findByUsername(username);
 
-		if (opMember.isPresent()) {
-			return RsData.of("S-2", "로그인 되었습니다.", opMember.get());
-		}
+		return opMember.map(member -> RsData.of("S-2", "로그인 되었습니다.", member))
+			.orElseGet(() -> join(providerTypeCode, username, ""));
 
-		return join(providerTypeCode, username, "");
 	}
 
 	@Transactional(readOnly = true)
