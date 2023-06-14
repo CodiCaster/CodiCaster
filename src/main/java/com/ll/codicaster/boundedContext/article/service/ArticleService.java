@@ -225,7 +225,10 @@ public class ArticleService {
 		String imageUrl = article.getImage().getFilepath();
 		amazonS3Service.deleteImage(imageUrl);
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> ed69c83 ([fix] 좋아요 표시 되어있는 게시물 삭제 가능)
 		publisher.publishEvent(new EventBeforeDeleteArticle(this, article));
 		articleRepository.deleteById(id);
 		return RsData.of("S-1", "삭제되었습니다.");
