@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
+
 // import com.ll.codicaster.boundedContext.aws.s3.dto.AmazonS3ImageDto;
 // import com.ll.codicaster.boundedContext.aws.s3.service.AmazonS3Service;
 import com.ll.codicaster.base.event.EventAfterWrite;
@@ -172,6 +174,8 @@ public class ArticleService {
 		if (article == null) {
 			return RsData.of("F-2", "게시물이 존재하지 않습니다.");
 		}
+
+
 		if (!Objects.equals(article.getAuthor().getId(), member.getId())) {
 			return RsData.of("F-3", "수정 권한이 없습니다.");
 		}
@@ -265,6 +269,7 @@ public class ArticleService {
 
 			article.setImage(image);
 		}
+
 		return RsData.of("S-1", "수정되었습니다.");
 	}
 
@@ -277,9 +282,14 @@ public class ArticleService {
 		if (article == null) {
 			return RsData.of("F-2", "존재하지 않는 게시물입니다.");
 		}
-		if (!Objects.equals(article.getAuthor().getId(), member.getId())) {
-			return RsData.of("F-3", "삭제 권한이 없습니다.");
+		if (article.getAuthor() == null) {
+			return RsData.of("F-3", "작성자가 존재하지 않는 게시물입니다.");
 		}
+		if (!Objects.equals(article.getAuthor().getId(), member.getId())) {
+			return RsData.of("F-4", "삭제 권한이 없습니다.");
+		}
+
+
 		articleRepository.deleteById(id);
 		return RsData.of("S-1", "삭제되었습니다.");
 	}
