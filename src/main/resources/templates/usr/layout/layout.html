@@ -19,7 +19,7 @@
                     </li><li th:if="${@rq.logout}">
                         <a href="/usr/member/login">
                             <th:block th:utext="#{c.iconStart}"></th:block>
-                            <span>테스트</span>
+                            <span th:text="#{c.pageNameLogin}"></span>
                         </a>
                     </li>
                     <li th:if="${@rq.login}">
