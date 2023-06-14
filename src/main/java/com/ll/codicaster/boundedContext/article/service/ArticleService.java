@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 
 import com.ll.codicaster.boundedContext.aws.s3.dto.AmazonS3ImageDto;
+import com.ll.codicaster.boundedContext.aws.s3.repository.AmazonS3Repository;
 import com.ll.codicaster.boundedContext.aws.s3.service.AmazonS3Service;
 import com.ll.codicaster.base.event.EventAfterWrite;
 
@@ -214,6 +215,9 @@ public class ArticleService {
 		if (!Objects.equals(article.getAuthor().getId(), member.getId())) {
 			return RsData.of("F-4", "삭제 권한이 없습니다.");
 		}
+
+		String imageUrl = article.getImage().getFilepath();
+		amazonS3Service.deleteImage(imageUrl);
 
 
 		publisher.publishEvent(new EventBeforeDeleteArticle(this, article));

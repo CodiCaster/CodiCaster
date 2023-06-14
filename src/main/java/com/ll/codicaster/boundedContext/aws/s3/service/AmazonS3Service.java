@@ -1,6 +1,9 @@
 package com.ll.codicaster.boundedContext.aws.s3.service;
 
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +21,7 @@ public class AmazonS3Service {
 
     private final AmazonS3Properties amazonS3Properties;
 
-    private final AmazonS3Repository amazonRepository;
+    private final AmazonS3Repository amazonS3Repository;
 
     public AmazonS3ImageDto imageUpload(MultipartFile file, String name) {
 
@@ -32,7 +35,7 @@ public class AmazonS3Service {
 
         String objectName = IMAGE_FOLDER_NAME + name + "." + fileExtension;
 
-        amazonRepository.upload(amazonS3Properties.getBucketName(), objectName, file, mimeType);
+        amazonS3Repository.upload(amazonS3Properties.getBucketName(), objectName, file, mimeType);
 
         String cndUrl = amazonS3Properties.getCdnEndPoint() + objectName + "?type=u&w=1080&h=1350&quality=90";
         String originUrl = amazonS3Properties.getEndPoint() + "/" + amazonS3Properties.getBucketName() + "/" + objectName;
@@ -42,5 +45,24 @@ public class AmazonS3Service {
             .originUrl(originUrl)
             .build();
 
+    }
+
+    public String extractObjectNameFromImageUrl(String imageUrl) {
+        try {
+            URL url = new URL(imageUrl);
+            String path = url.getPath();
+            String[] pathSegments = path.split("/");
+            String fileName = pathSegments[pathSegments.length - 1];
+            return fileName;
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("잘못된 이미지 URL입니다.", e);
+        }
+    }
+
+    // 이미지 삭제 메서드
+    public void deleteImage(String imageUrl) {
+        String objectName = extractObjectNameFromImageUrl(imageUrl); // 사진 URL에서 objectName 추출
+        String bucketName = amazonS3Properties.getBucketName(); // 버킷 이름을 가져옴
+        amazonS3Repository.deleteObject(bucketName, objectName); // 사진 삭제
     }
 }

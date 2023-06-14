@@ -5,6 +5,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.ll.codicaster.boundedContext.aws.s3.dto.AmazonS3ImageDto;
 import com.ll.codicaster.boundedContext.aws.s3.properties.AmazonS3Properties;
 
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,10 @@ public class AmazonS3Config {
                 .build();
 
         return s3;
+    }
+
+    @Bean
+    public AmazonS3ImageDto amazonS3ImageDto() {
+        return new AmazonS3ImageDto();
     }
 }

@@ -31,4 +31,9 @@ public class AmazonS3Repository {
         }
     }
 
+    public void deleteObject(String bucketName, String objectName) {
+        String fullObjectName = "i/" + objectName;
+        amazonS3.deleteObject(bucketName, fullObjectName);
+    }
+
 }
