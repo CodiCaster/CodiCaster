@@ -15,7 +15,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.ll.codicaster.boundedContext.member.entity.Member;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 public class MemberTests {
 	private Member member;
 
