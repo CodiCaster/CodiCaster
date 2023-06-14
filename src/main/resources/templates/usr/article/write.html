@@ -28,6 +28,11 @@
                 return false;
             }
 
+            if (imageFile.trim().length === 0) {
+                toastWarning("파일을 첨부해주세요.");
+                return false;
+            }
+
             if (imageFile.size > 10 * 1024 * 1024) {
                 toastr.warning("첨부된 파일의 크기가 10MB를 초과합니다.");
                 return false;
