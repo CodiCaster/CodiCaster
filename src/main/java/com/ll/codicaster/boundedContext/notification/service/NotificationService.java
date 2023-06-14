@@ -89,4 +89,12 @@ public class NotificationService {
 		return notificationRepository.countByReceiverAndReadDateIsNull(receiver) > 0;
 	}
 
+	public void delete(Article article) {
+		// Article에 연관된 알림을 조회합니다.
+		List<Notification> notifications = notificationRepository.findByArticleId(article.getId());
+
+		for(Notification notification : notifications){
+			notificationRepository.delete(notification);
+		}
+	}
 }

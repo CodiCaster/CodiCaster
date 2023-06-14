@@ -6,6 +6,7 @@ import com.ll.codicaster.base.baseEntity.BaseEntity;
 import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.member.entity.Member;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,7 +34,7 @@ public class Notification extends BaseEntity {
 	//좋아요 누른 사람, 팔로우 한사람
 	@ManyToOne
 	private Member actor;
-	@ManyToOne
+	@ManyToOne (cascade = CascadeType.ALL)
 	private Article article;
 
 	public boolean isRead() {

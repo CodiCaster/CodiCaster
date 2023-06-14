@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ll.codicaster.base.event.EventAfterLike;
+import com.ll.codicaster.base.event.EventBeforeDeleteArticle;
 import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.article.entity.Article;
@@ -289,9 +290,12 @@ public class ArticleService {
 		}
 
 
+		publisher.publishEvent(new EventBeforeDeleteArticle(this, article));
 		articleRepository.deleteById(id);
 		return RsData.of("S-1", "삭제되었습니다.");
 	}
+
+
 
 	//이게 1차 필터링.
 	//가질 수 있는 날짜랑 기본 거리로 우선 정렬. 메인페이지에 위치 호출 기능 가져오면 현 위치 기준으로 정렬

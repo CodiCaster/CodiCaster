@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ll.codicaster.base.event.EventAfterFollow;
 import com.ll.codicaster.base.event.EventAfterLike;
+import com.ll.codicaster.base.event.EventBeforeDeleteArticle;
 import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.member.entity.Member;
 import com.ll.codicaster.boundedContext.notification.service.NotificationService;
@@ -34,5 +35,12 @@ public class NotificationEventListener {
 		Member followee = event.getFollowee();
 		String typeCode = "FOLLOW";
 		notificationService.makeFollow(follower,followee,typeCode);
+	}
+
+	@EventListener
+	public void listen(EventBeforeDeleteArticle event){
+
+		Article article = event.getArticle();
+		notificationService.delete(article);
 	}
 }
