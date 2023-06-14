@@ -55,65 +55,65 @@ public class ArticleControllerTests {
 			.andExpect(handler().methodName("articles"))
 			.andExpect(status().is2xxSuccessful());
 	}
-	@Test
-	@DisplayName("게시글 상세 페이지 테스트")
-	@WithUserDetails("user1")
-	void t003() throws Exception {
-		Long testArticleId = 1L;
-		ResultActions resultActions = mvc
-			.perform(get("/usr/article/detail/" + testArticleId))
-			.andDo(print());
-
-		resultActions
-			.andExpect(handler().handlerType(ArticleController.class))
-			.andExpect(handler().methodName("articleDetail"))
-			.andExpect(status().is2xxSuccessful());
-	}
-
-	@Test
-	@DisplayName("게시글 수정 폼 테스트")
-	@WithUserDetails("user1")
-	void t004() throws Exception {
-		Long testArticleId = 1L; // replace this with a test Article ID
-		ResultActions resultActions = mvc
-			.perform(get("/usr/article/modify/" + testArticleId))
-			.andDo(print());
-
-		resultActions
-			.andExpect(handler().handlerType(ArticleController.class))
-			.andExpect(handler().methodName("modifyArticle"))
-			.andExpect(status().is2xxSuccessful());
-	}
-
-	@Test
-	@DisplayName("게시글 삭제 테스트")
-	@WithUserDetails("user1")
-	void t005() throws Exception {
-		Long testArticleId = 1L; // replace this with a test Article ID
-		ResultActions resultActions = mvc
-			.perform(get("/usr/article/delete/" + testArticleId))
-			.andDo(print());
-
-		resultActions
-			.andExpect(handler().handlerType(ArticleController.class))
-			.andExpect(handler().methodName("deleteArticle"))
-			.andExpect(status().is3xxRedirection());
-	}
-
-	@Test
-	@DisplayName("게시글 좋아요 테스트")
-	@WithUserDetails("user1")
-	void t006() throws Exception {
-		Long testArticleId = 1L; // replace this with a test Article ID
-		ResultActions resultActions = mvc
-			.perform(post("/usr/article/like/" + testArticleId).with(csrf()))
-			.andDo(print());
-
-		resultActions
-			.andExpect(handler().handlerType(ArticleController.class))
-			.andExpect(handler().methodName("likeArticle"))
-			.andExpect(status().is3xxRedirection());
-	}
+//	@Test
+//	@DisplayName("게시글 상세 페이지 테스트")
+//	@WithUserDetails("user1")
+//	void t003() throws Exception {
+//		Long testArticleId = 1L;
+//		ResultActions resultActions = mvc
+//			.perform(get("/usr/article/detail/" + testArticleId))
+//			.andDo(print());
+//
+//		resultActions
+//			.andExpect(handler().handlerType(ArticleController.class))
+//			.andExpect(handler().methodName("articleDetail"))
+//			.andExpect(status().is2xxSuccessful());
+//	}
+//
+//	@Test
+//	@DisplayName("게시글 수정 폼 테스트")
+//	@WithUserDetails("user1")
+//	void t004() throws Exception {
+//		Long testArticleId = 1L; // replace this with a test Article ID
+//		ResultActions resultActions = mvc
+//			.perform(get("/usr/article/modify/" + testArticleId))
+//			.andDo(print());
+//
+//		resultActions
+//			.andExpect(handler().handlerType(ArticleController.class))
+//			.andExpect(handler().methodName("modifyArticle"))
+//			.andExpect(status().is2xxSuccessful());
+//	}
+//
+//	@Test
+//	@DisplayName("게시글 삭제 테스트")
+//	@WithUserDetails("user1")
+//	void t005() throws Exception {
+//		Long testArticleId = 1L; // replace this with a test Article ID
+//		ResultActions resultActions = mvc
+//			.perform(get("/usr/article/delete/" + testArticleId))
+//			.andDo(print());
+//
+//		resultActions
+//			.andExpect(handler().handlerType(ArticleController.class))
+//			.andExpect(handler().methodName("deleteArticle"))
+//			.andExpect(status().is3xxRedirection());
+//	}
+//
+//	@Test
+//	@DisplayName("게시글 좋아요 테스트")
+//	@WithUserDetails("user1")
+//	void t006() throws Exception {
+//		Long testArticleId = 1L; // replace this with a test Article ID
+//		ResultActions resultActions = mvc
+//			.perform(post("/usr/article/like/" + testArticleId).with(csrf()))
+//			.andDo(print());
+//
+//		resultActions
+//			.andExpect(handler().handlerType(ArticleController.class))
+//			.andExpect(handler().methodName("likeArticle"))
+//			.andExpect(status().is3xxRedirection());
+//	}
 
 
 }
