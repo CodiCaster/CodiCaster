@@ -75,20 +75,20 @@ public class Rq {
 		}
 	}
 
-	// 로그인 되어 있는지 체크
-	public boolean isLogin() {
-		return user != null;
-	}
+    // 로그인 되어 있는지 체크
+    public boolean isLogin() {
+        return user != null;
+    }
 
-	// 로그아웃 되어 있는지 체크
-	public boolean isLogout() {
-		return !isLogin();
-	}
+    // 로그아웃 되어 있는지 체크
+    public boolean isLogout() {
+        return !isLogin();
+    }
 
-	// 로그인 된 회원의 객체
-	public Member getMember() {
-		if (isLogout())
-			return null;
+    // 로그인 된 회원의 객체
+    public Member getMember() {
+        if (isLogout())
+            return null;
 
         // 데이터가 없는지 체크
         if (member == null) {
@@ -120,51 +120,51 @@ public class Rq {
 		return getMember().getId();
 	}
 
-	public boolean isRefererAdminPage() {
-		SavedRequest savedRequest = (SavedRequest)session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
+    public boolean isRefererAdminPage() {
+        SavedRequest savedRequest = (SavedRequest) session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
 
-		if (savedRequest == null)
-			return false;
+        if (savedRequest == null)
+            return false;
 
-		String referer = savedRequest.getRedirectUrl();
-		return referer != null && referer.contains("/adm");
-	}
+        String referer = savedRequest.getRedirectUrl();
+        return referer != null && referer.contains("/adm");
+    }
 
-	// 뒤로가기 + 메세지
-	public String historyBack(String msg) {
-		String referer = req.getHeader("referer");
-		String key = "historyBackErrorMsg___" + referer;
-		req.setAttribute("localStorageKeyAboutHistoryBackErrorMsg", key);
-		req.setAttribute("historyBackErrorMsg", msg);
-		// 200 이 아니라 400 으로 응답코드가 지정되도록
-		resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-		return "common/js";
-	}
+    // 뒤로가기 + 메세지
+    public String historyBack(String msg) {
+        String referer = req.getHeader("referer");
+        String key = "historyBackErrorMsg___" + referer;
+        req.setAttribute("localStorageKeyAboutHistoryBackErrorMsg", key);
+        req.setAttribute("historyBackErrorMsg", msg);
+        // 200 이 아니라 400 으로 응답코드가 지정되도록
+        resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        return "common/js";
+    }
 
-	// 뒤로가기 + 메세지
-	public String historyBack(RsData rsData) {
-		return historyBack(rsData.getMsg());
-	}
+    // 뒤로가기 + 메세지
+    public String historyBack(RsData rsData) {
+        return historyBack(rsData.getMsg());
+    }
 
-	// 302 + 메세지
-	public String redirectWithMsg(String url, RsData rsData) {
-		return redirectWithMsg(url, rsData.getMsg());
-	}
+    // 302 + 메세지
+    public String redirectWithMsg(String url, RsData rsData) {
+        return redirectWithMsg(url, rsData.getMsg());
+    }
 
-	// 302 + 메세지
-	public String redirectWithMsg(String url, String msg) {
-		return "redirect:" + urlWithMsg(url, msg);
-	}
+    // 302 + 메세지
+    public String redirectWithMsg(String url, String msg) {
+        return "redirect:" + urlWithMsg(url, msg);
+    }
 
-	private String urlWithMsg(String url, String msg) {
-		// 기존 URL에 혹시 msg 파라미터가 있다면 그것을 지우고 새로 넣는다.
-		return Ut.url.modifyQueryParam(url, "msg", msgWithTtl(msg));
-	}
+    private String urlWithMsg(String url, String msg) {
+        // 기존 URL에 혹시 msg 파라미터가 있다면 그것을 지우고 새로 넣는다.
+        return Ut.url.modifyQueryParam(url, "msg", msgWithTtl(msg));
+    }
 
-	// 메세지에 ttl 적용
-	private String msgWithTtl(String msg) {
-		return Ut.url.encode(msg) + ";ttl=" + new Date().getTime();
-	}
+    // 메세지에 ttl 적용
+    private String msgWithTtl(String msg) {
+        return Ut.url.encode(msg) + ";ttl=" + new Date().getTime();
+    }
 
 
     public String getAddress() {
@@ -177,15 +177,15 @@ public class Rq {
         return location;
     }
 
-	public void setLocation(Location location) {
-		session.setAttribute("location", location);
-	}
+    public void setLocation(Location location) {
+        session.setAttribute("location", location);
+    }
 
-	public String getCurrentDate() {
-		LocalDate currentDate = LocalDate.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd(E)", Locale.KOREAN);
-		return currentDate.format(formatter);
-	}
+    public String getCurrentDate() {
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd(E)", Locale.KOREAN);
+        return currentDate.format(formatter);
+    }
 
     public Location getCurrentLocation() {
         Location location = (Location) session.getAttribute("location");
@@ -195,10 +195,10 @@ public class Rq {
         return location;
     }
 
-	public String getWeatherInfo() {
-		Location location = getCurrentLocation();
-		return weatherService.getWeatherInfo(location);
-	}
+    public String getWeatherInfo() {
+        Location location = getCurrentLocation();
+        return weatherService.getWeatherInfo(location);
+    }
 
 	public boolean isFollowed(Member followee) {
 		Member user = getMember();

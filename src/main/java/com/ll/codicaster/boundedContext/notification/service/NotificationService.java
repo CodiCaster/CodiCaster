@@ -33,6 +33,10 @@ public class NotificationService {
 
 	@Transactional
 	public RsData<Notification> makeLike(Article article, String typeCode, Member actor) {
+		RsData canLike = canMakeLikeNotification(article, actor);
+		if (canLike.isFail()) {
+			return RsData.of("F-1", "알림 생성이 불가합니다.");
+		}
 		Notification notification = Notification
 			.builder()
 			.article(article)
@@ -43,6 +47,19 @@ public class NotificationService {
 			.build();
 		notificationRepository.save(notification);
 		return RsData.of("S-1", "알림 메세지가 생성되었습니다.", notification);
+	}
+
+	public RsData canMakeLikeNotification(Article article, Member actor) {
+		if (article.getAuthor().equals(actor)) {
+			return RsData.of("F-1", "본인 게시물에 대한 좋아요는 알림을 생성하지 않습니다.");
+		}
+		List<Notification> notifications = notificationRepository.findByArticleIdAndActor(article.getId(), actor);
+
+		if (!notifications.isEmpty()) {
+			return RsData.of("F-2", "이미 좋아요 처리한 알림입니다.");
+		}
+
+		return RsData.of("S-1", "알림 생성이 가능합니다.");
 	}
 
 	@Transactional
@@ -72,4 +89,12 @@ public class NotificationService {
 		return notificationRepository.countByReceiverAndReadDateIsNull(receiver) > 0;
 	}
 
+	public void delete(Article article) {
+		// Article에 연관된 알림을 조회합니다.
+		List<Notification> notifications = notificationRepository.findByArticleId(article.getId());
+
+		for(Notification notification : notifications){
+			notificationRepository.delete(notification);
+		}
+	}
 }
