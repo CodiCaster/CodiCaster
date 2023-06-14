@@ -118,12 +118,4 @@ public class Member {
             default -> "더위 많이탐";
         };
     }
-
-
-
-
-
-
-
-
 }
