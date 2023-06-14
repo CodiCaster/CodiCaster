@@ -53,6 +53,8 @@ public class ArticleService {
     private final AmazonS3Service amazonS3Service;
 	private final Rq rq;
 
+
+
 	public static Set<String> extractHashTagList(String content) {
 		Set<String> tagSet = new HashSet<>();
 
