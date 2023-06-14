@@ -27,7 +27,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'com.naver.cloud:object-storage-api:2.2.0'
 	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.476'
 	implementation 'org.apache.tika:tika-core:1.28'
     testImplementation 'junit:junit:4.13.1'
