@@ -161,33 +161,37 @@ public class ArticleService {
 		article.setContent(form.getContent());
 		article.setTagSet(newTagSet);
 
+		// 클라우드 스토리지 이용
+		if (!imageFile.isEmpty()) {
+			try {
+				// 이미지 업로드 및 URL 정보 받아오기
+				AmazonS3ImageDto amazonS3ImageDto = amazonS3Service.imageUpload(imageFile, UUID.randomUUID().toString());
 
-            // 클라우드 스토리지 이용
-            if (!imageFile.isEmpty()) {
-                try {
-                    // 이미지 업로드 및 URL 정보 받아오기
-                    AmazonS3ImageDto amazonS3ImageDto = amazonS3Service.imageUpload(imageFile, UUID.randomUUID().toString());
+				// 기존 이미지 삭제
+				Image oldImage = article.getImage();
+				if (oldImage != null) {
+					String imageUrl = oldImage.getFilepath();
+					amazonS3Service.deleteImage(imageUrl);
+					imageRepository.delete(oldImage);
+				}
 
-                    // 기존 이미지가 있으면 DB에서 삭제
-                    Image oldImage = article.getImage();
-                    if (oldImage != null) {
-                        imageRepository.delete(oldImage);
-                    }
+				// 새 이미지 정보를 설정하고 저장
+				Image image = Image.builder()
+					.filename(imageFile.getOriginalFilename())
+					.filepath(amazonS3ImageDto.getCdnUrl())
+					.article(article)
+					.build();
 
-                    // 새 이미지 정보를 설정하고 저장
-                    Image image = Image.builder()
-                        .filename(imageFile.getOriginalFilename())
-                        .filepath(amazonS3ImageDto.getCdnUrl()) // CDN URL로 변경
-                        .article(article)
-                        .build();
+				image = imageRepository.save(image);
 
-                    image = imageRepository.save(image);
-
-                    article.setImage(image);
-                } catch (Exception e) {
-                    return RsData.of("F-4", "이미지 저장 중 오류가 발생했습니다.");
-                }
-            }
+				article.setImage(image);
+			} catch (Exception e) {
+				return RsData.of("F-4", "이미지 저장 중 오류가 발생했습니다.");
+			}
+		} else {
+			// 이미지를 수정하지 않는 경우, 기존 이미지를 그대로 유지
+			article.setImage(article.getImage());
+		}
 
         try {
             article = articleRepository.save(article);
