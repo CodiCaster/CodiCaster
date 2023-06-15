@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.boundedContext.article.entity.Article;
-import com.ll.codicaster.boundedContext.article.form.ArticleCreateForm;
+import com.ll.codicaster.boundedContext.article.dto.ArticleDTO;
 import com.ll.codicaster.boundedContext.article.service.ArticleService;
 
 import lombok.RequiredArgsConstructor;
@@ -38,27 +38,26 @@ public class ArticleController {
 		return "usr/article/write";
 	}
 
-	@PreAuthorize("isAuthenticated()")
-	@PostMapping("/write")
-	public String articleWriteSave(ArticleCreateForm articleCreateForm,
-		@RequestParam("imageFile") MultipartFile imageFile) {
-		RsData<Article> rsData = articleService.saveArticle(rq.getMember(), articleCreateForm, imageFile);
-		if (rsData.isFail()) {
-			return rq.historyBack(rsData);
-		}
-		return rq.redirectWithMsg("/usr/article/list", rsData);
-	}
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/write")
+    public String articleWriteSave(ArticleDTO articleDTO, @RequestParam("imageFile") MultipartFile imageFile) {
+        RsData<Article> rsData = articleService.saveArticle(rq.getMember(), articleDTO, imageFile);
+        if (rsData.isFail()) {
+            return rq.historyBack(rsData);
+        }
+        return rq.redirectWithMsg("/usr/article/list", rsData);
+    }
 
 	@GetMapping("/list")
 	public String articles(Model model) {
 
-		List<Article> articles = articleService.articleList();
-		model.addAttribute("articles", articles);
+        List<Article> articles = articleService.articleList();
+        model.addAttribute("articles", articles);
 
 		return "usr/article/list";
 	}
 
-	@GetMapping("/detail/{id}")
+    @GetMapping("/detail/{id}")
 	public String articleDetail(@PathVariable Long id, Model model) {
 
 		Article article = articleService.findById(id).orElse(null);
@@ -92,11 +91,10 @@ public class ArticleController {
 		return "usr/article/modify";
 	}
 
-	@PreAuthorize("isAuthenticated()")
-	@PostMapping("/modify/{id}")
-	public String updateArticle(@PathVariable("id") Long id, ArticleCreateForm updatedArticle,
-		MultipartFile imageFile) {
-		RsData<Article> rsData = articleService.updateArticle(rq.getMember(), id, updatedArticle, imageFile);
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/modify/{id}")
+    public String updateArticle(@PathVariable("id") Long id, ArticleDTO articleDTO, MultipartFile imageFile) {
+        RsData<Article> rsData = articleService.updateArticle(rq.getMember(), id, articleDTO, imageFile);
 
 		if (rsData.isFail()) {
 			return rq.historyBack(rsData);

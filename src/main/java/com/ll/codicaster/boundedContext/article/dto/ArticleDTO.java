@@ -1,4 +1,4 @@
-package com.ll.codicaster.boundedContext.article.form;
+package com.ll.codicaster.boundedContext.article.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-public class ArticleCreateForm {
+public class ArticleDTO {
 	private String title;
 	private String content;
 	private MultipartFile imageFile;

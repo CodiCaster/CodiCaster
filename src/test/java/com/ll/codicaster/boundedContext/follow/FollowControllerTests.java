@@ -1,4 +1,4 @@
-package com.ll.codicaster.follow;
+package com.ll.codicaster.boundedContext.follow;
 
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;

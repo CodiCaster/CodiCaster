@@ -1,6 +1,6 @@
 <html layout:decorate="~{usr/layout/layout.html}">
 <head>
-  <title>게시글 작성하기</title>
+    <title>게시글 작성하기</title>
     <script>
 
         function validateForm() {
@@ -34,13 +34,13 @@
             }
 
             if (imageFile.size > 10 * 1024 * 1024) {
-                toastr.warning("첨부된 파일의 크기가 10MB를 초과합니다.");
+                toastWarning("첨부된 파일의 크기가 10MB를 초과합니다.");
                 return false;
             }
 
             var fileType = imageFile["type"];
             if (!validImageTypes.includes(fileType)) {
-                toastr.warning("첨부된 파일이 이미지 타입이 아닙니다.");
+                toastWarning("첨부된 파일이 이미지 타입이 아닙니다.");
                 return false;
             }
             if (title.length > 20) {
@@ -99,7 +99,7 @@
                             <div class="relative">
                                 <textarea
                                         class="textarea textarea-bordered w-full h-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                        id="content" placeholder="Content" name="content" ></textarea>
+                                        id="content" placeholder="Content" name="content"></textarea>
                                 <div id="contentCount" class="absolute right-5 bottom-5">(0 / 200)</div>
                             </div>
                         </div>

@@ -1,4 +1,4 @@
-package com.ll.codicaster.member;
+package com.ll.codicaster.boundedContext.member;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;

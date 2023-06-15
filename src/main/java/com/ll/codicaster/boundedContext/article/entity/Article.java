@@ -41,7 +41,10 @@ public class Article extends BaseEntity {
     @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)
     private Weather weather;
 
+    @Column(length = 80)
     private String address;
+
+    @Column(length = 50)
     private String weatherInfo;
 
     @OneToOne(mappedBy = "article", cascade = CascadeType.ALL)

@@ -1,4 +1,4 @@
-package com.ll.codicaster.member;
+package com.ll.codicaster.boundedContext.member;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.StringUtils;
 
 import com.ll.codicaster.base.rq.Rq;
@@ -21,6 +22,7 @@ import com.ll.codicaster.boundedContext.member.repository.MemberRepository;
 import com.ll.codicaster.boundedContext.member.service.MemberService;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class MemberServiceTests{
 
 	@Mock

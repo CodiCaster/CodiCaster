@@ -10,12 +10,12 @@
             var validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
 
             if (title.trim().length === 0) {
-                toastr.warning("제목을 입력해주세요.");
+                toastWarning("제목을 입력해주세요.");
                 return false;
             }
 
             if (content.trim().length === 0) {
-                toastr.warning("내용을 입력해주세요.");
+                toastWarning("내용을 입력해주세요.");
                 return false;
             }
             if (title.length > 20) {

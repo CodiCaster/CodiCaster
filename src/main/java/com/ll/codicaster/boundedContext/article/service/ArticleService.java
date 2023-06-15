@@ -35,7 +35,7 @@ import com.ll.codicaster.base.event.EventBeforeDeleteArticle;
 import com.ll.codicaster.base.rq.Rq;
 import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.article.entity.Article;
-import com.ll.codicaster.boundedContext.article.form.ArticleCreateForm;
+import com.ll.codicaster.boundedContext.article.dto.ArticleDTO;
 import com.ll.codicaster.boundedContext.article.repository.ArticleRepository;
 import com.ll.codicaster.boundedContext.image.entity.Image;
 import com.ll.codicaster.boundedContext.image.repository.ImageRepository;
@@ -81,14 +81,14 @@ public class ArticleService {
 	}
 
 	@Transactional
-	public RsData<Article> saveArticle(Member actor, ArticleCreateForm form, MultipartFile imageFile) {
+	public RsData<Article> saveArticle(Member actor, ArticleDTO articleDTO, MultipartFile imageFile) {
 
-		Set<String> tagSet = extractHashTagList(form.getContent());
+		Set<String> tagSet = extractHashTagList(articleDTO.getContent());
 		updateUserTagMap(actor, tagSet);
 
 		Article article = Article.builder()
-			.title(form.getTitle())
-			.content(form.getContent())
+			.title(articleDTO.getTitle())
+			.content(articleDTO.getContent())
 			.author(actor)
 			.address(rq.getAddress())
 			.weatherInfo(rq.getWeatherInfo())
@@ -140,7 +140,7 @@ public class ArticleService {
 
 	//게시물 수정
 	@Transactional
-	public RsData<Article> updateArticle(Member member, Long id, ArticleCreateForm form, MultipartFile imageFile) {
+	public RsData<Article> updateArticle(Member member, Long id, ArticleDTO articleDTO, MultipartFile imageFile) {
 		if (member == null) {
 			return RsData.of("F-1", "수정 권한이 없습니다.");
 		}
@@ -156,12 +156,12 @@ public class ArticleService {
 
 		Set<String> existingTagSet = article.getTagSet();
 		truncateUserTagMap(member, existingTagSet);
-		Set<String> newTagSet = extractHashTagList(form.getContent());
+		Set<String> newTagSet = extractHashTagList(articleDTO.getContent());
 		updateUserTagMap(member, newTagSet);
 
 		// 게시글의 정보를 수정
-		article.setTitle(form.getTitle());
-		article.setContent(form.getContent());
+		article.setTitle(articleDTO.getTitle());
+		article.setContent(articleDTO.getContent());
 		article.setTagSet(newTagSet);
 
 		// 클라우드 스토리지 이용
