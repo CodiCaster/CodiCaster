@@ -133,73 +133,111 @@
                 <br>
                 <br>
                 <div class="max-w-3xl py-6 px-4">
-                    <div th:if="${@rq.isLogout()}">
-                        <div class="flex flex-wrap gap-4">
-                            <div th:each="article : ${articlesFilteredOnce}"
-                                 class="flex mx-1 rounded overflow-hidden shadow-lg">
-                                <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
-                                    <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
-                                         class="w-full h-32 object-cover"/>
-                                    <div class="flex justify-around">
-                                        <div class="like-display">
-                                            <span class="heart-icon text-red-500 mr-1">💕</span>
-                                            <span th:text="${article.getLikedMembers().size()}"></span>
-                                        </div>
-                                        <span th:text="${#numbers.formatDecimal(@articleService.getDistanceBetweenUser(article), 1, 1)} + 'km'"></span>
+                    <section th:fragment="articleListFragment" class="flex justify-center">
+                        <div id="articleList">
+                            <div th:if="${@rq.isLogout()}">
+                                <div class="flex flex-col gap-4">
+                                    <div th:each="article : ${articleList}"
+                                         class="rounded overflow-hidden shadow-lg px-4 py-6 my-4">
+                                        <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
+                                            <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
+                                                 class="w-30 object-contain"/>
+                                            <div class="article-Status flex flex-col justify-around">
+                                                <div class="font-bold text-xl mb-2 truncate"
+                                                     th:text="${article.getWeatherInfo()}"></div>
+                                                <div class="like-display badge badge-lg">
+                                                    <span class="heart-icon text-red-500 mr-1">💕</span>
+                                                    <span th:text="${article.getLikedMembers().size()}"></span>
+                                                </div>
+                                                <span th:text="${#numbers.formatDecimal(@articleService.getDistanceBetweenUser(article), 1, 1)} + 'km'"></span>
+                                            </div>
+                                        </a>
                                     </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div th:if="${@rq.isLogin()}">
-                        <div class="flex flex gap-4">
-                            <div th:each="article : ${articlesFilterdAndSorted}"
-                                 class="rounded overflow-hidden shadow-lg">
-                                <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
-                                    <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
-                                         class="w-full h-32 object-cover"/>
-                                    <div class="flex justify-around">
-                                        <div class="like-display">
-                                            <span class="heart-icon text-red-500 mr-1">💕</span>
-                                            <span th:text="${article.getLikedMembers().size()}"></span>
-                                        </div>
-                                        <span th:text="${#numbers.formatDecimal(@articleService.getDistanceBetweenUser(article), 1, 1)} + 'km'"></span>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="flex flex-col gap-4 mt-4">
-                <div th:if="${@rq.isLogin}" class="card bg-base-100 shadow-xl max-w-2xl w-full px-4">
-                    <h2 class="card-title flex items-center mt-4">
-                        <a href="/usr/article/mylist">
-                            <i class="fa-solid fa-list"></i>
-                            <span class="text-2xl">나의 게시물</span>
-                        </a>
-                    </h2>
-                    <br>
-                    <br>
-                    <div class="flex flex-wrap gap-4">
-                        <div th:each="article : ${myArticles}" class="rounded overflow-hidden shadow-lg">
-                            <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
-                                <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
-                                     class="w-full h-32 object-cover"/>
-                                <div class="px-6 py-4">
-                                    <div class="font-bold text-xl mb-2 truncate"
-                                         th:text="${article.getWeatherInfo()}"></div>
-                                    <span th:text="${#temporals.format(article.createDate, 'yyyy-MM-dd')}"></span>
                                 </div>
-                            </a>
+                            </div>
+                            <div th:if="${@rq.isLogin()}">
+                                <div class="flex flex-col items-center gap-4">
+                                    <div th:each="article : ${articleList}"
+                                         class="rounded overflow-hidden shadow-lg px-4 py-6 my-4">
+                                        <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
+                                            <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
+                                                 class="w-30 object-contain"/>
+                                            <div class="article-Status flex flex-col items-center justify-around">
+                                                <div class="font-bold text-xl mb-2 truncate"
+                                                     th:text="${article.getWeatherInfo()}"></div>
+                                                <div class="like-display badge badge-lg">
+                                                    <span class="heart-icon text-red-500 mr-1">💕</span>
+                                                    <span th:text="${article.getLikedMembers().size()}"></span>
+                                                </div>
+                                                <div th:text="${#numbers.formatDecimal(@articleService.getDistanceBetweenUser(article), 1, 1)} + 'km'"></div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <br>
-                    <br>
+                    </section>
                 </div>
             </div>
         </div>
+    </div>
 
+    <script th:inline="javascript">
+        var page = 0;
+        var size = 5;
+        var hasNextPage = [[${articleList.hasNext()}]];
+        var loading = false; // 동시에 여러 개의 요청을 방지하기 위한 플래그
+
+        function loadMoreArticles() {
+            if (hasNextPage && !loading) {
+                page++;
+                loading = true; // 로딩 중임을 나타내는 플래그를 true로 설정
+
+                $.ajax({
+                    url: "/main/list",
+                    method: "GET",
+                    data: { page: page, size: size },
+                    success: function (data) {
+                        // 요청이 성공했을 때 실행할 로직
+                        if (data.trim().length > 0 && data!=null) {
+                            $("#articleList").append(data);
+                            hasNextPage = true;
+                        } else {
+                            hasNextPage = false;
+                            // 더 이상 게시물이 없음을 표시하는 로직 추가
+                            $("#articleList").append("<p>더 이상 게시물이 없습니다.</p>");
+                        }
+
+                        loading = false; // 로딩 완료
+                    },
+                    //500에러 뜨면 여기로 옴.
+                    error: function (error) {
+                        // 요청이 실패했을 때 실행할 로직
+                        console.log("AJAX 요청 실패:", error);
+                        hasNextPage = false;
+                        loading = false; // 로딩 완료
+                        $("#articleList").append("<div class='flex flex-col text-2xl justify-center items-center mt-4'> 리스트의 끝입니다. " +
+                            "<div class='text-2xl my-4'> 새로운 글을 작성해주세요 </div>" +
+                            "<div class=\"mt-4\">\n" +
+                            "                            <a href=\"/usr/article/write\">\n" +
+                            "                                <button class=\"btn btn-primary\">새 글 작성</button>\n" +
+                            "                            </a>\n" +
+                            "                        </div>" +
+                            "" +
+                            "</div>");
+                    }
+                });
+            }
+        }
+
+        $(window).scroll(function () {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height()) {
+                loadMoreArticles();
+            }
+        });
+
+
+    </script>
 </main>
 </body>
 

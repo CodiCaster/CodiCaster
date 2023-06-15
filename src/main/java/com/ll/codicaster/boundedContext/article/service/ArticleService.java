@@ -225,10 +225,6 @@ public class ArticleService {
 		String imageUrl = article.getImage().getFilepath();
 		amazonS3Service.deleteImage(imageUrl);
 
-<<<<<<< HEAD
-
-=======
->>>>>>> ed69c83 ([fix] 좋아요 표시 되어있는 게시물 삭제 가능)
 		publisher.publishEvent(new EventBeforeDeleteArticle(this, article));
 		articleRepository.deleteById(id);
 		return RsData.of("S-1", "삭제되었습니다.");
@@ -408,21 +404,48 @@ public class ArticleService {
 
 	}
 
-	public Page<Article> getPageableArticlesFilteredByDate(int page, int size) {
-		List<Article> nonmemberArticles = showArticlesFilteredByDate();
-		Pageable pageable = PageRequest.of(page, size);
-		int start = (int)pageable.getOffset();
-		int end = Math.min((start + pageable.getPageSize()), nonmemberArticles.size());
-		return new PageImpl<>(nonmemberArticles.subList(start, end), pageable, nonmemberArticles.size());
+	//날짜 기준으로 필터링, 거리순으로 정렬된 리스트 => 페이지로 변환
+	public ResponseEntity<Page<Article>> getPageableArticlesFilteredByDate(int page, int size) {
+		List<Article> nonMembersList = showArticlesFilteredByDate();
+		RsData pageRs = canGetPage(page, size, nonMembersList);
+		List<Article> filteredList = nonMembersList.stream()
+			.filter(article -> article.getContent() != null)
+			.collect(Collectors.toList());
+
+		//게시물 가져오기 실패하면 익셉션
+		if (pageRs.isFail()) {
+			throw new IllegalArgumentException(pageRs.getMsg());
+		}
+
+		return getPageResponseEntity(page, size, filteredList);
 	}
 
-	public Page<Article> getPageableSortedArticles(Member member, int page, int size) {
+	public ResponseEntity<Page<Article>> getPageableSortedArticles(Member member, int page, int size) {
 		List<Article> nonmemberArticles = showArticlesFilteredByDate();
-		List<Article> memberArticles = sortByAllParams(member, nonmemberArticles);
+		List<Article> membersList = sortByAllParams(member, nonmemberArticles);
+
+		RsData pageRs = canGetPage(page, size, membersList);
+
+		// content가 null인 Article 객체 제외
+		List<Article> filteredList = membersList.stream()
+			.filter(article -> article.getContent() != null)
+			.collect(Collectors.toList());
+
+		//게시물 가져오기 실패하면 익셉션
+		if (pageRs.isFail()) {
+			throw new IllegalArgumentException(pageRs.getMsg());
+		}
+		return getPageResponseEntity(page, size, filteredList);
+	}
+
+	private ResponseEntity<Page<Article>> getPageResponseEntity(int page, int size, List<Article> membersList) {
 		Pageable pageable = PageRequest.of(page, size);
 		int start = (int)pageable.getOffset();
-		int end = Math.min((start + pageable.getPageSize()), memberArticles.size());
-		return new PageImpl<>(memberArticles.subList(start, end), pageable, memberArticles.size());
+		int end = Math.min((start + pageable.getPageSize()), membersList.size());
+
+		Page<Article> pageResult = new PageImpl<>(membersList.subList(start, end), pageable, membersList.size());
+
+		return ResponseEntity.ok(pageResult);
 	}
 
 	public Page<Article> getPageableMyArticles(int page, int size) {
@@ -433,8 +456,26 @@ public class ArticleService {
 		return new PageImpl<>(myArticles.subList(start, end), pageable, myArticles.size());
 	}
 
+	public RsData canGetPage(int page, int size, List<?> list) {
+		if (page < 0 || size <= 0) {
+			return RsData.of("F-1", "page, size는 자연수여야 합니다.");
+		}
+		int totalArticles = list.size();
+		int totalPages = (int)Math.ceil((double)totalArticles / size);
+		Pageable pageable = PageRequest.of(page, size);
+		int start = (int)pageable.getOffset();
+		int end = Math.min((start + pageable.getPageSize()), list.size());
+
+		if (start > end) {
+			return RsData.of("F-2", "마지막 페이지입니다.", "");
+		}
+
+		return RsData.of("S-1", "페이징 처리 성공");
+
+	}
+
 	//팔로우 한 사람의 게시물
-	public List<Article> showFollweesArticles() {
+	public List<Article> getFolloweesArticles() {
 		List<Member> followingMembers = rq.getFollwingMembers();
 		List<Long> followingMemberIds = followingMembers.stream().map(Member::getId).collect(Collectors.toList());
 		List<Article> articles = articleRepository.findByAuthorIdIn(followingMemberIds);
@@ -444,6 +485,36 @@ public class ArticleService {
 			.collect(Collectors.toList());
 
 		return sortedArticles;
+	}
+
+	public ResponseEntity<Page<Article>> getPageableArticles(int page, int size) {
+		Page<Article> articleList = Page.empty(); // 빈 페이지 객체 생성
+
+		if (rq.isLogout()) {
+			articleList = getPageableArticlesFilteredByDate(page, size).getBody();
+		} else if (rq.isLogin()) {
+			articleList = getPageableSortedArticles(rq.getMember(), page, size).getBody();
+		}
+
+		return ResponseEntity.ok(articleList);
+	}
+
+	public ResponseEntity<Page<Article>> getPageableFolloweesArticles(int page, int size) {
+		List<Article> followeesArticles = getFolloweesArticles(); // 팔로우 중인 사용자의 게시물 가져오기
+
+		RsData pageRs = canGetPage(page, size, followeesArticles);
+
+		// content가 null인 Article 객체 제외
+		List<Article> filteredList = followeesArticles.stream()
+			.filter(article -> article.getContent() != null)
+			.collect(Collectors.toList());
+
+		// 게시물 가져오기 실패하면 익셉션
+		if (pageRs.isFail()) {
+			throw new IllegalArgumentException(pageRs.getMsg());
+		}
+
+		return getPageResponseEntity(page, size, filteredList);
 	}
 
 }

@@ -6,37 +6,98 @@
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">
     <div class="max-w-2xl w-full px-4">
         <h1 class="mb-4">
-            <i class="fa-solid fa-people-arrows"></i>            관심 게시물
+            <i class="fa-solid fa-people-arrows"></i> 관심 게시물
         </h1>
         <div>
         </div>
         <div class="flex flex-col gap-4">
             <div class="card bg-base-100 shadow-xl">
                 <div class="card-body">
-                    <br>
-                    <div class="mx-auto py-6 px-4">
-                        <div class="grid grid-cols-3 gap-4">
-                            <div th:each="article : ${articles}" class="rounded overflow-hidden shadow-lg">
-                                <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
-                                    <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
-                                         class="w-full h-32 object-cover"/>
-                                    <div class="px-6 py-4">
-                                        <div class="font-bold text-xl mb-2 truncate" th:text="${article.title}"></div>
-                                        <div th:text="${article.getAuthor().nickname}"></div>
-                                    </div>
-                                </a>
+                    <section th:fragment="articleListFragment" class="justify-center">
+                        <div id="articleList">
+                            <div th:if="${@rq.isLogin()}">
+                                <div th:each="article : ${articleList}"
+                                     class="rounded overflow-hidden shadow-lg px-4 py-6 my-4">
+                                    <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
+                                        <div class="flex justify-start ml-6 my-4"
+                                             th:text="${article.getAuthor().nickname}"></div>
+                                        <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
+                                             class="w-30 object-contain"/>
+                                        <div class="px-6 py-4 flex flex-col">
+                                            <div class="flex justify-center font-bold text-xl mb-2 truncate"
+                                                 th:text="${article.title}"></div>
+                                            <div class="flex justify-end mr-4">
+                                                <div class="like-display badge badge-lg">
+                                                    <span class="heart-icon text-red-500 mr-1">💕</span>
+                                                    <span th:text="${article.getLikedMembers().size()}"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                        <div class="mt-4">
-                            <a href="/usr/article/write">
-                                <button class="btn btn-primary">새 글 작성</button>
-                            </a>
-                        </div>
-                    </div>
+                    </section>
                 </div>
             </div>
         </div>
     </div>
+    <script th:inline="javascript">
+        var page = 0;
+        var size = 5;
+        var hasNextPage = [[${articleList.hasNext()}]];
+        var loading = false; // 동시에 여러 개의 요청을 방지하기 위한 플래그
+
+        function loadMoreArticles() {
+            if (hasNextPage && !loading) {
+                page++;
+                loading = true; // 로딩 중임을 나타내는 플래그를 true로 설정
+
+                $.ajax({
+                    url: "/usr/article/follow/list",
+                    method: "GET",
+                    data: {page: page, size: size},
+                    success: function (data) {
+                        // 요청이 성공했을 때 실행할 로직
+                        if (data.trim().length > 0) {
+                            $("#articleList").append(data);
+                            hasNextPage = true;
+                        } else {
+                            hasNextPage = false;
+                            // 더 이상 게시물이 없음을 표시하는 로직 추가
+                            $("#articleList").append("<p>더 이상 게시물이 없습니다.</p>");
+                        }
+
+                        loading = false; // 로딩 완료
+                    },
+                    //500에러 뜨면 여기로 옴.
+                    error: function (error) {
+                        // 요청이 실패했을 때 실행할 로직
+                        console.log("AJAX 요청 실패:", error);
+                        hasNextPage = false;
+                        loading = false; // 로딩 완료
+                        $("#articleList").append("<div class='flex flex-col text-2xl justify-center items-center mt-4'> 리스트의 끝입니다. " +
+                            "<div class='text-2xl my-4'> 더 많은 게시물을 확인하세요! </div>" +
+                            "<div class=\"mt-4\">\n" +
+                            "                            <a href=\"/usr/article/list\">\n" +
+                            "                                <button class=\"btn btn-primary\">전체 게시물</button>\n" +
+                            "                            </a>\n" +
+                            "                        </div>" +
+                            "" +
+                            "</div>");
+                    }
+                });
+            }
+        }
+
+        $(window).scroll(function () {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height()) {
+                loadMoreArticles();
+            }
+        });
+
+
+    </script>
 </main>
 </body>
 </html>
