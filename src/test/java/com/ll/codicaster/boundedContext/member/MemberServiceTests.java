@@ -1,4 +1,4 @@
-package com.ll.codicaster.member;
+package com.ll.codicaster.boundedContext.member;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
