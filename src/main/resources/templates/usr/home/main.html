@@ -87,32 +87,34 @@
 
     </script>
 </head>
-
 <body>
-<main layout:fragment="main" class="flex-grow flex justify-center ">
+<main layout:fragment="main" class="flex-grow flex items-center justify-center ">
+
     <div class="max-w-2xl w-full px-4">
         <div class="flex flex-col gap-4">
             <div class="card bg-base-100 shadow-xl">
-                <div class="mt-2 px-4 mt-4">
-                    <div class="flex justify-between">
-                        <div class="flex flex-col">
-                            <div class="card-title flex items-center">
-                                <span class="text-3xl" th:text="${@rq.getCurrentDate}"></span>
-                                <span class="text-3xl" th:text="${@rq.getWeatherInfo}"></span>
-                            </div>
-                            <div class="card-title flex items-center">
-                                <span class="text-xl" th:text="${@rq.getAddress}"></span>
-                                <div>
-                                    <form id="locationDTO" th:action="@{/usr/location/update/main}" class="mb-0"
-                                          method="post">
-                                        <button id="updateButton" type="button"
-                                                class="button bg-white border border-primary text-primary hover:bg-primary hover:text-white"
-                                                onclick="handleButtonClick(this);">
-                                            <span class="button__text text-xl">Update</span>
-                                            <input type="hidden" name="latitude" th:value="${latitude}">
-                                            <input type="hidden" name="longitude" th:value="${longitude}">
-                                        </button>
-                                    </form>
+                <div class="flex justify-center">
+                    <div class="mt-2 px-4 mt-4">
+                        <div class="flex justify-between">
+                            <div class="flex flex-col">
+                                <div class="card-title flex items-center">
+                                    <span class="text-3xl" th:text="${@rq.getCurrentDate}"></span>
+                                    <span class="text-3xl" th:text="${@rq.getWeatherInfo}"></span>
+                                </div>
+                                <div class="card-title flex items-center">
+                                    <span class="text-xl" th:text="${@rq.getAddress}"></span>
+                                    <div>
+                                        <form id="locationDTO" th:action="@{/usr/location/update/main}" class="mb-0"
+                                              method="post">
+                                            <button id="updateButton" type="button"
+                                                    class="button bg-white border border-primary text-primary hover:bg-primary hover:text-white"
+                                                    onclick="handleButtonClick(this);">
+                                                <span class="button__text text-xl">Update</span>
+                                                <input type="hidden" name="latitude" th:value="${latitude}">
+                                                <input type="hidden" name="longitude" th:value="${longitude}">
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -124,12 +126,20 @@
                 </th:block>
                 <span th:if="${@rq.hasHighTemperatureDifference()}" th:text="일교차가 큰 날이니 겉옷을 챙기시는게 좋아요!"></span>
                 <br>
-                <h2 class="card-title flex items-center px-4">
+            </div>
+        </div>
+
+        <div class="my-4"></div>
+
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title">
                     <a href="/usr/article/todayList">
                         <th:block th:utext="#{c.iconTodayList}"></th:block>
-                        <span class="text-2xl" th:text="#{c.pageNameTodayList}"></span>
+                        <span th:text="#{c.pageNameTodayList}"></span>
                     </a>
                 </h2>
+
                 <div class="max-w-3xl py-6 px-4">
                     <section th:fragment="articleListFragment" class="flex justify-center">
                         <div id="articleList">
@@ -194,10 +204,10 @@
                 $.ajax({
                     url: "/main/list",
                     method: "GET",
-                    data: { page: page, size: size },
+                    data: {page: page, size: size},
                     success: function (data) {
                         // 요청이 성공했을 때 실행할 로직
-                        if (data.trim().length > 0 && data!=null) {
+                        if (data.trim().length > 0 && data != null) {
                             $("#articleList").append(data);
                             hasNextPage = true;
                         } else {

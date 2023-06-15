@@ -38,7 +38,7 @@
             <div th:if="${notification.typeCode == 'LIKE'}">
               <a th:href="@{/usr/article/detail/{id}(id=${notification.article.id})}">
                 <span class="badge badge-primary" th:text="${notification.actor.getNickname()}"></span>님이
-                당신의 <span class="badge badge-outline" th:text="${notification.article.getTitle()}"></span>게시물을 좋아합니다.
+                당신의 <span class="badge badge-secondary" th:text="${notification.article.getTitle()}"></span>게시물을 좋아합니다.
               </a>
             </div>
             <div th:if="${notification.typeCode == 'FOLLOW'}">
