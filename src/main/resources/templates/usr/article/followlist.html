@@ -13,19 +13,15 @@
         <div class="flex flex-col gap-4">
             <div class="card bg-base-100 shadow-xl">
                 <div class="card-body">
-                    <section th:fragment="articleListFragment" class="justify-center">
+                    <section th:fragment="articleListFragment" class="justify-center" th:if="${not #lists.isEmpty(articleList)}">
                         <div id="articleList">
                             <div th:if="${@rq.isLogin()}">
-                                <div th:each="article : ${articleList}"
-                                     class="rounded overflow-hidden shadow-lg px-4 py-6 my-4">
+                                <div th:each="article : ${articleList}" class="rounded overflow-hidden shadow-lg px-4 py-6 my-4">
                                     <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
-                                        <div class="flex justify-start ml-6 my-4"
-                                             th:text="${article.getAuthor().nickname}"></div>
-                                        <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
-                                             class="w-30 object-contain"/>
+                                        <div class="flex justify-start ml-6 my-4" th:text="${article.getAuthor().nickname}"></div>
+                                        <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}" class="w-30 object-contain"/>
                                         <div class="px-6 py-4 flex flex-col">
-                                            <div class="flex justify-center font-bold text-xl mb-2 truncate"
-                                                 th:text="${article.title}"></div>
+                                            <div class="flex justify-center font-bold text-xl mb-2 truncate" th:text="${article.title}"></div>
                                             <div class="flex justify-end mr-4">
                                                 <div class="like-display badge badge-lg">
                                                     <span class="heart-icon text-red-500 mr-1">💕</span>
