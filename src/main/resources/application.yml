@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   profiles:
     active: dev
     include: secret
@@ -6,7 +10,7 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://127.0.0.1:3306/codicaster_dev?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
     username: root
-    password: 1234
+    password: Codi2327~~
   security:
     oauth2:
       client:
@@ -35,7 +39,7 @@ spring:
             user-name-attribute: response
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
@@ -53,11 +57,9 @@ server:
       charset: UTF-8
       enabled: true
       force: true
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+file:
+  upload-dir: /Users/heegwonjo/Desktop/Likelion/codicaster
 custom:
   site:
     baseUrl: http://localhost
-file:
-  upload-dir: /Users/hojun/Desktop/CodiCaster/images
+
