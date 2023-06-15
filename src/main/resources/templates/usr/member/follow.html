@@ -1,21 +1,7 @@
+<!DOCTYPE html>
 <html layout:decorate="~{usr/layout/layout.html}">
 <head>
-    <title>팔로우 목록</title>
-    <style>
-        .follow-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .follow-list-item {
-            padding: 10px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 10px;
-            text-align: center;
-        }
-    </style>
+    <title>게시글 목록</title>
 </head>
 <body>
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">
@@ -24,9 +10,19 @@
             <i class="fa-solid fa-people-arrows"></i>
             팔로우 목록
         </h1>
-        <div class="py-6">
-            <div th:each="member : ${@rq.getFollwingMembers()}" class="follow-list">
-                <div class="follow-list-item text-xl" th:text="${member.nickname}"></div>
+        <div class="flex flex-col gap-4">
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <br>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                        <div th:each="member : ${@rq.getFollwingMembers()}"
+                             class="rounded overflow-hidden shadow-lg">
+                            <div class="px-6 py-4">
+                                <div class="font-bold text-xl mb-2 truncate" th:text="${member.nickname}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

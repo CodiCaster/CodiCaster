@@ -4,6 +4,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,16 +27,28 @@ public class HomeController {
 	@GetMapping("/main")
 	public String showMain(Model model, @RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "5") int size) {
-		List<Article> nonmemberArticles = articleService.showArticlesFilteredByDate();
-		model.addAttribute("articlesFilteredOnce", nonmemberArticles);
+		ResponseEntity<Page<Article>> response = articleService.getPageableArticles(page, size);
 
-		if (rq.isLogin()) {
-			List<Article> memberArticles = articleService.sortByAllParams(rq.getMember(), nonmemberArticles);
-			model.addAttribute("articlesFilterdAndSorted", memberArticles);
-			List<Article> myArticles = articleService.showMyList();
-			model.addAttribute("myArticles", myArticles);
+		if (response.getStatusCode().is2xxSuccessful()) {
+			Page<Article> articleList = response.getBody();
+			model.addAttribute("articleList", articleList);
 		}
+
 		return "usr/home/main";
+	}
+
+	@GetMapping("/main/list")
+	public String showArticleList(Model model, @RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "5") int size) {
+
+		ResponseEntity<Page<Article>> response = articleService.getPageableArticles(page,size);
+
+		if (response.getStatusCode().is2xxSuccessful()) {
+			Page<Article> articleList = response.getBody();
+			model.addAttribute("articleList", articleList);
+		}
+
+		return "usr/home/main :: articleListFragment";
 	}
 
 	@GetMapping("/")
