@@ -150,14 +150,15 @@
                                         <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
                                             <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
                                                  class="w-30 object-contain"/>
-                                            <div class="article-Status flex flex-col justify-around">
-                                                <div class="font-bold text-xl my-2 truncate"
-                                                     th:text="${article.getWeatherInfo()}"></div>
-                                                <div class="like-display badge badge-lg my-2">
+                                            <div class="flex items-center justify-between mt-4">
+                                                <div class="like-display badge badge-lg badge-ghost">
                                                     <span class="heart-icon text-red-500 mr-1">💕</span>
                                                     <span th:text="${article.getLikedMembers().size()}"></span>
                                                 </div>
-                                                <span th:text="${#numbers.formatDecimal(@articleService.getDistanceBetweenUser(article), 1, 1)} + 'km'"></span>
+                                                <div class="font-bold text-xl truncate" th:text="${article.getWeatherInfo()}"></div>
+                                                <div class="like-display badge badge-lg badge-ghost">
+                                                    <div th:text="${#numbers.formatDecimal(@articleService.getDistanceBetweenUser(article), 1, 1)} + 'km'"></div>
+                                                </div>
                                             </div>
                                         </a>
                                     </div>
@@ -170,14 +171,15 @@
                                         <a th:href="@{/usr/article/detail/{id}(id=${article.id})}">
                                             <img th:src="${article.image != null ? article.image.filepath : '/images/default.png'}"
                                                  class="w-30 object-contain"/>
-                                            <div class="article-Status flex flex-col items-center justify-around">
-                                                <div class="font-bold text-xl mb-2 truncate"
-                                                     th:text="${article.getWeatherInfo()}"></div>
-                                                <div class="like-display badge badge-lg my-2">
+                                            <div class="flex items-center justify-between mt-4">
+                                                <div class="like-display badge badge-lg badge-ghost">
                                                     <span class="heart-icon text-red-500 mr-1">💕</span>
                                                     <span th:text="${article.getLikedMembers().size()}"></span>
                                                 </div>
-                                                <div th:text="${#numbers.formatDecimal(@articleService.getDistanceBetweenUser(article), 1, 1)} + 'km'"></div>
+                                                <div class="font-bold text-xl truncate" th:text="${article.getWeatherInfo()}"></div>
+                                                <div class="like-display badge badge-lg badge-ghost">
+                                                    <div th:text="${#numbers.formatDecimal(@articleService.getDistanceBetweenUser(article), 1, 1)} + 'km'"></div>
+                                                </div>
                                             </div>
                                         </a>
                                     </div>
