@@ -54,7 +54,7 @@ public class FollowService {
 	}
 
 	// 특정 멤버가 다른 멤버를 언팔로우하는 기능
-	public void unfollowMember(Member follower, Member followee) {
+	public void unfollowMember(Member followee, Member follower) {
 		Follow follow = followRepository.findByFollowerAndFollowee(follower, followee);
 		if (follow != null) {
 			followRepository.delete(follow);
