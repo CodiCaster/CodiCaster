@@ -13,8 +13,9 @@ import java.util.stream.Stream;
 
 
 
-// import com.ll.codicaster.boundedContext.aws.s3.dto.AmazonS3ImageDto;
-// import com.ll.codicaster.boundedContext.aws.s3.service.AmazonS3Service;
+import com.ll.codicaster.boundedContext.aws.s3.dto.AmazonS3ImageDto;
+import com.ll.codicaster.boundedContext.aws.s3.repository.AmazonS3Repository;
+import com.ll.codicaster.boundedContext.aws.s3.service.AmazonS3Service;
 import com.ll.codicaster.base.event.EventAfterWrite;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,10 +51,10 @@ public class ArticleService {
 	private final ArticleRepository articleRepository;
 	private final ImageRepository imageRepository;
 	private final ApplicationEventPublisher publisher;
-    // private final AmazonS3Service amazonS3Service;
+    private final AmazonS3Service amazonS3Service;
 	private final Rq rq;
-	@Value("${file.upload-dir}")
-	private String uploadDir;
+
+
 
 	public static Set<String> extractHashTagList(String content) {
 		Set<String> tagSet = new HashSet<>();
@@ -97,57 +99,29 @@ public class ArticleService {
 		publisher.publishEvent(new EventAfterWrite(this, rq.getCurrentLocation(), savedArticle));
 
         // 클라우드스토리지 사용
-    //     if (!imageFile.isEmpty()) {
-    //         try {
-    //             // 이미지 업로드 및 URL 정보 받아오기
-    //             AmazonS3ImageDto amazonS3ImageDto = amazonS3Service.imageUpload(imageFile, UUID.randomUUID().toString());
-    //
-    //             // 이미지 정보를 설정하고 저장
-    //             Image image = Image.builder()
-    //                 .filename(imageFile.getOriginalFilename())
-    //                 .filepath(amazonS3ImageDto.getCdnUrl()) // CDN URL로 변경
-    //                 .article(article)
-    //                 .build();
-    //
-    //             image = imageRepository.save(image);  // 이미지를 DB에 저장
-    //
-    //             article.setImage(image); // 이미지 정보를 게시글에 추가
-    //         } catch (Exception e) {
-    //             e.printStackTrace();
-    //             throw new RuntimeException("이미지 업로드에 실패하였습니다", e);
-    //         }
-    //     }
-    //     return RsData.of("S-1", "성공적으로 저장되었습니다", article);
-    //}
-// 이미지 파일이 있으면 저장
         if (!imageFile.isEmpty()) {
-            UUID uuid = UUID.randomUUID();
-            String fileName = uuid + "_" + imageFile.getOriginalFilename();
+            try {
+                // 이미지 업로드 및 URL 정보 받아오기
+                AmazonS3ImageDto amazonS3ImageDto = amazonS3Service.imageUpload(imageFile, UUID.randomUUID().toString());
 
-			File directory = new File(uploadDir);
-			// 디렉토리가 존재하지 않으면 생성
-			if (!directory.exists()) {
-				directory.mkdirs(); // 상위 디렉토리까지 모두 생성
-			}
+                // 이미지 정보를 설정하고 저장
+                Image image = Image.builder()
+                    .filename(imageFile.getOriginalFilename())
+                    .filepath(amazonS3ImageDto.getCdnUrl()) // CDN URL로 변경
+                    .article(article)
+                    .build();
 
-			File saveFile = new File(uploadDir, fileName);
-			try {
-				imageFile.transferTo(saveFile);
-			} catch (Exception e) {
-				return RsData.of("F-4", "이미지 업로드에 실패하였습니다");
-			}
+                image = imageRepository.save(image);  // 이미지를 DB에 저장
 
-			Image image = Image.builder()
-				.filename(fileName)
-				.filepath("/images/" + fileName)
-				.article(article)
-				.build();
+                article.setImage(image); // 이미지 정보를 게시글에 추가
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("이미지 업로드에 실패하였습니다", e);
+            }
+        }
+        return RsData.of("S-1", "성공적으로 저장되었습니다", article);
+    }
 
-			image = imageRepository.save(image);  // 이미지를 DB에 저장
-			article.setImage(image); // 이미지 정보를 게시글에 추가
-		}
-		return RsData.of("S-1", "성공적으로 저장되었습니다", article);
-	}
 
 
 
@@ -190,88 +164,48 @@ public class ArticleService {
 		article.setContent(articleDTO.getContent());
 		article.setTagSet(newTagSet);
 
-
-            // 클라우드 스토리지 이용
-    //         if (!imageFile.isEmpty()) {
-    //             try {
-    //                 // 이미지 업로드 및 URL 정보 받아오기
-    //                 AmazonS3ImageDto amazonS3ImageDto = amazonS3Service.imageUpload(imageFile, UUID.randomUUID().toString());
-    //
-    //                 // 기존 이미지가 있으면 DB에서 삭제
-    //                 Image oldImage = article.getImage();
-    //                 if (oldImage != null) {
-    //                     imageRepository.delete(oldImage);
-    //                 }
-    //
-    //                 // 새 이미지 정보를 설정하고 저장
-    //                 Image image = Image.builder()
-    //                     .filename(imageFile.getOriginalFilename())
-    //                     .filepath(amazonS3ImageDto.getCdnUrl()) // CDN URL로 변경
-    //                     .article(article)
-    //                     .build();
-    //
-    //                 image = imageRepository.save(image);
-    //
-    //                 article.setImage(image);
-    //             } catch (Exception e) {
-    //                 return RsData.of("F-4", "이미지 저장 중 오류가 발생했습니다.");
-    //             }
-    //         }
-    //
-    //     try {
-    //         article = articleRepository.save(article);
-    //     } catch (Exception e) {
-    //         return RsData.of("F-5", "게시글 수정 중 오류가 발생했습니다.");
-    //     }
-    //
-    //     return RsData.of("S-1", "성공적으로 수정되었습니다.", article);
-    // }
-
-        // 이미지 파일이 있으면 저장
-        if (!imageFile.isEmpty()) {
-            UUID uuid = UUID.randomUUID();
-            String fileName = uuid + "_" + imageFile.getOriginalFilename();
-
-			File directory = new File(uploadDir);
-			if (!directory.exists()) {
-				directory.mkdirs();
-			}
-
-			File saveFile = new File(uploadDir, fileName);
+		// 클라우드 스토리지 이용
+		if (!imageFile.isEmpty()) {
 			try {
-				imageFile.transferTo(saveFile);
-			} catch (FileNotFoundException e) {
-				return RsData.of("F-4", "이미지 파일이 존재하지 않습니다.");
-			} catch (IOException e) {
-				return RsData.of("F-5", "오류가 발생했습니다.");
-			}
+				// 이미지 업로드 및 URL 정보 받아오기
+				AmazonS3ImageDto amazonS3ImageDto = amazonS3Service.imageUpload(imageFile, UUID.randomUUID().toString());
 
-			// 기존 이미지가 있으면 삭제
-			Image oldImage = article.getImage();
-			if (oldImage != null) {
-				// 실제 파일 삭제
-				File oldFile = new File(uploadDir, oldImage.getFilename());
-				if (oldFile.exists()) {
-					oldFile.delete();
+				// 기존 이미지 삭제
+				Image oldImage = article.getImage();
+				if (oldImage != null) {
+					String imageUrl = oldImage.getFilepath();
+					amazonS3Service.deleteImage(imageUrl);
+					imageRepository.delete(oldImage);
 				}
 
-				// DB에서 기존 이미지 삭제
-				imageRepository.delete(oldImage);
+				// 새 이미지 정보를 설정하고 저장
+				Image image = Image.builder()
+					.filename(imageFile.getOriginalFilename())
+					.filepath(amazonS3ImageDto.getCdnUrl())
+					.article(article)
+					.build();
+
+				image = imageRepository.save(image);
+
+				article.setImage(image);
+			} catch (Exception e) {
+				return RsData.of("F-4", "이미지 저장 중 오류가 발생했습니다.");
 			}
-
-			// 새 이미지 정보를 설정하고 저장
-			Image image = new Image();
-			image.setFilename(fileName);
-			image.setFilepath("/images/" + fileName);
-			image.setArticle(article);
-
-			image = imageRepository.save(image);
-
-			article.setImage(image);
+		} else {
+			// 이미지를 수정하지 않는 경우, 기존 이미지를 그대로 유지
+			article.setImage(article.getImage());
 		}
 
-		return RsData.of("S-1", "수정되었습니다.");
-	}
+        try {
+            article = articleRepository.save(article);
+        } catch (Exception e) {
+            return RsData.of("F-5", "게시글 수정 중 오류가 발생했습니다.");
+        }
+
+        return RsData.of("S-1", "성공적으로 수정되었습니다.", article);
+    }
+
+
 
 	@Transactional
 	public RsData deleteArticle(Long id, Member member) {
@@ -289,6 +223,8 @@ public class ArticleService {
 			return RsData.of("F-4", "삭제 권한이 없습니다.");
 		}
 
+		String imageUrl = article.getImage().getFilepath();
+		amazonS3Service.deleteImage(imageUrl);
 
 		publisher.publishEvent(new EventBeforeDeleteArticle(this, article));
 		articleRepository.deleteById(id);
@@ -469,21 +405,48 @@ public class ArticleService {
 
 	}
 
-	public Page<Article> getPageableArticlesFilteredByDate(int page, int size) {
-		List<Article> nonmemberArticles = showArticlesFilteredByDate();
-		Pageable pageable = PageRequest.of(page, size);
-		int start = (int)pageable.getOffset();
-		int end = Math.min((start + pageable.getPageSize()), nonmemberArticles.size());
-		return new PageImpl<>(nonmemberArticles.subList(start, end), pageable, nonmemberArticles.size());
+	//날짜 기준으로 필터링, 거리순으로 정렬된 리스트 => 페이지로 변환
+	public ResponseEntity<Page<Article>> getPageableArticlesFilteredByDate(int page, int size) {
+		List<Article> nonMembersList = showArticlesFilteredByDate();
+		RsData pageRs = canGetPage(page, size, nonMembersList);
+		List<Article> filteredList = nonMembersList.stream()
+			.filter(article -> article.getContent() != null)
+			.collect(Collectors.toList());
+
+		//게시물 가져오기 실패하면 익셉션
+		if (pageRs.isFail()) {
+			throw new IllegalArgumentException(pageRs.getMsg());
+		}
+
+		return getPageResponseEntity(page, size, filteredList);
 	}
 
-	public Page<Article> getPageableSortedArticles(Member member, int page, int size) {
+	public ResponseEntity<Page<Article>> getPageableSortedArticles(Member member, int page, int size) {
 		List<Article> nonmemberArticles = showArticlesFilteredByDate();
-		List<Article> memberArticles = sortByAllParams(member, nonmemberArticles);
+		List<Article> membersList = sortByAllParams(member, nonmemberArticles);
+
+		RsData pageRs = canGetPage(page, size, membersList);
+
+		// content가 null인 Article 객체 제외
+		List<Article> filteredList = membersList.stream()
+			.filter(article -> article.getContent() != null)
+			.collect(Collectors.toList());
+
+		//게시물 가져오기 실패하면 익셉션
+		if (pageRs.isFail()) {
+			throw new IllegalArgumentException(pageRs.getMsg());
+		}
+		return getPageResponseEntity(page, size, filteredList);
+	}
+
+	private ResponseEntity<Page<Article>> getPageResponseEntity(int page, int size, List<Article> membersList) {
 		Pageable pageable = PageRequest.of(page, size);
 		int start = (int)pageable.getOffset();
-		int end = Math.min((start + pageable.getPageSize()), memberArticles.size());
-		return new PageImpl<>(memberArticles.subList(start, end), pageable, memberArticles.size());
+		int end = Math.min((start + pageable.getPageSize()), membersList.size());
+
+		Page<Article> pageResult = new PageImpl<>(membersList.subList(start, end), pageable, membersList.size());
+
+		return ResponseEntity.ok(pageResult);
 	}
 
 	public Page<Article> getPageableMyArticles(int page, int size) {
@@ -494,8 +457,26 @@ public class ArticleService {
 		return new PageImpl<>(myArticles.subList(start, end), pageable, myArticles.size());
 	}
 
+	public RsData canGetPage(int page, int size, List<?> list) {
+		if (page < 0 || size <= 0) {
+			return RsData.of("F-1", "page, size는 자연수여야 합니다.");
+		}
+		int totalArticles = list.size();
+		int totalPages = (int)Math.ceil((double)totalArticles / size);
+		Pageable pageable = PageRequest.of(page, size);
+		int start = (int)pageable.getOffset();
+		int end = Math.min((start + pageable.getPageSize()), list.size());
+
+		if (start > end) {
+			return RsData.of("F-2", "마지막 페이지입니다.", "");
+		}
+
+		return RsData.of("S-1", "페이징 처리 성공");
+
+	}
+
 	//팔로우 한 사람의 게시물
-	public List<Article> showFollweesArticles() {
+	public List<Article> getFolloweesArticles() {
 		List<Member> followingMembers = rq.getFollwingMembers();
 		List<Long> followingMemberIds = followingMembers.stream().map(Member::getId).collect(Collectors.toList());
 		List<Article> articles = articleRepository.findByAuthorIdIn(followingMemberIds);
@@ -505,6 +486,36 @@ public class ArticleService {
 			.collect(Collectors.toList());
 
 		return sortedArticles;
+	}
+
+	public ResponseEntity<Page<Article>> getPageableArticles(int page, int size) {
+		Page<Article> articleList = Page.empty(); // 빈 페이지 객체 생성
+
+		if (rq.isLogout()) {
+			articleList = getPageableArticlesFilteredByDate(page, size).getBody();
+		} else if (rq.isLogin()) {
+			articleList = getPageableSortedArticles(rq.getMember(), page, size).getBody();
+		}
+
+		return ResponseEntity.ok(articleList);
+	}
+
+	public ResponseEntity<Page<Article>> getPageableFolloweesArticles(int page, int size) {
+		List<Article> followeesArticles = getFolloweesArticles(); // 팔로우 중인 사용자의 게시물 가져오기
+
+		RsData pageRs = canGetPage(page, size, followeesArticles);
+
+		// content가 null인 Article 객체 제외
+		List<Article> filteredList = followeesArticles.stream()
+			.filter(article -> article.getContent() != null)
+			.collect(Collectors.toList());
+
+		// 게시물 가져오기 실패하면 익셉션
+		if (pageRs.isFail()) {
+			throw new IllegalArgumentException(pageRs.getMsg());
+		}
+
+		return getPageResponseEntity(page, size, filteredList);
 	}
 
 }

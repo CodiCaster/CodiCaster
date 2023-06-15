@@ -20,6 +20,7 @@ import com.ll.codicaster.base.rsData.RsData;
 import com.ll.codicaster.boundedContext.article.entity.Article;
 import com.ll.codicaster.boundedContext.article.dto.ArticleDTO;
 import com.ll.codicaster.boundedContext.article.repository.ArticleRepository;
+import com.ll.codicaster.boundedContext.aws.s3.service.AmazonS3Service;
 import com.ll.codicaster.boundedContext.image.entity.Image;
 import com.ll.codicaster.boundedContext.image.repository.ImageRepository;
 import com.ll.codicaster.boundedContext.member.entity.Member;
@@ -39,12 +40,17 @@ public class ArticleServiceTests {
 	@Mock
 	private Rq rq;
 
+
+	@Mock
 	private ArticleService articleService;
+
+	@Mock
+	private AmazonS3Service amazonS3Service;
 
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
-		articleService = new ArticleService(articleRepository, imageRepository, publisher, rq);
+		articleService = new ArticleService(articleRepository, imageRepository, publisher, amazonS3Service, rq);
 	}
 
 	@Test
@@ -112,7 +118,7 @@ public class ArticleServiceTests {
 
 		assertNotNull(result);
 		assertEquals("S-1", result.getResultCode());
-		assertEquals("수정되었습니다.", result.getMsg());
+		assertEquals("성공적으로 수정되었습니다.", result.getMsg());
 	}
 
 }
