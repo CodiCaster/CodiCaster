@@ -34,6 +34,12 @@
                             <span th:text="#{c.pageNameMyProfile}"></span>
                         </a>
                     </li>
+                    <li th:if="${@rq.login}">
+                        <a href="/usr/article/mylist">
+                            <th:block th:utext="#{c.iconMyList}"></th:block>
+                            <span th:text="#{c.pageMyList}"></span>
+                        </a>
+                    </li>
 
                     <div th:if="${@rq.login}" class="divider"></div>
 

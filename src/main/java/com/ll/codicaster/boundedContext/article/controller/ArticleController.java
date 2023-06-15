@@ -158,4 +158,17 @@ public class ArticleController {
 		}
 		return "usr/article/followlist";
 	}
+
+	@GetMapping("/follow/list")
+	public String pageableFollowsList(Model model, @RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "5") int size) {
+
+		ResponseEntity<Page<Article>> response = articleService.getPageableFolloweesArticles(page, size);
+		if (response.getStatusCode().is2xxSuccessful()) {
+			Page<Article> articleList = response.getBody();
+			model.addAttribute("articleList", articleList);
+		}
+
+		return "usr/article/followlist :: articleListFragment";
+	}
 }

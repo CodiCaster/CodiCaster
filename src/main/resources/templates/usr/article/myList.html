@@ -1,14 +1,10 @@
 <html layout:decorate="~{usr/layout/layout.html}">
 <head>
-    <title>오늘의 코디</title>
+    <title>내 게시글 목록</title>
 </head>
 <body>
 <main layout:fragment="main" class="flex-grow flex items-center justify-center">
     <div class="max-w-2xl w-full px-4">
-        <h1 class="mb-4">
-            <i class="fa-solid fa-list"></i>
-            내 게시글
-        </h1>
         <div>
             <div class="flex">
                 <span class="mr-2">가장 많이 이용한 태그: </span>
@@ -19,8 +15,8 @@
             <div th:if="${@rq.isLogin}" class="card bg-base-100 shadow-xl max-w-2xl w-full px-4">
                 <h2 class="card-title flex items-center mt-4">
                     <a href="/usr/article/mylist">
-                        <i class="fa-solid fa-list"></i>
-                        <span class="text-2xl">나의 게시물</span>
+                        <i class="fa-solid fa-folder-open"></i>
+                        내가 작성한 게시글
                     </a>
                 </h2>
                 <br>
