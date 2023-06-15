@@ -51,11 +51,13 @@ public class ArticleController {
 	@GetMapping("/list")
 	public String articles(Model model) {
 
-        List<Article> articles = articleService.articleList();
-        model.addAttribute("articles", articles);
+		List<Article> articles = articleService.articleList();
+		model.addAttribute("articles", articles);
 
 		return "usr/article/list";
 	}
+
+
 
     @GetMapping("/detail/{id}")
 	public String articleDetail(@PathVariable Long id, Model model) {

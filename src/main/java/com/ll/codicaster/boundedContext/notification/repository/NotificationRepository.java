@@ -19,4 +19,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 	List<Notification> findByArticleIdAndActor(Long articleId, Member actor);
 
 	List<Notification> findByArticleId(Long articleId);
+
 }
