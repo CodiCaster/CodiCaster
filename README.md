@@ -1,10 +1,17 @@
 # 🌦️ 코디 캐스터 (Codi Caster)
 
 > 개발기간: 2022.05 - 2022.06 (4주)  
-> 프로젝트 유형: 4인 팀 프로젝트
+> 프로젝트 유형: 4인 팀 프로젝트<br>
+> 도메인 주소 : <a href="https://www.codicaster.site/main">CodiCaster</a>
 </br>
 
 ## 서비스 소개
+
+<h3>오늘 뭐입지? 날씨에 맞춘 코디 추천 플랫폼 <img src=https://velog.velcdn.com/images/heeco/post/aeeed93c-4c3c-41cb-8bf7-35bafeb2107a/image.png width="30"/> </h3>
+<br>
+<img src=https://velog.velcdn.com/images/heeco/post/eee7f1b5-31af-452b-b167-bed14c336dcc/image.png />
+
+<br>
 
 - 코디캐스터(CodiCaster) = 의상을 균형있게 갖추다 + 전문성있게 정보를 전달하는사람
 - 사용자의 위치와 날씨 등에 따른 옷차림을 추천해주는 SNS 성격의 웹 서비스
@@ -29,13 +36,36 @@
 
 ## 팀원 소개 및 역할
 
-- **조희권**: BE, 1주차 PM
-
-- **신희수**: BE, 2주차 PM
-
-- **박다원**: BE, 3주차 PM
-
-- **송호준**: BE, 4주차 PM
+<div align=center> 
+  <br>
+    <table>
+        <tr>
+          <td align="center">박다원</td>
+          <td align="center">송호준</td>
+          <td align="center">신희수</td>
+          <td align="center">조희권</td>
+        </tr>
+        <tr>
+          <td align="center"><a href="https://github.com/daxx0ne" target="_blank">@daxx0ne</a></td>
+          <td align="center"><a href="https://github.com/hojunking96" target="_blank" width="160">@hojunking96</a></td>
+          <td align="center"><a href="https://github.com/Heeesuu" target="_blank">@Heeesuu</a></td>
+          <td align="center"><a href="https://github.com/HeegwonJo" target="_blank">@Joyfulgwon</a></td>
+        </tr>
+        <tr>
+          <td align="center">Backend</td>
+          <td align="center">Backend</td>
+          <td align="center">Backend</td>
+          <td align="center">Backend</td>
+        </tr>
+        <tr>
+          <td align="center">회원 관리</td>
+          <td align="center">날씨 API, 서버 관리</td>
+          <td align="center">게시물 관리</td>
+          <td align="center">태그, 게시물 추천 관리</td>
+        </tr>
+  </table>
+</div>
+<br>
 
 ## 기술 스택
 
